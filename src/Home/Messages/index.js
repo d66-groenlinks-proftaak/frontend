@@ -1,5 +1,4 @@
 import React from "react";
-import {Button} from "primereact/button";
 import Header from "./Header";
 
 import { HubConnectionBuilder } from '@microsoft/signalr';
@@ -16,7 +15,7 @@ class Messages extends React.Component {
 
     componentDidMount() {
         const connection = new HubConnectionBuilder()
-            .withUrl('https://localhost:5001/hub/message')
+            .withUrl('http://localhost:5000/hub/message')
             .withAutomaticReconnect()
             .build();
 

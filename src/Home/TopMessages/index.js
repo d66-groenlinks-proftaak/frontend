@@ -1,7 +1,5 @@
 import React from "react";
 import { Card } from 'primereact/card';
-import Announcements from "../Announcements/_index";
-import Messages from "../Messages";
 
 class TopMessages extends React.Component {
     render() {
