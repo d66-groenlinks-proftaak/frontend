@@ -1,0 +1,29 @@
+import React from "react";
+import Announcements from "./Announcements/_index";
+import { Button } from 'primereact/button';
+import Messages from "./Messages";
+import TopMessages from "./TopMessages";
+
+
+
+class Home extends React.Component {
+    render() {
+        return <div style={{width: "100%"}} className="p-grid p-formgrid p-fluid">
+            <div className="p-col-12 p-md-3 p-pl-3">
+                <Announcements />
+            </div>
+
+            <div className="p-col-12 p-md-6 p-pl-3">
+                <h1>Top Berichten</h1>
+                <TopMessages />
+                <Messages api={this.props.api} />
+            </div>
+
+            <div className="p-col-12 p-md-3 p-pl-3">
+
+            </div>
+        </div>
+    }
+}
+
+export default Home;
