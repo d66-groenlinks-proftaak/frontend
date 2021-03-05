@@ -3,13 +3,15 @@ import Header from "./Header";
 
 import Message from "./Message";
 import {Link} from "react-router-dom";
+import LoadingMessages from "./LoadingMessages";
 
 class Messages extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            messages: []
+            messages: [],
+            loaded: false
         }
     }
 
@@ -28,7 +30,7 @@ class Messages extends React.Component {
                 if(messages.length > 10)
                     messages.pop();
 
-                return { messages }
+                return { messages: messages, loaded: true }
             })
         })
 
@@ -36,6 +38,12 @@ class Messages extends React.Component {
     }
 
     render() {
+        if(this.state.loading)
+            return <div>
+                <h1>Nieuwe Berichten</h1>
+                <LoadingMessages />
+            </div>
+
         return <div>
             <Header connection={this.props.connection} />
             {this.state.messages.map(message => {

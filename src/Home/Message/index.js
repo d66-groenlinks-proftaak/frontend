@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import {Sidebar} from "primereact/sidebar";
 import {InputText} from "primereact/inputtext";
 import {Editor} from "primereact/editor";
+import LoadingMessage from "./LoadingMessage";
 
 class Message extends React.Component {
     constructor(props) {
@@ -87,6 +88,11 @@ class Message extends React.Component {
     }
 
     render() {
+
+        if(this.state.title === undefined) {
+            return <LoadingMessage />
+        }
+
         return <div className={"p-mt-5"}>
             <div className="p-d-flex p-jc-between p-ai-center">
                 <Link to={"/"}>
