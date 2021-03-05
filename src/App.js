@@ -7,22 +7,47 @@ import './App.css';
 
 import Home from "./Home";
 import Header from "./Home/Header";
-import axios from "axios";
+import React from "react";
+import {withRouter} from "react-router-dom";
+import {HubConnectionBuilder} from "@microsoft/signalr";
+import PageListener from "./Home/PageListener";
 
-function App() {
-    const api = axios.create({
-        baseURL: 'http://localhost:5000',
-        timeout: 5000,
-        headers: {'Authorization': 'empty', 'Content-Type': "application/json"},
+class App extends React.Component {
+    constructor(props) {
+        super(props);
 
-    });
+        this.state = {}
+    }
 
-    return (
-        <div className="App">
-            <Header api={api}/>
-            <Home api={api}/>
-        </div>
-    );
+    componentDidMount() {
+        const connection = new HubConnectionBuilder()
+            .withUrl('http://localhost:5000/hub/message')
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start()
+            .then(result => {
+                this.setState({
+                    connection: connection
+                })
+
+                console.log(this.props.location.pathname);
+                connection.send('UpdatePage', this.props.location.pathname);
+            })
+    }
+
+    render()
+    {
+        if(!this.state.connection || !this.state.connection.connectionStarted)
+            return <div>Connecting...</div>
+        return (
+            <div className="App">
+                    <PageListener connection={this.state.connection}/>
+                    <Header connection={this.state.connection} />
+                    <Home connection={this.state.connection} />
+            </div>
+        )
+    }
 }
 
-export default App;
+export default withRouter(App);

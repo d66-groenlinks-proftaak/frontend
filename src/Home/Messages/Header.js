@@ -42,7 +42,8 @@ class Header extends React.Component {
                 icon: "pi pi-spin pi-spinner"
             }
         })
-        this.props.api.post("/message/new", {
+
+        this.props.connection.send("CreateMessage", {
             Title: this.state.newPost.title,
             Content: this.state.newPost.content,
             Email: this.state.newPost.email,
@@ -54,13 +55,6 @@ class Header extends React.Component {
                 })
 
                 this.setPostWindow(false);
-            })
-            .catch(e => {
-                this.setState({
-                    additionalProps: {}
-                })
-
-                alert(e.message);
             })
     }
 

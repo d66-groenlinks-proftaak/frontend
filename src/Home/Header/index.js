@@ -1,5 +1,6 @@
 import React from "react";
 import { Menubar } from 'primereact/menubar';
+import {Link} from "react-router-dom";
 
 class index extends React.Component {
     render() {
@@ -38,7 +39,7 @@ class index extends React.Component {
             }
         ]
 
-        return <Menubar start={ <span style={{fontSize: "1.7em"}} className={"p-p-3 p-text-bold"}>Ringkey</span> } model={menuItems} />
+        return <Menubar start={ <Link to={"/"} style={{fontSize: "1.7em", color: "black", textDecoration: 'none'}} className={"p-p-3 p-text-bold"}>Ringkey</Link> } model={menuItems} />
     }
 }
 

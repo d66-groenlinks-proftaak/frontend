@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "./Header";
 
-import { HubConnectionBuilder } from '@microsoft/signalr';
 import Message from "./Message";
+import {Link} from "react-router-dom";
 
 class Messages extends React.Component {
     constructor(props) {
@@ -14,49 +14,36 @@ class Messages extends React.Component {
     }
 
     componentDidMount() {
-        const connection = new HubConnectionBuilder()
-            .withUrl('http://localhost:5000/hub/message')
-            .withAutomaticReconnect()
-            .build();
-
-        connection.start()
-            .then(result => {
-                connection.on("SendMessages", _messages => {
-                    this.setState({
-                        messages: _messages
-                    })
-
-                    console.log(_messages);
-                })
-
-                connection.on("SendMessage", _message => {
-                    this.setState(oldState => {
-                        const messages = [...oldState.messages];
-                        messages.unshift(_message)
-
-                        if(messages.length > 10)
-                            messages.pop();
-
-                        return { messages }
-                    })
-
-                    console.log(_message);
-                })
-
-                connection.send('RequestUpdate')
-                    .then(e => {
-                    })
+        this.props.connection.on("SendMessages", _messages => {
+            this.setState({
+                messages: _messages
             })
+        })
+
+        this.props.connection.on("SendMessage", _message => {
+            this.setState(oldState => {
+                const messages = [...oldState.messages];
+                messages.unshift(_message)
+
+                if(messages.length > 10)
+                    messages.pop();
+
+                return { messages }
+            })
+        })
+
+        this.props.connection.send('RequestUpdate');
     }
 
     render() {
         return <div>
-            <Header api={this.props.api} />
-
+            <Header connection={this.props.connection} />
             {this.state.messages.map(message => {
-                return <Message title={message.title} author={message.author} created={message.created}>
-                    <div dangerouslySetInnerHTML={{__html: message.content}}/>
-                </Message>
+                return <Link key={message.id} style={{ textDecoration: 'none' }} to={"/thread/" + message.id}>
+                    <Message title={message.title} author={message.author} created={message.created}>
+                        <div dangerouslySetInnerHTML={{__html: message.content}}/>
+                    </Message>
+                </Link>
             })}
         </div>
     }
