@@ -53,7 +53,7 @@ class Header extends React.Component {
                     additionalProps: {}
                 })
 
-                //this.setPostWindow(false);
+                this.setPostWindow(false);
             })
             .catch(e => {
                 this.setState({
