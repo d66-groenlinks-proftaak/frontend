@@ -34,6 +34,9 @@ class Messages extends React.Component {
                         const messages = [...oldState.messages];
                         messages.unshift(_message)
 
+                        if(messages.length > 10)
+                            messages.pop();
+
                         return { messages }
                     })
 
