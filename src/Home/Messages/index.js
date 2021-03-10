@@ -49,7 +49,7 @@ class Messages extends React.Component {
             {this.state.messages.map(message => {
                 return <Link key={message.id} style={{ textDecoration: 'none' }} to={"/thread/" + message.id}>
                     <Message title={message.title} author={message.author} created={message.created}>
-                        <div dangerouslySetInnerHTML={{__html: message.content}}/>
+                        {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)} ...
                     </Message>
                 </Link>
             })}
