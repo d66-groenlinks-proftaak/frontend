@@ -9,6 +9,8 @@ import {
 } from "react-router-dom";
 import Message from "./Message";
 
+import Profile from "./Profile"
+
 
 
 class Home extends React.Component {
@@ -22,6 +24,10 @@ class Home extends React.Component {
                 <Switch>
                     <Route path={"/thread/:id"} render={(props) =>
                         <Message connection={this.props.connection} id={props.match.params.id} />
+                    } />
+
+                    <Route path={"/profile/:id"} render={(props) =>
+                        <Profile connection={this.props.connection} id={props.match.params.id} />
                     } />
 
                     <Route path={"/"}>
