@@ -2,8 +2,9 @@ import React from "react";
 import {withRouter} from "react-router";
 
 class PageListener extends React.Component {
-    componentWillMount() {
+    componentDidMount() {
         this.unlisten = this.props.history.listen((location, action) => {
+            console.log(location.pathname)
             this.props.connection.send('UpdatePage', location.pathname);
         });
     }
