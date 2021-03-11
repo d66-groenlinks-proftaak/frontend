@@ -24,13 +24,22 @@ class Message extends React.Component {
                 content: "",
                 email: "",
                 author: ""
-            }
+            },
+            newReportOpen: false,
+            reportConfirmation: false,
+            reportMessage: ""
         }
     }
 
     setPostWindow = (open) => {
         this.setState({
             newPostOpen: open
+        });
+    }
+
+    setReportWindow = (open) => {
+        this.setState({
+            newReportOpen: open
         });
     }
 
@@ -72,6 +81,15 @@ class Message extends React.Component {
             })
     }
 
+    SendReport(){
+        this.props.connection.send("ReportMessage", {
+            ReportMessage: this.state.ReportMessage
+        })
+        this.setReportWindow(false)
+    }
+
+    
+    
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
             this.setState({
@@ -82,6 +100,11 @@ class Message extends React.Component {
                 title: thread.parent.title,
                 replies: thread.children
             })
+        })
+
+        this.props.connection.on("ConfirmReport", (ReportConfirmation)=> {
+            this.setState({reportConfirmation: ReportConfirmation})
+            console.log("Test");
         })
 
         this.props.connection.send("LoadMessageThread", this.props.id);
@@ -99,14 +122,17 @@ class Message extends React.Component {
                     <Button className={"p-button-secondary"} label={"Terug"} style={{float: "right"}} icon="pi pi-arrow-left" iconPos="left" />
                 </Link>
                 <div>
+                    
                     <Button className={"p-button-secondary"} label={"Volg"} style={{float: "right"}} icon="pi pi-bell" iconPos="right" />
                 </div>
             </div>
 
             <Card title={this.state.title} subTitle={<span><span style={{color: "blue"}}>@{this.state.author}</span> op {new Date(this.state.created).toLocaleString()}</span>} className={"p-mt-5"}>
+                <Button className={"p-button-secondary"} style={{float: "right"}} icon="pi pi-ban" iconPos="right" onClick={() => this.setReportWindow(true)}/>
                 <div dangerouslySetInnerHTML={{__html: this.state.content}}/>
             </Card>
 
+            
             <div className="p-d-flex p-jc-between p-ai-center">
                 <div>
                     <h1>Reacties</h1>
@@ -141,6 +167,23 @@ class Message extends React.Component {
 
                         <div className={"p-col-12 p-md-6 p-mt-5"}>
                             <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => { this.createPost() }} label={"Plaatsen"}/>
+                        </div>
+                    </div>
+                </Sidebar>
+            </div>
+
+            <div className={"p-grid"}>
+                <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right" visible={this.state.newReportOpen} onHide={() => this.setReportWindow(false)}>
+                    <div className="p-grid p-fluid p-p-3 p-pt-3">
+                        <h1>Report</h1>
+
+                        <div className="p-col-12">
+                            <h3>Bericht</h3>
+                            <Editor style={{height:'320px'}} value={this.state.ReportMessage} onTextChange={(e) => { this.onInputChanged("content", e.htmlValue)}} />
+                        </div>
+
+                        <div className={"p-col-12 p-md-6 p-mt-5"}>
+                            <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => { this.SendReport() }} label={"Sturen"}/>
                         </div>
                     </div>
                 </Sidebar>
