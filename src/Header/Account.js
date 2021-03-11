@@ -1,11 +1,54 @@
 import React from "react";
 import {Button} from "primereact/button";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
+import {Menu} from 'primereact/menu';
 
 class Account extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.menuRef = React.createRef();
+        this.state = {
+            redirect: false
+        }
+    }
+
     render() {
-        if (this.props.loggedIn)
-            return <span> {this.props.accountName} </span>
+        const items = [
+            {
+                label: 'Account',
+                items: [{
+                    label: 'Profile', icon: 'pi pi-fw pi-user', command: () => {
+                        this.setState({
+                            redirect: "/profile/" + this.props.accountId
+                        })
+                    }
+                },
+                    {
+                        label: 'Sign Out', icon: 'pi pi-fw pi-power-off', command: () => {
+                            localStorage.clear();
+                            window.location.href = "/";
+                        }
+                    }]
+            }
+        ]
+
+        if (this.props.loggedIn) {
+            if (this.state.redirect) {
+                const redirect = this.state.redirect;
+                this.setState({
+                    redirect: false
+                })
+                return <Redirect to={redirect}/>
+            }
+
+            return <div>
+                <Menu ref={this.menuRef} popup model={items}/>
+                <Button className={"p-button-text"} label={this.props.accountName} icon="pi pi-user" iconPos={"right"}
+                        onClick={(event) => this.menuRef.current.toggle(event)}/>
+            </div>
+        }
+
         return <span>
             <Link
                 to={"/account/login"}><Button label={"Account"}/></Link>

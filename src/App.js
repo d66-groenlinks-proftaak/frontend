@@ -20,7 +20,8 @@ class App extends React.Component {
 
         this.state = {
             loggedIn: false,
-            accountName: "Kane",
+            accountName: false,
+            accountId: "",
             registerCallback: undefined,
             loginCallback: undefined,
             authenticationError: false
@@ -67,7 +68,8 @@ class App extends React.Component {
                 connection.on("Authenticated", account => {
                     this.setState({
                         loggedIn: true,
-                        accountName: account.email
+                        accountName: account.email,
+                        accountId: account.accountId
                     });
 
                     localStorage.setItem("token", account.token);
@@ -91,7 +93,8 @@ class App extends React.Component {
         if (!this.state.connection || !this.state.connection.connectionStarted)
             return <div>Connecting...</div>
         return (<div>
-                <Header accountName={this.state.accountName} loggedIn={this.state.loggedIn}
+                <Header accountId={this.state.accountId} accountName={this.state.accountName}
+                        loggedIn={this.state.loggedIn}
                         connection={this.state.connection}/>
                 <Switch>
                     <Route path={"/account"} render={(props) => {
