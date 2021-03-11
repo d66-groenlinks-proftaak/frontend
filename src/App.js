@@ -11,6 +11,7 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import PageListener from "./Home/PageListener";
+import Footer from "./Layout/Footer";
 
 class App extends React.Component {
     constructor(props) {
@@ -36,18 +37,24 @@ class App extends React.Component {
             })
     }
 
-    render()
-    {
-        if(!this.state.connection || !this.state.connection.connectionStarted)
+    render() {
+        if (!this.state.connection || !this.state.connection.connectionStarted)
             return <div>Connecting...</div>
-        return (
-            <div className="App">
-                    <PageListener connection={this.state.connection}/>
-                    <Header connection={this.state.connection} />
-                    <Home connection={this.state.connection} />
+        return (<div style={{height: "100vh", width: "100vw"}}>
+                <div className="App p-grid" style={{marginLeft: 0, width: "100vw", height: "100%"}}>
+                    <div className={"p-col-12 p-col-align-start"}>
+                        <Header connection={this.state.connection}/>
+                        <Home connection={this.state.connection}/>
+                    </div>
+                    <div className={"p-col-12 p-align-col-end"}>
+                        <Footer/>
+                    </div>
+                </div>
             </div>
         )
     }
+
+    4
 }
 
 export default withRouter(App);

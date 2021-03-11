@@ -49,6 +49,7 @@ class Header extends React.Component {
                 this.setState({invalidTitle: false}, cb)
             }
         }
+
         if (type === "content") {
             if (content.length > 2000) {
                 this.setState({invalidContent: "De tekst is te lang"}, cb)
