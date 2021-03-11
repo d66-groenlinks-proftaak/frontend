@@ -45,7 +45,7 @@ class Messages extends React.Component {
             </div>
 
         return <div>
-            <Header connection={this.props.connection}/>
+            <Header loggedIn={this.props.loggedIn} connection={this.props.connection}/>
             {this.state.messages.map(message => {
                 return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
                     <Message title={message.title} author={message.author} created={message.created}>

@@ -93,7 +93,7 @@ class Header extends React.Component {
             this.validateInput("content", this.state.newPost.content, () => {
                 this.validateInput("email", this.state.newPost.email, () => {
                     this.validateInput("author", this.state.newPost.author, () => {
-                        if (!this.state.invalidTitle && !this.state.invalidAuthor && !this.state.invalidContent && !this.state.invalidEmail) {
+                        if ((this.props.loggedIn || !(!this.state.invalidEmail && !this.state.invalidAuthor)) && !this.state.invalidTitle && !this.state.invalidContent) {
                             this.setState({
                                 additionalProps: {
                                     disabled: true,
@@ -122,6 +122,27 @@ class Header extends React.Component {
     }
 
     render() {
+
+        let authenticated = <div>
+            <h3>E-Mail</h3>
+            <InputText className={this.state.invalidEmail ? "p-invalid" : ""}
+                       value={this.state.newPost.email} onChange={e => {
+                this.onInputChanged("email", e.target.value)
+            }}/>
+            <div style={{color: "red"}}>{this.state.invalidEmail ? this.state.invalidEmail :
+                <span>&nbsp;</span>}</div>
+
+            <h3>Naam</h3>
+            <InputText className={this.state.invalidAuthor ? "p-invalid" : ""}
+                       value={this.state.newPost.author} onChange={e => {
+                this.onInputChanged("author", e.target.value)
+            }}/>
+            <div style={{color: "red"}}>{this.state.invalidAuthor ? this.state.invalidAuthor :
+                <span>&nbsp;</span>}</div>
+        </div>
+
+        if (this.props.loggedIn)
+            authenticated = "";
 
         return <div>
 
@@ -157,21 +178,8 @@ class Header extends React.Component {
                             <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
                                 <span>&nbsp;</span>}</div>
 
-                            <h3>E-Mail</h3>
-                            <InputText className={this.state.invalidEmail ? "p-invalid" : ""}
-                                       value={this.state.newPost.email} onChange={e => {
-                                this.onInputChanged("email", e.target.value)
-                            }}/>
-                            <div style={{color: "red"}}>{this.state.invalidEmail ? this.state.invalidEmail :
-                                <span>&nbsp;</span>}</div>
 
-                            <h3>Naam</h3>
-                            <InputText className={this.state.invalidAuthor ? "p-invalid" : ""}
-                                       value={this.state.newPost.author} onChange={e => {
-                                this.onInputChanged("author", e.target.value)
-                            }}/>
-                            <div style={{color: "red"}}>{this.state.invalidAuthor ? this.state.invalidAuthor :
-                                <span>&nbsp;</span>}</div>
+                            {authenticated}
                         </div>
 
                         <div className={"p-col-12 p-md-6 p-mt-5"}>

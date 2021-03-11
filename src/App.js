@@ -83,6 +83,10 @@ class App extends React.Component {
                     })
                 });
 
+                connection.on("MessageCreationError", err => {
+                    console.log(err);
+                })
+
                 if (localStorage.getItem("token")) {
                     connection.send("Authenticate", localStorage.getItem("token"))
                 }
@@ -103,7 +107,8 @@ class App extends React.Component {
                                         login={(username, password, cb) => this.login(username, password, cb)}
                                         register={(firstname, lastname, password, email) => this.register(firstname, lastname, password, email)} {...props} />
                     }}/>
-                    <Route path={"/"} render={(props) => <Home connection={this.state.connection}/>}/>
+                    <Route path={"/"} render={(props) => <Home loggedIn={this.state.loggedIn}
+                                                               connection={this.state.connection}/>}/>
                 </Switch>
 
                 <Footer/>

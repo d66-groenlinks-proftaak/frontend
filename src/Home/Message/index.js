@@ -119,6 +119,21 @@ class Message extends React.Component {
 
     render() {
 
+        let authenticated = <div>
+            <h3>E-Mail</h3>
+            <InputText value={this.state.newPost.email} onChange={e => {
+                this.onInputChanged("email", e.target.value)
+            }}/>
+
+            <h3>Naam</h3>
+            <InputText value={this.state.newPost.author} onChange={e => {
+                this.onInputChanged("author", e.target.value)
+            }}/>
+        </div>
+
+        if (this.props.loggedIn)
+            authenticated = "";
+
         if (this.state.title === undefined) {
             return <LoadingMessage/>
         }
@@ -176,15 +191,7 @@ class Message extends React.Component {
                                 this.onInputChanged("content", e.htmlValue)
                             }}/>
 
-                            <h3>E-Mail</h3>
-                            <InputText value={this.state.newPost.email} onChange={e => {
-                                this.onInputChanged("email", e.target.value)
-                            }}/>
-
-                            <h3>Naam</h3>
-                            <InputText value={this.state.newPost.author} onChange={e => {
-                                this.onInputChanged("author", e.target.value)
-                            }}/>
+                            {authenticated}
                         </div>
 
                         <div className={"p-col-12 p-md-6 p-mt-5"}>
