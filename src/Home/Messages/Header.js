@@ -1,9 +1,9 @@
 import React from "react";
-import { Button } from "primereact/button";
-import { Sidebar } from 'primereact/sidebar';
-import { InputText } from "primereact/inputtext";
-import { Editor } from 'primereact/editor';
-import { Tooltip} from 'primereact/tooltip';
+import {Button} from "primereact/button";
+import {Sidebar} from 'primereact/sidebar';
+import {InputText} from "primereact/inputtext";
+import {Editor} from 'primereact/editor';
+import {Tooltip} from 'primereact/tooltip';
 
 class Header extends React.Component {
     constructor(props) {
@@ -18,12 +18,11 @@ class Header extends React.Component {
                 email: "",
                 author: ""
             },
-            invalid:{}
+            invalidTitle: false,
+            invalidContent: false,
+            invalidEmail: false,
+            invalidAuthor: false
         }
-        this.validateInput("title", "");
-        this.validateInput("content","");
-        this.validateInput("email","");
-        this.validateInput("author","");
     }
 
     setPostWindow = (open) => {
@@ -37,86 +36,43 @@ class Header extends React.Component {
         return re.test(String(email).toLowerCase());
     }
 
-    validateInput(type, content){
-        if(type == "title") {
-            if(content && content.length > 40) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.title = "De titel is te lang!";
-                    return {invalid:oldInvalid}
-                })
-            } else if(content && content.length <= 5) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.title = "De titel is te kort!";
-                    return {invalid:oldInvalid}
-                })
+    validateInput(type, content, cb) {
+        if (type === "title") {
+            if (content.length > 40) {
+                this.setState({invalidTitle: "De titel is te lang"}, cb)
+            } else if (content.length <= 5) {
+                this.setState({invalidTitle: "De titel is te kort"}, cb)
             } else {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.title = false;
-                    return {invalid:oldInvalid}
-                })
+                this.setState({invalidTitle: false}, cb)
             }
         }
-        if(type == "content") {
-            if(content && content.length > 2000) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.content = "Het bericht is te lang!";
-                    return {invalid:oldInvalid}
-                })
-            } else if(content && content.length <= 10) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.content = "Het bericht is te kort!";
-                    return {invalid:oldInvalid}
-                })
+        if (type == "content") {
+            if (content.length > 2000) {
+                this.setState({invalidContent: "De tekst is te lang"}, cb)
+            } else if (content.length <= 10) {
+                this.setState({invalidContent: "De tekst is te kort"}, cb)
             } else {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.content = false;
-                    return {invalid:oldInvalid}
-                })
+                this.setState({invalidContent: false}, cb)
             }
         }
-        if(type == "email") {
-            if(this.validateEmail(content)) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.email = false;
-                    return {invalid:oldInvalid}
-                })
-            }else {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.email = "Het email is ongeldig!";
-                    return {invalid:oldInvalid}
-                })
-            } 
-        }
-        if(type == "author") {
-            if(content && content.length > 50) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.author = "De naam is te lang!";
-                    return {invalid:oldInvalid}
-                })
-            } else if(content && content.length <= 1) {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.author = "De naam is te kort!";
-                    return {invalid:oldInvalid}
-                })
+        if (type === "email") {
+            if (this.validateEmail(content)) {
+                this.setState({invalidEmail: false}, cb)
             } else {
-                this.setState(oldState => {
-                    const oldInvalid = Object.assign({}, oldState.invalid);
-                    oldInvalid.author = false;
-                    return {invalid:oldInvalid}
-                })
+                this.setState({invalidEmail: "Het email is ongeldig"}, cb)
+            }
+        }
+        if (type === "author") {
+            if (content.length > 50) {
+                this.setState({invalidAuthor: "De naam is te lang"}, cb)
+            } else if (content.length < 2) {
+                this.setState({invalidAuthor: "De naam is te kort"}, cb)
+            } else {
+                this.setState({invalidAuthor: false}, cb)
             }
         }
     }
+
     onInputChanged = (type, content) => {
         this.validateInput(type, content)
 
@@ -124,49 +80,42 @@ class Header extends React.Component {
             const newPost = oldState.newPost;
             newPost[type] = content;
 
-            return { newPost }
+            return {newPost}
         })
     }
 
     createPost() {
-        this.validateInput("title", this.state.newPost.title);
-        this.validateInput("content",this.state.newPost.content);
-        this.validateInput("email",this.state.newPost.email);
-        this.validateInput("author",this.state.newPost.author);
-        
-        let invalidState = false;
+        this.validateInput("title", this.state.newPost.title, () => {
+            this.validateInput("content", this.state.newPost.content, () => {
+                this.validateInput("email", this.state.newPost.email, () => {
+                    this.validateInput("author", this.state.newPost.author, () => {
+                        if (!this.state.invalidTitle && !this.state.invalidAuthor && !this.state.invalidContent && !this.state.invalidEmail) {
+                            this.setState({
+                                additionalProps: {
+                                    disabled: true,
+                                    icon: "pi pi-spin pi-spinner"
+                                }
+                            })
 
-        for(let i in this.state.invalid) {
-            if(this.state.invalid[i] != false) {
-                invalidState = true;
-                break;
-            }
-        }
-        console.log(this.state);
-        if(!invalidState) {
+                            this.props.connection.send("CreateMessage", {
+                                Title: this.state.newPost.title,
+                                Content: this.state.newPost.content,
+                                Email: this.state.newPost.email,
+                                Author: this.state.newPost.author,
+                            })
+                                .then(result => {
+                                    this.setState({
+                                        additionalProps: {}
+                                    })
 
-            this.setState({
-                additionalProps: {
-                    disabled: true,
-                    icon: "pi pi-spin pi-spinner"
-                }
-            })
-    
-            this.props.connection.send("CreateMessage", {
-                Title: this.state.newPost.title,
-                Content: this.state.newPost.content,
-                Email: this.state.newPost.email,
-                Author: this.state.newPost.author,
-            })
-                .then(result => {
-                    this.setState({
-                        additionalProps: {}
-                    })
-    
-                    this.setPostWindow(false);
-                })
-            }        
-        }
+                                    this.setPostWindow(false);
+                                })
+                        }
+                    });
+                });
+            });
+        });
+    }
 
     render() {
 
@@ -175,35 +124,56 @@ class Header extends React.Component {
             <div className="p-d-flex p-jc-between p-ai-center">
                 <h1>Nieuwe Berichten</h1>
                 <div>
-                    <Button onClick={() => { this.setPostWindow(true) }} label="" style={{float: "right"}} icon="pi pi-plus" iconPos="right" />
+                    <Button onClick={() => {
+                        this.setPostWindow(true)
+                    }} label="" style={{float: "right"}} icon="pi pi-plus" iconPos="right"/>
                 </div>
             </div>
 
             <div className={"p-grid"}>
-                <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right" visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
+                <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right"
+                         visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
                     <div className="p-grid p-fluid p-p-3 p-pt-3">
                         <h1>Nieuw Bericht Aanmaken</h1>
 
                         <div className="p-col-12">
                             <h3>Titel</h3>
-                            <InputText className={this.state.invalid.title ? "p-invalid" : ""} value={this.state.newPost.title} onChange={e => { this.onInputChanged("title", e.target.value) }}/>
-                            <div style={{color:"red"}}>{ this.state.invalid.title ? this.state.invalid.title : <span>&nbsp;</span>}</div>
+                            <InputText className={this.state.invalidTitle ? "p-invalid" : ""}
+                                       value={this.state.newPost.title} onChange={e => {
+                                this.onInputChanged("title", e.target.value)
+                            }}/>
+                            <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
+                                <span>&nbsp;</span>}</div>
 
                             <h3>Bericht</h3>
-                            <Editor style={{height:'320px'}} value={this.state.newPost.content} onTextChange={(e) => { this.onInputChanged("content", e.htmlValue)}} />
-                            <div style={{color:"red"}}>{ this.state.invalid.content ? this.state.invalid.content : <span>&nbsp;</span>}</div>
+                            <Editor className={this.state.invalidTitle ? "p-invalid" : ""} style={{height: '320px'}}
+                                    value={this.state.newPost.content} onTextChange={(e) => {
+                                this.onInputChanged("content", e.htmlValue)
+                            }}/>
+                            <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
+                                <span>&nbsp;</span>}</div>
 
                             <h3>E-Mail</h3>
-                            <InputText value={this.state.newPost.email} onChange={e => { this.onInputChanged("email", e.target.value) }}/>
-                            <div style={{color:"red"}}>{ this.state.invalid.email ? this.state.invalid.email : <span>&nbsp;</span>}</div>
+                            <InputText className={this.state.invalidEmail ? "p-invalid" : ""}
+                                       value={this.state.newPost.email} onChange={e => {
+                                this.onInputChanged("email", e.target.value)
+                            }}/>
+                            <div style={{color: "red"}}>{this.state.invalidEmail ? this.state.invalidEmail :
+                                <span>&nbsp;</span>}</div>
 
                             <h3>Naam</h3>
-                            <InputText value={this.state.newPost.author} onChange={e => { this.onInputChanged("author", e.target.value) }}/>
-                            <div style={{color:"red"}}>{ this.state.invalid.author ? this.state.invalid.author : <span>&nbsp;</span>}</div>
+                            <InputText className={this.state.invalidAuthor ? "p-invalid" : ""}
+                                       value={this.state.newPost.author} onChange={e => {
+                                this.onInputChanged("author", e.target.value)
+                            }}/>
+                            <div style={{color: "red"}}>{this.state.invalidAuthor ? this.state.invalidAuthor :
+                                <span>&nbsp;</span>}</div>
                         </div>
 
                         <div className={"p-col-12 p-md-6 p-mt-5"}>
-                            <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => {this.createPost()}} label={"Plaatsen"}/>
+                            <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => {
+                                this.createPost()
+                            }} label={"Plaatsen"}/>
                         </div>
                     </div>
                 </Sidebar>
