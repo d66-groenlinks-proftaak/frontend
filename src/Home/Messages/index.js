@@ -48,7 +48,8 @@ class Messages extends React.Component {
             <Header loggedIn={this.props.loggedIn} connection={this.props.connection}/>
             {this.state.messages.map(message => {
                 return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
-                    <Message title={message.title} author={message.author} created={message.created}>
+                    <Message title={message.title} authorId={message.authorId} author={message.author}
+                             created={message.created}>
                         {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
                     </Message>
                 </Link>

@@ -15,6 +15,7 @@ class Message extends React.Component {
             author: "",
             content: "",
             created: "",
+            authorId: "",
             id: "",
             title: "",
             replies: [],
@@ -97,6 +98,7 @@ class Message extends React.Component {
                 created: thread.parent.created,
                 id: thread.parent.id,
                 title: thread.parent.title,
+                authorId: thread.parent.authorId,
                 replies: thread.children
             })
         })
@@ -151,8 +153,8 @@ class Message extends React.Component {
                 </div>
             </div>
 
-            <Card title={this.state.title} subTitle={<span><span
-                style={{color: "blue"}}>@{this.state.author}</span> op {new Date(this.state.created).toLocaleString()}</span>}
+            <Card title={this.state.title} subTitle={<span><Link to={"/profile/" + this.state.authorId}
+                                                                 style={{color: "blue"}}>@{this.state.author}</Link> op {new Date(this.state.created).toLocaleString()}</span>}
                   className={"p-mt-5"}>
                 <Button className={"p-button-secondary"} style={{float: "right"}} icon="pi pi-ban" iconPos="right"
                         onClick={() => this.setReportWindow(true)}/>
@@ -172,8 +174,8 @@ class Message extends React.Component {
             </div>
 
             {this.state.replies.map(reply => {
-                return <Card className={"p-mb-2"} subTitle={<span><span
-                    style={{color: "blue"}}>@{reply.author}</span> op {new Date(reply.created).toLocaleString()}</span>}>
+                return <Card className={"p-mb-2"} subTitle={<span><Link to={"/profile/" + reply.authorId}
+                                                                        style={{color: "blue"}}>@{reply.author}</Link> op {new Date(reply.created).toLocaleString()}</span>}>
                     <div dangerouslySetInnerHTML={{__html: reply.content}}/>
                 </Card>
             })}
