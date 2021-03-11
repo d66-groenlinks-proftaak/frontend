@@ -16,7 +16,7 @@ class Messages extends React.Component {
     }
 
     componentDidMount() {
-        this.props.connection.on("SendMessages", _messages => {
+        this.props.connection.on("SendThreads", _messages => {
             this.setState({
                 messages: _messages
             })
@@ -27,10 +27,10 @@ class Messages extends React.Component {
                 const messages = [...oldState.messages];
                 messages.unshift(_message)
 
-                if(messages.length > 10)
+                if (messages.length > 10)
                     messages.pop();
 
-                return { messages: messages, loaded: true }
+                return {messages: messages, loaded: true}
             })
         })
 
@@ -38,16 +38,16 @@ class Messages extends React.Component {
     }
 
     render() {
-        if(this.state.loading)
+        if (this.state.loading)
             return <div>
                 <h1>Nieuwe Berichten</h1>
-                <LoadingMessages />
+                <LoadingMessages/>
             </div>
 
         return <div>
-            <Header connection={this.props.connection} />
+            <Header connection={this.props.connection}/>
             {this.state.messages.map(message => {
-                return <Link key={message.id} style={{ textDecoration: 'none' }} to={"/thread/" + message.id}>
+                return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
                     <Message title={message.title} author={message.author} created={message.created}>
                         {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
                     </Message>
