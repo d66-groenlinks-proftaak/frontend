@@ -17,9 +17,12 @@ class Messages extends React.Component {
 
     componentDidMount() {
         this.props.connection.on("SendThreads", _messages => {
-            this.setState({
-                messages: _messages
-            })
+            setTimeout(() => {
+                this.setState({
+                    messages: _messages,
+                    loaded: true
+                })
+            }, 500)
         })
 
         this.props.connection.on("SendMessage", _message => {
@@ -30,7 +33,7 @@ class Messages extends React.Component {
                 if (messages.length > 10)
                     messages.pop();
 
-                return {messages: messages, loaded: true}
+                return {messages: messages}
             })
         })
 
@@ -38,14 +41,16 @@ class Messages extends React.Component {
     }
 
     render() {
-        if (this.state.loading)
+        let header = <Header loggedIn={this.props.loggedIn} connection={this.props.connection}/>
+
+        if (!this.state.loaded)
             return <div>
-                <h1>Nieuwe Berichten</h1>
+                {header}
                 <LoadingMessages/>
             </div>
 
         return <div>
-            <Header loggedIn={this.props.loggedIn} connection={this.props.connection}/>
+            {header}
             {this.state.messages.map(message => {
                 return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
                     <Message title={message.title} authorId={message.authorId} author={message.author}

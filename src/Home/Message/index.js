@@ -92,15 +92,17 @@ class Message extends React.Component {
 
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
-            this.setState({
-                author: thread.parent.author,
-                content: thread.parent.content,
-                created: thread.parent.created,
-                id: thread.parent.id,
-                title: thread.parent.title,
-                authorId: thread.parent.authorId,
-                replies: thread.children
-            })
+            setTimeout(() => {
+                this.setState({
+                    author: thread.parent.author,
+                    content: thread.parent.content,
+                    created: thread.parent.created,
+                    id: thread.parent.id,
+                    title: thread.parent.title,
+                    authorId: thread.parent.authorId,
+                    replies: thread.children
+                })
+            }, 500);
         })
 
         this.props.connection.on("SendChild", child => {
@@ -136,23 +138,27 @@ class Message extends React.Component {
         if (this.props.loggedIn)
             authenticated = "";
 
-        if (this.state.title === undefined) {
-            return <LoadingMessage/>
+        let header = <div className="p-d-flex p-jc-between p-ai-center">
+            <Link to={"/"}>
+                <Button className={"p-button-secondary"} label={"Terug"} style={{float: "right"}}
+                        icon="pi pi-arrow-left" iconPos="left"/>
+            </Link>
+            <div>
+
+                <Button className={"p-button-secondary"} label={"Volg"} style={{float: "right"}} icon="pi pi-bell"
+                        iconPos="right"/>
+            </div>
+        </div>
+
+        if (this.state.title === "") {
+            return <div className={"p-mt-5"}>
+                {header}
+                <LoadingMessage/>
+            </div>
         }
 
         return <div className={"p-mt-5"}>
-            <div className="p-d-flex p-jc-between p-ai-center">
-                <Link to={"/"}>
-                    <Button className={"p-button-secondary"} label={"Terug"} style={{float: "right"}}
-                            icon="pi pi-arrow-left" iconPos="left"/>
-                </Link>
-                <div>
-
-                    <Button className={"p-button-secondary"} label={"Volg"} style={{float: "right"}} icon="pi pi-bell"
-                            iconPos="right"/>
-                </div>
-            </div>
-
+            {header}
             <Card title={this.state.title} subTitle={<span><Link to={"/profile/" + this.state.authorId}
                                                                  style={{color: "blue"}}>@{this.state.author}</Link> op {new Date(this.state.created).toLocaleString()}</span>}
                   className={"p-mt-5"}>
