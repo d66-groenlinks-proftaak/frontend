@@ -97,6 +97,7 @@ class App extends React.Component {
         if (!this.state.connection || !this.state.connection.connectionStarted)
             return <div>Connecting...</div>
         return (<div>
+                <PageListener connection={this.state.connection}/>
                 <Header accountId={this.state.accountId} accountName={this.state.accountName}
                         loggedIn={this.state.loggedIn}
                         connection={this.state.connection}/>
