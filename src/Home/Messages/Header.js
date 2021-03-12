@@ -88,32 +88,38 @@ class Header extends React.Component {
         })
     }
 
+    fullPost() {
+        this.setState({
+            additionalProps: {
+                disabled: true,
+                icon: "pi pi-spin pi-spinner"
+            }
+        })
+
+        this.props.connection.send("CreateMessage", {
+            Title: this.state.newPost.title,
+            Content: this.state.newPost.content,
+            Email: this.state.newPost.email,
+            Author: this.state.newPost.author,
+        })
+            .then(result => {
+                this.setState({
+                    additionalProps: {}
+                })
+
+                this.setPostWindow(false);
+            })
+    }
+
     createPost() {
         this.validateInput("title", this.state.newPost.title, () => {
             this.validateInput("content", this.state.newPost.content, () => {
                 this.validateInput("email", this.state.newPost.email, () => {
                     this.validateInput("author", this.state.newPost.author, () => {
-                        if ((this.props.loggedIn || !(!this.state.invalidEmail && !this.state.invalidAuthor)) && !this.state.invalidTitle && !this.state.invalidContent) {
-                            this.setState({
-                                additionalProps: {
-                                    disabled: true,
-                                    icon: "pi pi-spin pi-spinner"
-                                }
-                            })
-
-                            this.props.connection.send("CreateMessage", {
-                                Title: this.state.newPost.title,
-                                Content: this.state.newPost.content,
-                                Email: this.state.newPost.email,
-                                Author: this.state.newPost.author,
-                            })
-                                .then(result => {
-                                    this.setState({
-                                        additionalProps: {}
-                                    })
-
-                                    this.setPostWindow(false);
-                                })
+                        if (this.props.loggedIn && !this.state.invalidTitle && !this.state.invalidContent) {
+                            this.fullPost();
+                        } else if (!this.state.invalidAuthor && !this.state.invalidEmail && !this.state.invalidTitle && !this.state.invalidContent) {
+                            this.fullPost();
                         }
                     });
                 });
