@@ -30,6 +30,16 @@ class Account extends React.Component {
                             window.location.href = "/";
                         }
                     }]
+            },
+            {
+                label: 'Administratie',
+                items: [{
+                    label: 'Paneel', icon: 'pi pi-fw pi-cog', command: () => {
+                        this.setState({
+                            redirect: "/admin"
+                        })
+                    }
+                }]
             }
         ]
 
