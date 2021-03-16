@@ -316,6 +316,18 @@ Darkmode
     border-top: 1px solid #dee2e6;
 }
 
+.p-editor-toolbar {
+    display: none;
+}
+
+.ql-toolbar {
+    border: 1px solid #212121 !important;
+}
+
+.dark .ql-editor {
+    color: white !important;
+}
+
 .dark .p-divider .p-divider-content .p-tag {
     color: gray !important;
     border: 1px solid #212121 !important;

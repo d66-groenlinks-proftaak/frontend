@@ -232,7 +232,9 @@ class Message extends React.Component {
                     <div className="p-grid p-fluid">
                         <div className="p-col-12">
                             <h3>Reageer</h3>
-                            <Editor style={{height: '200px'}} value={this.state.newPost.content} onTextChange={(e) => {
+                            <Editor modules={{
+                                toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                            }} style={{height: '200px'}} value={this.state.newPost.content} onTextChange={(e) => {
                                 this.onInputChanged("content", e.htmlValue)
                             }}/>
 

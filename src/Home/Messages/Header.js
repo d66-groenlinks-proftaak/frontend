@@ -168,6 +168,21 @@ class Header extends React.Component {
             {label: "Oudste", value: 2},
         ]
 
+        const editorHeader = (
+            <span id={"toolbar"}>
+                <select className="ql-size">
+                    <option className={"ql-small"} value="small"/>
+                    <option selected/>
+                    <option value="large"/>
+                    <option value="huge"/>
+                </select>
+                <button className="ql-bold" aria-label="Bold"/>
+                <button className="ql-italic" aria-label="Italic"/>
+                <button className="ql-underline" aria-label="Underline"/>
+                <button className="ql-blockquote" aria-label="Blockquote"/>
+            </span>
+        );
+
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
@@ -198,7 +213,10 @@ class Header extends React.Component {
                                 <span>&nbsp;</span>}</div>
 
                             <h3>Bericht</h3>
-                            <Editor className={this.state.invalidTitle ? "p-invalid" : ""} style={{height: '320px'}}
+                            <Editor modules={{
+                                toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                            }} className={this.state.invalidTitle ? "p-invalid" : ""}
+                                    style={{height: '320px'}}
                                     value={this.state.newPost.content} onTextChange={(e) => {
                                 this.onInputChanged("content", e.htmlValue)
                             }}/>
