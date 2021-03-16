@@ -1,7 +1,5 @@
 import React from "react";
-import {InputText} from "primereact/inputtext";
-import {Button} from "primereact/button";
-import {Link, Route, Switch, Redirect} from "react-router-dom";
+import {Route, Switch, Redirect} from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 

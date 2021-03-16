@@ -1,5 +1,4 @@
 import React from "react";
-import {Card} from "primereact/card";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Tag} from 'primereact/tag';

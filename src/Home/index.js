@@ -1,7 +1,5 @@
 import React from "react";
-import Announcements from "./Announcements/_index";
 import Messages from "./Messages";
-import TopMessages from "./TopMessages";
 
 import {
     Switch,
@@ -11,8 +9,6 @@ import Message from "./Message";
 
 import Profile from "./Profile"
 import {Toast} from "primereact/toast";
-import Category from "./Categories/Category";
-import {Divider} from "primereact/divider";
 import Categories from "./Categories";
 
 const errors = [

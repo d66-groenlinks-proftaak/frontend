@@ -3,7 +3,6 @@ import {Button} from "primereact/button";
 import {Sidebar} from 'primereact/sidebar';
 import {InputText} from "primereact/inputtext";
 import {Editor} from 'primereact/editor';
-import {Tooltip} from 'primereact/tooltip';
 import {Dropdown} from "primereact/dropdown";
 
 class Header extends React.Component {

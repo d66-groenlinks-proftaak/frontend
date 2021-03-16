@@ -1,6 +1,5 @@
 import React from "react";
 import Category from "./Category";
-import {Divider} from "primereact/divider";
 import {faComments, faVirus, faCity, faTrash, faAdjust, faBullhorn} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 

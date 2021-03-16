@@ -1,5 +1,4 @@
 import React from "react";
-import {Menubar} from 'primereact/menubar';
 import {Link} from "react-router-dom";
 import Account from "./Account";
 import {InputText} from "primereact/inputtext";
@@ -8,8 +7,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 class index extends React.Component {
     render() {
-        const menuItems = []
-
         return <div className={"p-grid p-justify-center p-nogutter p-pl-2 p-pr-2 header"}
                     style={{
                         borderBottom: "1px solid #dee2e6",

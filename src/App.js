@@ -8,7 +8,7 @@ import './App.css';
 import Home from "./Home";
 import Header from "./Header";
 import React from "react";
-import {BrowserRouter, Route, Switch, withRouter} from "react-router-dom";
+import {Route, Switch, withRouter} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import PageListener from "./Home/PageListener";
 import Footer from "./Layout/Footer";
