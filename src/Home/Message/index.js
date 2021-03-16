@@ -171,12 +171,13 @@ class Message extends React.Component {
 
         let header = <div className="p-d-flex p-jc-between p-ai-center">
             <Link to={"/"}>
-                <Button className={"p-button-secondary"} label={"Terug"} style={{float: "right"}}
+                <Button className={"p-button-info p-button-outlined"} label={"Terug"} style={{float: "right"}}
                         icon="pi pi-arrow-left" iconPos="left"/>
             </Link>
             <div>
 
-                <Button className={"p-button-secondary"} label={"Volg"} style={{float: "right"}} icon="pi pi-bell"
+                <Button className={"p-button-text"} style={{float: "right", color: "#CA8136"}}
+                        icon="pi pi-bell"
                         iconPos="right"/>
             </div>
         </div>
@@ -249,31 +250,33 @@ class Message extends React.Component {
                 </AccordionTab>
             </Accordion>
 
-            {this.state.replies.map(reply => {
-                return <Card className={"p-mb-2"}
-                             subTitle={<span><Link to={"/profile/" + reply.authorId}
-                                                   style={{color: "blue"}}>@{reply.author}</Link></span>}>
-                    <div dangerouslySetInnerHTML={{__html: reply.content}}/>
+            <div style={{paddingBottom: 20}}>
+                {this.state.replies.map(reply => {
+                    return <Card className={"p-mb-2"}
+                                 subTitle={<span><Link to={"/profile/" + reply.authorId}
+                                                       style={{color: "blue"}}>@{reply.author}</Link></span>}>
+                        <div dangerouslySetInnerHTML={{__html: reply.content}}/>
 
-                    <div className="p-d-flex p-jc-between p-ai-center">
-                        <div>
-                            {new Date(reply.created).toLocaleString()}
+                        <div className="p-d-flex p-jc-between p-ai-center">
+                            <div>
+                                {new Date(reply.created).toLocaleString()}
+                            </div>
+                            <div>
+                                <Menu ref={this.menuRef} popup model={extraOptions}/>
+
+                                <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
+                                        iconPos="right"
+                                        onClick={(event) => this.menuRef.current.toggle(event)}/>
+
+                                <Button onClick={() => {
+                                    this.setPostWindow(true)
+                                }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus" label={"Citeer"}
+                                        iconPos="right"/>
+                            </div>
                         </div>
-                        <div>
-                            <Menu ref={this.menuRef} popup model={extraOptions}/>
-
-                            <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
-                                    iconPos="right"
-                                    onClick={(event) => this.menuRef.current.toggle(event)}/>
-
-                            <Button onClick={() => {
-                                this.setPostWindow(true)
-                            }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus" label={"Citeer"}
-                                    iconPos="right"/>
-                        </div>
-                    </div>
-                </Card>
-            })}
+                    </Card>
+                })}
+            </div>
 
             <div className={"p-grid"}>
                 <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right"
