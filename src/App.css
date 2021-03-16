@@ -101,3 +101,221 @@ body, html {
     overflowX: "hidden";
     width: 100%;
 }
+
+/*
+Darkmode
+ */
+
+.dark {
+    background: #121212;
+    color: white;
+}
+
+.header {
+    background: #f8f9fa;
+}
+
+.brand {
+    color: black;
+}
+
+.dark .header {
+    background: #1e1e1e;
+    color: white !important;
+    border-bottom: 1px solid #212121 !important;
+}
+
+.dark .brand {
+    color: white;
+}
+
+.dark .search-bar {
+    background: #121212;
+    border: 1px solid #212121;
+}
+
+.dark .p-menu {
+    background: #121212;
+}
+
+.dark .p-submenu-header {
+    color: white;
+    background: #121212;
+}
+
+.dark .p-dropdown {
+    background: #212121;
+    border: 1px solid #121212;
+}
+
+.dark .p-dropdown-items {
+    background: #121212;
+}
+
+.dark .p-dropdown-item {
+    background: #121212;
+    color: white !important;
+}
+
+.dark .p-dropdown-item:hover {
+    background: #212121 !important;
+}
+
+.dark .message-title {
+    color: white !important;
+}
+
+.dark .message-author {
+    color: cornflowerblue !important;
+    text-decoration: none;
+}
+
+.dark .message-date {
+    color: white;
+}
+
+.dark .message-content {
+    color: white !important;
+}
+
+.dark .message-comments {
+    color: white !important;
+}
+
+.message-author {
+    color: blue;
+    text-decoration: none;
+}
+
+.message-content {
+    color: gray;
+}
+
+.message-comments {
+    color: black;
+}
+
+.dark .message {
+    background: #212121;
+}
+
+.dark .p-highlight {
+    background: #212121 !important;
+}
+
+.dark .p-dropdown-label {
+    color: white;
+}
+
+.dark .p-menuitem-link:hover {
+    background: #212121 !important;
+}
+
+.dark .p-card {
+    background: #212121 !important;
+}
+
+.dark .p-divider.p-divider-horizontal::before {
+    border-top: 1px solid #212121;
+}
+
+.dark .p-divider .p-divider-content {
+    background: #121212 !important;
+}
+
+.dark .p-card-title {
+    color: white;
+}
+
+.dark .p-card-subtitle a {
+    color: white !important;
+    text-decoration: none;
+}
+
+.dark .p-editor-toolbar {
+    background: #121212 !important;
+    border: 1px solid #212121 !important;;
+}
+
+.dark .ql-picker-options {
+    background: #121212 !important;
+    color: white !important;
+}
+
+.darkmode-toggle:hover {
+    cursor: pointer;
+}
+
+.dark h3 {
+    color: gray;
+}
+
+.dark h1 {
+    color: white;
+}
+
+.dark h2 {
+    color: white;
+}
+
+.dark .p-sidebar {
+    background: #121212;
+}
+
+.dark .ql-picker-item:hover {
+    background: #212121 !important;
+    color: white !important;
+    border: 1px solid #212121 !important;;
+}
+
+.dark .ql-picker-item {
+    background: #121212 !important;
+    color: white !important;
+    border: 1px solid #212121 !important;;
+}
+
+
+.dark .p-editor-content {
+    border: none !important;
+}
+
+.dark .ql-editor {
+    background: #212121 !important;
+    border: none !important;
+}
+
+.dark .p-accordion-content {
+    background: #121212 !important;
+}
+
+.dark .p-card-content {
+    color: white !important;
+}
+
+
+.dark .p-divider .p-divider-content .p-tag {
+    color: gray !important;
+    border: 1px solid #212121 !important;
+
+}
+
+.dark .p-menuitem-text, .dark .p-menuitem-icon {
+    color: white !important;
+}
+
+.dark .category path {
+    color: white !important;
+}
+
+.dark .footer {
+    border-top: 1px solid #212121;
+}
+
+.dark li {
+
+    color: white;
+}
+
+.dark .p-grid {
+    background: #121212;
+}

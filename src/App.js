@@ -1,5 +1,5 @@
-import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 
@@ -14,6 +14,7 @@ import PageListener from "./Home/PageListener";
 import Footer from "./Layout/Footer";
 import Account from "./Account";
 
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,8 @@ class App extends React.Component {
             accountId: "",
             registerCallback: undefined,
             loginCallback: undefined,
-            authenticationError: false
+            authenticationError: false,
+            darkMode: (localStorage.getItem("dark") === "1")
         }
     }
 
@@ -49,6 +51,14 @@ class App extends React.Component {
             LastName: lastname,
             Password: password,
             Email: email
+        })
+    }
+
+    toggleDarkMode = () => {
+        localStorage.setItem("dark", (this.state.darkMode) ? "0" : "1");
+
+        this.setState(state => {
+            return {darkMode: !state.darkMode};
         })
     }
 
@@ -96,10 +106,14 @@ class App extends React.Component {
     render() {
         if (!this.state.connection || !this.state.connection.connectionStarted)
             return <div>Connecting...</div>
-        return (<div className={"p-grid p-nogutter"} style={{width: "100%", height: "100vh"}}>
+        return (
+            <div className={"p-grid p-nogutter " + (this.state.darkMode ? "dark" : "")}
+                 style={{width: "100%", height: "100vh"}}>
                 <div className={"p-col-12"}>
                     <PageListener connection={this.state.connection}/>
-                    <Header accountId={this.state.accountId} accountName={this.state.accountName}
+                    <Header darkMode={this.state.darkMode} toggleDarkMode={() => {
+                        this.toggleDarkMode()
+                    }} accountId={this.state.accountId} accountName={this.state.accountName}
                             loggedIn={this.state.loggedIn}
                             connection={this.state.connection}/>
                     <Switch>
@@ -120,8 +134,6 @@ class App extends React.Component {
             </div>
         )
     }
-
-    4
 }
 
 export default withRouter(App);

@@ -14,7 +14,7 @@ class Message extends React.Component {
         return <div className={"message"}>
             <div class={"p-d-flex p-jc-between p-ai-center"}>
                 <div>
-                    <div style={{fontWeight: "bold", color: "black"}}>
+                    <div className={"message-title"} style={{fontWeight: "bold", color: "black"}}>
                         {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
                     </div>
                 </div>
@@ -24,20 +24,20 @@ class Message extends React.Component {
                 </div>
             </div>
             <div style={{fontSize: "0.7em", color: "black"}}>
-                <Link to={"/profile/" + this.props.authorId} style={{color: "blue"}}>@{this.props.author}</Link>
-                <span> heeft gepost op {new Date(this.props.created).toLocaleString()}</span>
+                <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
+                <span className={"message-date"}> heeft gepost op {new Date(this.props.created).toLocaleString()}</span>
             </div>
             <div className={"p-d-flex p-jc-between p-ai-end"}>
                 <div style={{
-                    color: "gray",
                     marginTop: 5,
                     wordBreak: "break-all"
-                }}>{this.props.children}</div>
+                }} className={"message-content"}>{this.props.children}</div>
                 <div style={{
                     minWidth: 55,
                     textAlign: "right"
                 }}>
-                    <div style={{color: "black"}}> {this.props.replies || 0} <i className={"pi pi-comments"}/></div>
+                    <div className={"message-comments"}> {this.props.replies || 0} <i className={"pi pi-comments"}/>
+                    </div>
                 </div>
             </div>
         </div>
