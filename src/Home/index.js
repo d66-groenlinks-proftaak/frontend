@@ -49,7 +49,7 @@ class Home extends React.Component {
         return <div style={{width: "100%"}} className="p-grid p-justify-center p-nogutter p-pl-2 p-pr-2">
             <Switch>
                 <Route path={"/thread/:id"} render={(props) =>
-                    <div className={"p-col-12 p-md-7"}>
+                    <div className={"p-col-12 p-md-8"}>
                         <Message loggedIn={this.props.loggedIn} connection={this.props.connection}
                                  id={props.match.params.id}/>
                     </div>
@@ -61,11 +61,6 @@ class Home extends React.Component {
                     </div>
                     <div className="p-col-12 p-md-7 p-pl-5">
                         <Switch>
-                            <Route path={"/thread/:id"} render={(props) =>
-                                <Message loggedIn={this.props.loggedIn} connection={this.props.connection}
-                                         id={props.match.params.id}/>
-                            }/>
-
                             <Route path={"/profile/:id"} render={(props) =>
                                 <Profile connection={this.props.connection} id={props.match.params.id}/>
                             }/>
