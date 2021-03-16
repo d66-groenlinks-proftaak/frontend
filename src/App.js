@@ -105,7 +105,7 @@ class App extends React.Component {
 
     render() {
         if (!this.state.connection || !this.state.connection.connectionStarted)
-            return <div>Connecting...</div>
+            return <div style={{height: "100vh"}} className={(this.state.darkMode ? "dark" : "")}>Connecting...</div>
         return (
             <div className={"p-grid p-nogutter " + (this.state.darkMode ? "dark" : "")}
                  style={{width: "100%", height: "100vh"}}>

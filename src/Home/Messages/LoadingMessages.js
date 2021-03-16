@@ -4,17 +4,12 @@ import {Skeleton} from "primereact/skeleton";
 class LoadingMessages extends React.Component {
     render() {
         return <div className="custom-skeleton p-p-4">
-            <div className="p-d-flex p-jc-between p-mt-3">
-                <Skeleton width="4rem" height="2rem"></Skeleton>
-                <Skeleton width="4rem" height="2rem"></Skeleton>
-            </div>
-
             <div className="custom-skeleton p-p-4">
                 <ul style={{listStyleType: "none"}} className="p-m-0 p-p-0">
                     <li className="p-mb-3">
                         <div className="p-d-flex">
                             <Skeleton shape="circle" size="4rem" className="p-mr-2"></Skeleton>
-                            <div style={{ flex: '1' }}>
+                            <div style={{flex: '1'}}>
                                 <Skeleton width="100%" className="p-mb-2"></Skeleton>
                                 <Skeleton width="75%"></Skeleton>
                             </div>
@@ -23,7 +18,7 @@ class LoadingMessages extends React.Component {
                     <li className="p-mb-3">
                         <div className="p-d-flex">
                             <Skeleton shape="circle" size="4rem" className="p-mr-2"></Skeleton>
-                            <div style={{ flex: '1' }}>
+                            <div style={{flex: '1'}}>
                                 <Skeleton width="100%" className="p-mb-2"></Skeleton>
                                 <Skeleton width="75%"></Skeleton>
                             </div>
@@ -32,7 +27,7 @@ class LoadingMessages extends React.Component {
                     <li className="p-mb-3">
                         <div className="p-d-flex">
                             <Skeleton shape="circle" size="4rem" className="p-mr-2"></Skeleton>
-                            <div style={{ flex: '1' }}>
+                            <div style={{flex: '1'}}>
                                 <Skeleton width="100%" className="p-mb-2"></Skeleton>
                                 <Skeleton width="75%"></Skeleton>
                             </div>
@@ -41,7 +36,7 @@ class LoadingMessages extends React.Component {
                     <li>
                         <div className="p-d-flex">
                             <Skeleton shape="circle" size="4rem" className="p-mr-2"></Skeleton>
-                            <div style={{ flex: '1' }}>
+                            <div style={{flex: '1'}}>
                                 <Skeleton width="100%" className="p-mb-2"></Skeleton>
                                 <Skeleton width="75%"></Skeleton>
                             </div>

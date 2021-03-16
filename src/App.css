@@ -178,6 +178,10 @@ Darkmode
     color: white !important;
 }
 
+.dark .p-skeleton {
+    background: #212121;
+}
+
 .dark .message-comments {
     color: white !important;
 }
