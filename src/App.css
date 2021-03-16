@@ -170,6 +170,18 @@ Darkmode
     text-decoration: none;
 }
 
+.p-tooltip-text {
+    box-shadow: none !important;
+}
+
+.message-posted {
+    color: gray;
+}
+
+.tooltip {
+    box-shadow: none !important;
+}
+
 .message-author, .p-card-subtitle a {
     text-decoration: none;
 }

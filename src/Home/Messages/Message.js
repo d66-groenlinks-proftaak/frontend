@@ -3,6 +3,8 @@ import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Tag} from 'primereact/tag';
 import {faThumbtack} from '@fortawesome/free-solid-svg-icons'
+import {DateTime} from "luxon";
+import {Tooltip} from "primereact/tooltip";
 
 class Message extends React.Component {
     testPrint() {
@@ -24,7 +26,9 @@ class Message extends React.Component {
             </div>
             <div style={{fontSize: "0.7em", color: "black"}}>
                 <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
-                <span className={"message-date"}> heeft gepost op {new Date(this.props.created).toLocaleString()}</span>
+                <span
+                    className={"message-date"}
+                    data-pr-tooltip={DateTime.fromMillis(this.props.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}> gepost {DateTime.fromMillis(this.props.created).toRelative({locale: "nl"})}</span>
             </div>
             <div className={"p-d-flex p-jc-between p-ai-end"}>
                 <div style={{
@@ -39,6 +43,8 @@ class Message extends React.Component {
                     </div>
                 </div>
             </div>
+
+            <Tooltip className={"tooltip"} target=".message-date" position={"bottom"}/>
         </div>
     }
 }

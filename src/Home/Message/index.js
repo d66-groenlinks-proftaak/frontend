@@ -9,6 +9,8 @@ import LoadingMessage from "./LoadingMessage";
 import {Menu} from "primereact/menu";
 import {Divider} from "primereact/divider";
 import {Accordion, AccordionTab} from "primereact/accordion";
+import {DateTime} from "luxon"
+import {Tooltip} from 'primereact/tooltip';
 
 class Message extends React.Component {
     constructor(props) {
@@ -132,7 +134,6 @@ class Message extends React.Component {
 
         this.props.connection.on("ConfirmReport", (ReportConfirmation) => {
             this.setState({reportConfirmation: ReportConfirmation})
-            console.log("Test");
         })
 
         this.props.connection.send("LoadMessageThread", this.props.id);
@@ -196,8 +197,9 @@ class Message extends React.Component {
                   className={"p-mt-5 p-mb-5"}>
                 <div style={{wordBreak: "break-all"}} dangerouslySetInnerHTML={{__html: this.state.content}}/>
                 <div className="p-d-flex p-jc-between p-ai-center">
-                    <div>
-                        {new Date(this.state.created).toLocaleString()}
+                    <div className={"message-posted"}
+                         data-pr-tooltip={DateTime.fromMillis(this.state.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
+                        {DateTime.fromMillis(this.state.created).toRelative({locale: "nl"})}
                     </div>
                     <div>
                         <Menu ref={this.menuRef} popup model={extraOptions}/>
@@ -258,8 +260,9 @@ class Message extends React.Component {
                         <div dangerouslySetInnerHTML={{__html: reply.content}}/>
 
                         <div className="p-d-flex p-jc-between p-ai-center">
-                            <div>
-                                {new Date(reply.created).toLocaleString()}
+                            <div className={"message-posted"}
+                                 data-pr-tooltip={DateTime.fromMillis(reply.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
+                                {DateTime.fromMillis(reply.created).toRelative({locale: "nl"})}
                             </div>
                             <div>
                                 <Menu ref={this.menuRef} popup model={extraOptions}/>
@@ -300,6 +303,8 @@ class Message extends React.Component {
                 </Sidebar>
             </div>
 
+
+            <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
         </div>
     }
 }
