@@ -170,6 +170,10 @@ Darkmode
     text-decoration: none;
 }
 
+.message-author, .p-card-subtitle a {
+    text-decoration: none;
+}
+
 .dark .message-date {
     color: white;
 }
