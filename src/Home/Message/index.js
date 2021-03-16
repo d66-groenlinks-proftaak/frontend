@@ -164,7 +164,7 @@ class Message extends React.Component {
                   className={"p-mt-5"}>
                 <Button className={"p-button-secondary"} style={{float: "right"}} icon="pi pi-ban" iconPos="right"
                         onClick={() => this.setReportWindow(true)}/>
-                <div dangerouslySetInnerHTML={{__html: this.state.content}}/>
+                <div style={{wordBreak: "break-all"}} dangerouslySetInnerHTML={{__html: this.state.content}}/>
             </Card>
 
 

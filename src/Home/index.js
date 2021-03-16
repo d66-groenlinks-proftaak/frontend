@@ -11,6 +11,9 @@ import Message from "./Message";
 
 import Profile from "./Profile"
 import {Toast} from "primereact/toast";
+import Category from "./Categories/Category";
+import {Divider} from "primereact/divider";
+import Categories from "./Categories";
 
 const errors = [
     "Geen fout",
@@ -33,11 +36,6 @@ class Home extends React.Component {
 
     componentDidMount() {
         this.props.connection.on("MessageCreationError", err => {
-            console.log(err);
-            console.log(err);
-            console.log(err);
-            console.log(err);
-
             this.toastRef.current.show({
                 severity: 'error',
                 summary: "Foutmelding",
@@ -48,33 +46,37 @@ class Home extends React.Component {
     }
 
     render() {
-        return <div style={{width: "100%"}} className="p-grid p-formgrid p-fluid">
-            <div className="p-col-12 p-md-3 p-pl-3">
-                <Announcements/>
-            </div>
-
-            <div className="p-col-12 p-md-6 p-pl-3">
-                <Switch>
-                    <Route path={"/thread/:id"} render={(props) =>
+        return <div style={{width: "100%"}} className="p-grid p-justify-center p-nogutter p-pl-2 p-pr-2">
+            <Switch>
+                <Route path={"/thread/:id"} render={(props) =>
+                    <div className={"p-col-12 p-md-7"}>
                         <Message loggedIn={this.props.loggedIn} connection={this.props.connection}
                                  id={props.match.params.id}/>
-                    }/>
+                    </div>
+                }/>
 
-                    <Route path={"/profile/:id"} render={(props) =>
-                        <Profile connection={this.props.connection} id={props.match.params.id}/>
-                    }/>
+                <Route path={"/"}>
+                    <div className={"p-col-12 p-sm-2 p-md-2 p-xl-1 hidden-sm hidden-xs"}>
+                        <Categories/>
+                    </div>
+                    <div className="p-col-12 p-md-7 p-pl-5">
+                        <Switch>
+                            <Route path={"/thread/:id"} render={(props) =>
+                                <Message loggedIn={this.props.loggedIn} connection={this.props.connection}
+                                         id={props.match.params.id}/>
+                            }/>
 
-                    <Route path={"/"}>
-                        <h1>Top Berichten</h1>
-                        <TopMessages/>
-                        <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
-                    </Route>
-                </Switch>
-            </div>
+                            <Route path={"/profile/:id"} render={(props) =>
+                                <Profile connection={this.props.connection} id={props.match.params.id}/>
+                            }/>
 
-            <div className="p-col-12 p-md-3 p-pl-3">
-
-            </div>
+                            <Route path={"/"}>
+                                <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
+                            </Route>
+                        </Switch>
+                    </div>
+                </Route>
+            </Switch>
 
             <Toast ref={this.toastRef}/>
         </div>

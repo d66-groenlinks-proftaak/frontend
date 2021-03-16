@@ -4,6 +4,7 @@ import {Sidebar} from 'primereact/sidebar';
 import {InputText} from "primereact/inputtext";
 import {Editor} from 'primereact/editor';
 import {Tooltip} from 'primereact/tooltip';
+import {Dropdown} from "primereact/dropdown";
 
 class Header extends React.Component {
     constructor(props) {
@@ -21,7 +22,8 @@ class Header extends React.Component {
             invalidTitle: false,
             invalidContent: false,
             invalidEmail: false,
-            invalidAuthor: false
+            invalidAuthor: false,
+            currentMessages: 0
         }
     }
 
@@ -127,6 +129,13 @@ class Header extends React.Component {
         });
     }
 
+    setCurrentMessages(current) {
+        console.log(current);
+        this.setState({
+            currentMessages: current
+        })
+    }
+
     render() {
 
         let authenticated = <div>
@@ -150,14 +159,23 @@ class Header extends React.Component {
         if (this.props.loggedIn)
             authenticated = "";
 
+        const messageTypes = [
+            {label: "Nieuwste", value: 0},
+            {label: "Top", value: 1},
+            {label: "Oudste", value: 2},
+        ]
+
         return <div>
 
-            <div className="p-d-flex p-jc-between p-ai-center">
-                <h1>Nieuwe Berichten</h1>
+            <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
+                <div>
+                    <Dropdown optionLabel={"label"} value={this.state.currentMessages} options={messageTypes}
+                              onChange={(e) => this.setCurrentMessages(e.value)}/>
+                </div>
                 <div>
                     <Button onClick={() => {
                         this.setPostWindow(true)
-                    }} label="" style={{float: "right"}} icon="pi pi-plus" iconPos="right"/>
+                    }} label="Nieuw Bericht" style={{float: "right"}} icon="pi pi-plus" iconPos="right"/>
                 </div>
             </div>
 

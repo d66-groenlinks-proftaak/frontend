@@ -2,8 +2,10 @@ import React from "react";
 
 class Footer extends React.Component {
     render() {
-        return <div>
-            Test
+        return <div className={"p-grid p-justify-center p-nogutter p-pt-2 p-pb-2"}>
+            <div>
+                Ringkey Footer
+            </div>
         </div>
     }
 }

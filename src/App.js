@@ -8,7 +8,7 @@ import './App.css';
 import Home from "./Home";
 import Header from "./Header";
 import React from "react";
-import {Route, Switch, withRouter} from "react-router-dom";
+import {BrowserRouter, Route, Switch, withRouter} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import PageListener from "./Home/PageListener";
 import Footer from "./Layout/Footer";
@@ -96,23 +96,27 @@ class App extends React.Component {
     render() {
         if (!this.state.connection || !this.state.connection.connectionStarted)
             return <div>Connecting...</div>
-        return (<div>
-                <PageListener connection={this.state.connection}/>
-                <Header accountId={this.state.accountId} accountName={this.state.accountName}
-                        loggedIn={this.state.loggedIn}
-                        connection={this.state.connection}/>
-                <Switch>
-                    <Route path={"/account"} render={(props) => {
-                        return <Account loggedIn={this.state.loggedIn}
-                                        authenticationError={this.state.authenticationError}
-                                        login={(username, password, cb) => this.login(username, password, cb)}
-                                        register={(firstname, lastname, password, email) => this.register(firstname, lastname, password, email)} {...props} />
-                    }}/>
-                    <Route path={"/"} render={(props) => <Home loggedIn={this.state.loggedIn}
-                                                               connection={this.state.connection}/>}/>
-                </Switch>
+        return (<div className={"p-grid p-nogutter"} style={{width: "100%", height: "100vh"}}>
+                <div className={"p-col-12"}>
+                    <PageListener connection={this.state.connection}/>
+                    <Header accountId={this.state.accountId} accountName={this.state.accountName}
+                            loggedIn={this.state.loggedIn}
+                            connection={this.state.connection}/>
+                    <Switch>
+                        <Route path={"/account"} render={(props) => {
+                            return <Account loggedIn={this.state.loggedIn}
+                                            authenticationError={this.state.authenticationError}
+                                            login={(username, password, cb) => this.login(username, password, cb)}
+                                            register={(firstname, lastname, password, email) => this.register(firstname, lastname, password, email)} {...props} />
+                        }}/>
+                        <Route path={"/"} render={(props) => <Home loggedIn={this.state.loggedIn}
+                                                                   connection={this.state.connection}/>}/>
+                    </Switch>
+                </div>
 
-                <Footer/>
+                <div className={"p-col-12 p-col-align-end footer"}>
+                    <Footer/>
+                </div>
             </div>
         )
     }

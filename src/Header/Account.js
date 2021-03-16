@@ -42,11 +42,11 @@ class Account extends React.Component {
                 return <Redirect to={redirect}/>
             }
 
-            return <div>
+            return <span>
                 <Menu ref={this.menuRef} popup model={items}/>
-                <Button className={"p-button-text"} label={this.props.accountName} icon="pi pi-user" iconPos={"right"}
+                <Button className={"p-button-text"} label={this.props.accountName}
                         onClick={(event) => this.menuRef.current.toggle(event)}/>
-            </div>
+            </span>
         }
 
         return <span>
