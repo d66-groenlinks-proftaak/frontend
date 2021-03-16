@@ -14,12 +14,12 @@ class Message extends React.Component {
         return <div className={"message"}>
             <div class={"p-d-flex p-jc-between p-ai-center"}>
                 <div>
-                    <div style={{fontWeight: "bold", color: "black"}}><Tag value="Gast"
-                                                                           severity={"warning"}/> {this.props.title}
+                    <div style={{fontWeight: "bold", color: "black"}}>
+                        {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
                     </div>
                 </div>
                 <div>
-                    <div style={{color: "#ff5959"}}> {this.props.author === "Kane Petra" ?
+                    <div style={{color: "#ff5959"}}> {this.props.pinned ?
                         <FontAwesomeIcon icon={faThumbtack}/> : ""} </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@ class Message extends React.Component {
                     minWidth: 55,
                     textAlign: "right"
                 }}>
-                    <div style={{color: "black"}}> 43 <i className={"pi pi-comments"}/></div>
+                    <div style={{color: "black"}}> {this.props.replies || 0} <i className={"pi pi-comments"}/></div>
                 </div>
             </div>
         </div>

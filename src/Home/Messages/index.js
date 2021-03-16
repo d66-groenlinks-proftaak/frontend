@@ -28,7 +28,13 @@ class Messages extends React.Component {
         this.props.connection.on("SendMessage", _message => {
             this.setState(oldState => {
                 const messages = [...oldState.messages];
-                messages.unshift(_message)
+
+                let pins = 0;
+                for (let message of messages)
+                    if (message.pinned)
+                        pins++;
+
+                messages.splice(pins > 0 ? (pins) : 0, 0, _message);
 
                 if (messages.length > 10)
                     messages.pop();
@@ -53,7 +59,12 @@ class Messages extends React.Component {
             {header}
             {this.state.messages.map(message => {
                 return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
-                    <Message title={message.title} authorId={message.authorId} author={message.author}
+                    <Message guest={message.guest}
+                             replies={message.replies}
+                             pinned={message.pinned}
+                             title={message.title}
+                             authorId={message.authorId}
+                             author={message.author}
                              created={message.created}>
                         {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
                     </Message>
