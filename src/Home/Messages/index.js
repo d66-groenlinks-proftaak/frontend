@@ -15,6 +15,12 @@ class Messages extends React.Component {
         }
     }
 
+    setLoaded = (b) => {
+        this.setState({
+            loaded: b
+        })
+    }
+
     componentDidMount() {
         this.props.connection.on("SendThreads", _messages => {
             setTimeout(() => {
@@ -47,7 +53,8 @@ class Messages extends React.Component {
     }
 
     render() {
-        let header = <Header loggedIn={this.props.loggedIn} connection={this.props.connection}/>
+        let header = <Header setLoaded={this.setLoaded} loggedIn={this.props.loggedIn}
+                             connection={this.props.connection}/>
 
         if (!this.state.loaded)
             return <div>

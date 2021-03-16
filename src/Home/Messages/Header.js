@@ -134,6 +134,10 @@ class Header extends React.Component {
         this.setState({
             currentMessages: current
         })
+
+        this.props.setLoaded(false);
+
+        this.props.connection.send("RequestSortedList", current);
     }
 
     render() {
