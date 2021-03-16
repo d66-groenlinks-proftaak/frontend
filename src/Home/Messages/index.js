@@ -4,6 +4,7 @@ import Header from "./Header";
 import Message from "./Message";
 import {Link} from "react-router-dom";
 import LoadingMessages from "./LoadingMessages";
+import {Tag} from "primereact/tag";
 
 class Messages extends React.Component {
     constructor(props) {
@@ -32,6 +33,7 @@ class Messages extends React.Component {
         })
 
         this.props.connection.on("SendMessage", _message => {
+            const title = _message.title;
             this.setState(oldState => {
                 const messages = [...oldState.messages];
 
@@ -39,6 +41,8 @@ class Messages extends React.Component {
                 for (let message of messages)
                     if (message.pinned)
                         pins++;
+
+                _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
 
                 messages.splice(pins > 0 ? (pins) : 0, 0, _message);
 

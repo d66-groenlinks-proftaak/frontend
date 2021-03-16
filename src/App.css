@@ -312,11 +312,13 @@ Darkmode
     color: white !important;
 }
 
+.p-divider.p-divider-horizontal::before {
+    border-top: 1px solid #dee2e6;
+}
 
 .dark .p-divider .p-divider-content .p-tag {
     color: gray !important;
     border: 1px solid #212121 !important;
-
 }
 
 .dark .p-menuitem-text, .dark .p-menuitem-icon {

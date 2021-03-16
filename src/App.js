@@ -109,6 +109,9 @@ class App extends React.Component {
         return (
             <div className={"p-grid p-nogutter " + (this.state.darkMode ? "dark" : "")}
                  style={{width: "100%", height: "100vh"}}>
+
+                <title>Ringkey</title>
+
                 <div className={"p-col-12"}>
                     <PageListener connection={this.state.connection}/>
                     <Header darkMode={this.state.darkMode} toggleDarkMode={() => {
