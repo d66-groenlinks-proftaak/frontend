@@ -3,6 +3,8 @@ import {Button} from "primereact/button";
 import {Link} from "react-router-dom";
 import { Avatar } from 'primereact/avatar';
 
+import Message from "../Messages/Message";
+
 
 class Profile extends React.Component {
   constructor(props) {
@@ -14,9 +16,12 @@ class Profile extends React.Component {
       lastname: "",
       email: "",
       enableImage: true,
-      image: ""
+      image: "",
+      messages: []
     }
+  }
 
+  componentWillMount() {
     this.props.connection.send("GetProfile", this.state.id)
   }
 
@@ -24,12 +29,13 @@ class Profile extends React.Component {
     this.props.connection.on("SendProfile", profile => {
       console.log(profile)
       this.setState({
-        firstname: profile.firstname,
-        lastname: profile.lastname,
-        email: profile.email
+        firstname: profile.firstName,
+        lastname: profile.lastName,
+        email: profile.email,
+        messages: profile.messages
       })
 
-      this.props.connection.send("GetProfile", this.state.id)
+      //this.props.connection.send("GetProfile", this.state.id)
     })
   }
 
@@ -55,6 +61,21 @@ class Profile extends React.Component {
               <div>Email: {this.state.email}</div>
             </div>  
           </Link>
+      </div>
+      <div>
+      {this.state.messages.map(message => {
+                return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
+                    <Message guest={message.guest}
+                             replies={message.replies}
+                             pinned={message.pinned}
+                             title={message.title}
+                             authorId={message.authorId}
+                             author={message.author}
+                             created={message.created}>
+                        {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
+                    </Message>
+                </Link>
+            })}
       </div>
     </div>
     )
