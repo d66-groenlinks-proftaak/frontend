@@ -28,8 +28,9 @@ class index extends React.Component {
                              accountName={this.props.accountName}
                              loggedIn={this.props.loggedIn}/>
 
-                    <span onClick={this.props.toggleDarkMode} className={"darkmode-toggle"} style={{fontSize: "1.2em"}}>
-                        <FontAwesomeIcon icon={faSun}></FontAwesomeIcon>
+                    <span onClick={this.props.toggleDarkMode} className={"darkmode-toggle"}
+                          style={{paddingLeft: 10, fontSize: "1.2em"}}>
+                        <FontAwesomeIcon icon={faSun}/>
                     </span>
                 </div>
             </div>
