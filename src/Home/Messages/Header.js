@@ -143,7 +143,7 @@ class Header extends React.Component {
 
         let authenticated = <div>
             <h3>E-Mail</h3>
-            <InputText className={this.state.invalidEmail ? "p-invalid" : ""}
+            <InputText style={{width: "100%"}} className={this.state.invalidEmail ? "p-invalid" : ""}
                        value={this.state.newPost.email} onChange={e => {
                 this.onInputChanged("email", e.target.value)
             }}/>
@@ -151,7 +151,7 @@ class Header extends React.Component {
                 <span>&nbsp;</span>}</div>
 
             <h3>Naam</h3>
-            <InputText className={this.state.invalidAuthor ? "p-invalid" : ""}
+            <InputText style={{width: "100%"}} className={this.state.invalidAuthor ? "p-invalid" : ""}
                        value={this.state.newPost.author} onChange={e => {
                 this.onInputChanged("author", e.target.value)
             }}/>
@@ -198,40 +198,44 @@ class Header extends React.Component {
             </div>
 
             <div className={"p-grid"}>
-                <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right"
+                <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
+                         style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
+                         position="bottom"
+                         showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
-                    <div className="p-grid p-fluid p-p-3 p-pt-3">
-                        <h1>Nieuw Bericht Aanmaken</h1>
+                    <div className="new-post-content p-p-3 p-pt-3">
+                        <InputText style={{width: "100%"}} placeholder={"Titel"}
+                                   className={this.state.invalidTitle ? "p-invalid" : ""}
+                                   value={this.state.newPost.title} onChange={e => {
+                            this.onInputChanged("title", e.target.value)
+                        }}/>
+                        <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
+                            <span>&nbsp;</span>}</div>
 
-                        <div className="p-col-12">
-                            <h3>Titel</h3>
-                            <InputText className={this.state.invalidTitle ? "p-invalid" : ""}
-                                       value={this.state.newPost.title} onChange={e => {
-                                this.onInputChanged("title", e.target.value)
-                            }}/>
-                            <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
-                                <span>&nbsp;</span>}</div>
-
-                            <h3>Bericht</h3>
-                            <Editor modules={{
-                                toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
-                            }} className={this.state.invalidTitle ? "p-invalid" : ""}
-                                    style={{height: '320px'}}
-                                    value={this.state.newPost.content} onTextChange={(e) => {
-                                console.log(e)
-                                this.onInputChanged("content", e.htmlValue)
-                            }}/>
-                            <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
-                                <span>&nbsp;</span>}</div>
+                        <Editor placeholder={"Typ hier uw bericht"} modules={{
+                            toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                        }} className={this.state.invalidTitle ? "p-invalid" : ""}
+                                style={{height: '250px'}}
+                                value={this.state.newPost.content} onTextChange={(e) => {
+                            console.log(e)
+                            this.onInputChanged("content", e.htmlValue)
+                        }}/>
+                        <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
+                            <span>&nbsp;</span>}</div>
 
 
-                            {authenticated}
-                        </div>
-
-                        <div className={"p-col-12 p-md-6 p-mt-5"}>
-                            <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => {
-                                this.createPost()
-                            }} label={"Plaatsen"}/>
+                        {authenticated}
+                        <div>
+                            <Button {...this.state.additionalProps} iconPos={"left"} icon={"pi pi-plus"}
+                                    onClick={() => {
+                                        this.createPost()
+                                    }} label={"Plaatsen"}/>
+                            <Button {...this.state.additionalProps}
+                                    className={"p-button-secondary p-button-outlined p-ml-3"}
+                                    iconPos={"right"}
+                                    onClick={() => {
+                                        this.setPostWindow(false)
+                                    }} label={"Annuleren"}/>
                         </div>
                     </div>
                 </Sidebar>

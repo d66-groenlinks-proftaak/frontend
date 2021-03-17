@@ -34,7 +34,7 @@ class Message extends React.Component {
             newReportOpen: false,
             reportConfirmation: false,
             reportMessage: "",
-            activeIndex: 1
+            activeIndex: false
         }
 
         this.menuRef = React.createRef();
@@ -42,13 +42,13 @@ class Message extends React.Component {
 
     setPostWindow = (open) => {
         this.setState(state => {
-            return {activeIndex: open ? 0 : 1}
+            return {activeIndex: open}
         });
     }
 
     togglePostWindow = () => {
         this.setState(state => {
-            return {activeIndex: state.activeIndex === 1 ? 0 : 1}
+            return {activeIndex: state.activeIndex ? false : true}
         });
     }
 
@@ -227,32 +227,44 @@ class Message extends React.Component {
                       }}>Reacties</span>
             </Divider>
 
-            <Accordion activeIndex={this.state.activeIndex} onTabChange={(e) => this.setState({activeIndex: e.index})}>
-                <AccordionTab headerStyle={{display: "none"}}>
-                    <div className="p-grid p-fluid">
-                        <div className="p-col-12">
-                            <h3>Reageer</h3>
-                            <Editor modules={{
-                                toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
-                            }} style={{height: '200px'}} value={this.state.newPost.content} onTextChange={(e) => {
-                                this.onInputChanged("content", e.htmlValue)
-                            }}/>
+            <div className={"p-grid"}>
+                <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
+                         style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
+                         position="bottom"
+                         showCloseIcon={false}
+                         visible={this.state.activeIndex} onHide={() => this.setPostWindow(false)}>
+                    <div className="new-post-content p-p-3 p-pt-3">
+                        <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
+                            <span>&nbsp;</span>}</div>
 
-                            {authenticated}
-                        </div>
+                        <Editor placeholder={"Typ hier uw reactie"} modules={{
+                            toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                        }} className={this.state.invalidTitle ? "p-invalid" : ""}
+                                style={{height: '250px'}}
+                                value={this.state.newPost.content} onTextChange={(e) => {
+                            console.log(e)
+                            this.onInputChanged("content", e.htmlValue)
+                        }}/>
+                        <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
+                            <span>&nbsp;</span>}</div>
 
-                        <div style={{width: "100%"}} className="p-d-flex p-jc-between p-ai-center p-pr-2">
-                            <div>
-                            </div>
-                            <div>
-                                <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => {
-                                    this.createPost()
-                                }} label={"Plaatsen"} icon={"pi pi-plus"}/>
-                            </div>
+
+                        {authenticated}
+                        <div>
+                            <Button {...this.state.additionalProps} iconPos={"left"} icon={"pi pi-plus"}
+                                    onClick={() => {
+                                        this.createPost()
+                                    }} label={"Plaatsen"}/>
+                            <Button {...this.state.additionalProps}
+                                    className={"p-button-secondary p-button-outlined p-ml-3"}
+                                    iconPos={"right"}
+                                    onClick={() => {
+                                        this.setPostWindow(false)
+                                    }} label={"Annuleren"}/>
                         </div>
                     </div>
-                </AccordionTab>
-            </Accordion>
+                </Sidebar>
+            </div>
 
             <div style={{paddingBottom: 20}}>
                 {this.state.replies.map(reply => {

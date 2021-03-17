@@ -69,6 +69,19 @@
     transition-duration: 0.05s;
 }
 
+.dark input {
+    background: #121212;
+    border-color: #212121;
+}
+
+.dark ::placeholder {
+    color: white;
+}
+
+.dark .ql-editor.ql-blank::before {
+    color: gray !important;
+}
+
 .category:hover {
     color: #007FFF;
     cursor: pointer;
@@ -77,6 +90,14 @@
 @media (max-width: 767px) {
     .hidden-xs {
         display: none !important;
+    }
+
+    .new-post {
+        height: 100vh !important;
+    }
+
+    .new-post-content {
+        width: 100vw !important;
     }
 }
 
@@ -247,6 +268,14 @@ Darkmode
     color: white;
 }
 
+.new-post {
+    height: 60%;
+}
+
+.new-post-content {
+    width: 800px;
+}
+
 .dark .p-card-subtitle a {
     color: #6495d3 !important;
     text-decoration: none;
@@ -320,7 +349,7 @@ Darkmode
     display: none;
 }
 
-.ql-toolbar {
+.dark .ql-toolbar {
     border: 1px solid #212121 !important;
 }
 
