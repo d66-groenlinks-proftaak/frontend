@@ -218,6 +218,7 @@ class Header extends React.Component {
                             }} className={this.state.invalidTitle ? "p-invalid" : ""}
                                     style={{height: '320px'}}
                                     value={this.state.newPost.content} onTextChange={(e) => {
+                                console.log(e)
                                 this.onInputChanged("content", e.htmlValue)
                             }}/>
                             <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
