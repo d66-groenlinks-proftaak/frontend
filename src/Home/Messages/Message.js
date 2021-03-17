@@ -28,7 +28,7 @@ class Message extends React.Component {
                 <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
                 <span
                     className={"message-date"}
-                    data-pr-tooltip={DateTime.fromMillis(this.props.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}> gepost {DateTime.fromMillis(this.props.created).toRelative({locale: "nl"})}</span>
+                    data-pr-tooltip={DateTime.fromMillis(this.props.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}> — {DateTime.fromMillis(this.props.created).toRelative({locale: "nl"})} gepost</span>
             </div>
             <div className={"p-d-flex p-jc-between p-ai-end"}>
                 <div style={{
