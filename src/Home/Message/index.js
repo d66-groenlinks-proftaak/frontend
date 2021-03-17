@@ -11,6 +11,22 @@ import {Divider} from "primereact/divider";
 import {Accordion, AccordionTab} from "primereact/accordion";
 import {DateTime} from "luxon"
 import {Tooltip} from 'primereact/tooltip';
+import Reply from "./Reply";
+
+const extraOptions = [{
+    label: "Rapporteer",
+    icon: "pi pi-ban",
+    command: () => {
+        this.setReportWindow(true);
+    }
+},
+    {
+        label: "Bewerken",
+        icon: "pi pi-pencil",
+        command: () => {
+        }
+    }
+]
 
 class Message extends React.Component {
     constructor(props) {
@@ -34,7 +50,9 @@ class Message extends React.Component {
             newReportOpen: false,
             reportConfirmation: false,
             reportMessage: "",
-            activeIndex: false
+            activeIndex: false,
+            replyingTo: "",
+            replyingToId: ""
         }
 
         this.menuRef = React.createRef();
@@ -48,7 +66,7 @@ class Message extends React.Component {
 
     togglePostWindow = () => {
         this.setState(state => {
-            return {activeIndex: state.activeIndex ? false : true}
+            return {activeIndex: !state.activeIndex}
         });
     }
 
@@ -75,8 +93,13 @@ class Message extends React.Component {
             }
         })
 
+        let parent = this.props.id;
+
+        if (this.state.replyingToId !== "")
+            parent = this.state.replyingToId;
+
         this.props.connection.send("CreateReply", {
-            Parent: this.props.id,
+            Parent: parent,
             Content: this.state.newPost.content,
             Email: this.state.newPost.email,
             Author: this.state.newPost.author,
@@ -108,6 +131,75 @@ class Message extends React.Component {
         this.setReportWindow(false)
     }
 
+    GetRepliesDepth(level, message) {
+        let replies = [];
+
+        if (message.replyContent)
+            for (let reply of message.replyContent) {
+                let item = {
+                    parent: message.id,
+                    id: reply.id,
+                    children: [],
+                    created: reply.created
+                }
+
+                item.element = (<Reply setReplyingTo={(a, b) => {
+                    this.setReplyingTo(a, b)
+                }} setPostWindow={(b) => {
+                    this.setPostWindow(b)
+                }} level={level} content={reply.content} menuRef={this.menuRef} created={reply.created}
+                                       id={reply.id}
+                                       author={reply.author}
+                                       authorId={reply.authorId}
+                                       extraOptions={extraOptions}/>)
+
+                if (reply.replyContent && reply.replyContent.length > 0) {
+                    for (let r of this.GetRepliesDepth(level + 1, reply))
+                        item.children.push(r)
+                }
+
+                replies.push(item)
+            }
+
+        return replies;
+    }
+
+    GetSubReplies(reply) {
+        if (reply.children && reply.children.length > 0) {
+            return reply.children.map(_reply => {
+                return <div>
+                    {_reply.element}
+                    {this.GetSubReplies(_reply)}
+                </div>;
+            })
+        }
+    }
+
+    GetReplies(level, message) {
+        let replies = this.GetRepliesDepth(level, message);
+
+        return <div>
+            {replies.map(reply => {
+                return <div>
+                    {reply.element}
+                    {this.GetSubReplies(reply)}
+                </div>;
+            })}
+        </div>
+    }
+
+    GetParent(replies, id) {
+        for (let reply of replies)
+            if (reply.id === id)
+                return reply;
+
+        for (let reply of replies)
+            if (reply.replyContent && reply.replyContent.length > 0) {
+                let rValue = this.GetParent(reply.replyContent, id);
+                if (rValue)
+                    return rValue;
+            }
+    }
 
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
@@ -127,9 +219,18 @@ class Message extends React.Component {
         this.props.connection.on("SendChild", child => {
             const children = Object.assign([], this.state.replies);
 
-            children.unshift(child)
+            console.log(child)
 
-            this.setState({replies: children});
+            if (child.parent === this.props.id)
+                children.unshift(child);
+            else {
+                if (this.GetParent(children, child.parent).replyContent)
+                    this.GetParent(children, child.parent).replyContent.unshift(child);
+                else
+                    this.GetParent(children, child.parent).replyContent = [child]
+            }
+
+            this.setState({replies: children})
         })
 
         this.props.connection.on("ConfirmReport", (ReportConfirmation) => {
@@ -139,22 +240,14 @@ class Message extends React.Component {
         this.props.connection.send("LoadMessageThread", this.props.id);
     }
 
-    render() {
-        const extraOptions = [{
-            label: "Rapporteer",
-            icon: "pi pi-ban",
-            command: () => {
-                this.setReportWindow(true);
-            }
-        },
-            {
-                label: "Bewerken",
-                icon: "pi pi-pencil",
-                command: () => {
-                }
-            }
-        ]
+    setReplyingTo = (author, id) => {
+        this.setState({
+            replyingTo: author,
+            replyingToId: id
+        })
+    }
 
+    render() {
         let authenticated = <div>
             <h3>E-Mail</h3>
             <InputText value={this.state.newPost.email} onChange={e => {
@@ -210,6 +303,10 @@ class Message extends React.Component {
 
                         <Button onClick={() => {
                             this.togglePostWindow()
+                            this.setState({
+                                replyingTo: "",
+                                replyingToId: ""
+                            })
                         }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus" label={"Reageer"}
                                 iconPos="right"/>
                     </div>
@@ -217,14 +314,14 @@ class Message extends React.Component {
             </Card>
 
             <Divider align="left">
-                <span className="p-tag"
-                      style={{
-                          backgroundColor: "transparent",
-                          border: "1px solid #dee2e6",
-                          color: "#49506c",
-                          fontSize: "1.2em",
-                          fontWeight: "normal"
-                      }}>Reacties</span>
+            <span className="p-tag"
+                  style={{
+                      backgroundColor: "transparent",
+                      border: "1px solid #dee2e6",
+                      color: "#49506c",
+                      fontSize: "1.2em",
+                      fontWeight: "normal"
+                  }}>Reacties</span>
             </Divider>
 
             <div className={"p-grid"}>
@@ -237,12 +334,13 @@ class Message extends React.Component {
                         <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
                             <span>&nbsp;</span>}</div>
 
+                        {this.state.replyingTo !== "" ? <span><b>Reageren op:</b> {this.state.replyingTo}</span> : ""}
+
                         <Editor placeholder={"Typ hier uw reactie"} modules={{
-                            toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                            toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link', 'blockquote']]
                         }} className={this.state.invalidTitle ? "p-invalid" : ""}
                                 style={{height: '250px'}}
                                 value={this.state.newPost.content} onTextChange={(e) => {
-                            console.log(e)
                             this.onInputChanged("content", e.htmlValue)
                         }}/>
                         <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
@@ -268,30 +366,17 @@ class Message extends React.Component {
 
             <div style={{paddingBottom: 20}}>
                 {this.state.replies.map(reply => {
-                    return <Card className={"p-mb-2"}
-                                 subTitle={<span><Link to={"/profile/" + reply.authorId}
-                                                       style={{color: "blue"}}>@{reply.author}</Link></span>}>
-                        <div dangerouslySetInnerHTML={{__html: reply.content}}/>
+                    return <div><Reply setReplyingTo={(a, b) => {
+                        this.setReplyingTo(a, b)
+                    }} setPostWindow={(b) => {
+                        this.setPostWindow(b)
+                    }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
+                                       author={reply.author}
+                                       authorId={reply.authorId}
+                                       extraOptions={extraOptions}/>
 
-                        <div className="p-d-flex p-jc-between p-ai-center">
-                            <div className={"message-posted"}
-                                 data-pr-tooltip={DateTime.fromMillis(reply.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
-                                {DateTime.fromMillis(reply.created).toRelative({locale: "nl"})}
-                            </div>
-                            <div>
-                                <Menu ref={this.menuRef} popup model={extraOptions}/>
-
-                                <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
-                                        iconPos="right"
-                                        onClick={(event) => this.menuRef.current.toggle(event)}/>
-
-                                <Button onClick={() => {
-                                    this.setPostWindow(true)
-                                }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus" label={"Citeer"}
-                                        iconPos="right"/>
-                            </div>
-                        </div>
-                    </Card>
+                        {this.GetReplies(1, reply)}
+                    </div>
                 })}
             </div>
 
