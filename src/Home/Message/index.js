@@ -240,6 +240,12 @@ class Message extends React.Component {
             }
     }
 
+    componentWillUnmount() {
+        this.props.connection.off("SendThreadDetails");
+        this.props.connection.off("SendChildren");
+        this.props.connection.off("SendChild");
+    }
+
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
             setTimeout(() => {
@@ -269,6 +275,8 @@ class Message extends React.Component {
                     this.GetParent(_children, child.parent).replyContent = [child]
             }
 
+            console.log("DONE ADDING")
+
             if (children.length > 3) {
                 displayMore[children[0].parent] = false;
                 loadingMore[children[0].parent] = false;
@@ -278,6 +286,7 @@ class Message extends React.Component {
             }
 
             console.log(this.GetParent(_children, children[0].parent))
+            console.log("SETTING STATE")
 
             this.setState({replies: _children, displayMore: displayMore, loadingMore: loadingMore})
         })
