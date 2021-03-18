@@ -2,6 +2,8 @@ import React from "react";
 import {Button} from "primereact/button";
 import {Link} from "react-router-dom";
 import { Avatar } from 'primereact/avatar';
+import { Divider } from 'primereact/divider';
+import './index.css';
 
 import Message from "../Messages/Message";
 
@@ -12,14 +14,19 @@ class Profile extends React.Component {
 
     this.state = {
       id: this.props.id,
+      loaded: false,
       firstname: "",
       lastname: "",
       email: "",
-      enableImage: true,
-      image: "",
+      enableImage: false,
+      image: "/profile_pictures/1.png",
       messages: []
     }
   }
+
+  /// 
+  /// TODO - working implementation of images
+  ///
 
   componentWillMount() {
     this.props.connection.send("GetProfile", this.state.id)
@@ -29,6 +36,7 @@ class Profile extends React.Component {
     this.props.connection.on("SendProfile", profile => {
       console.log(profile)
       this.setState({
+        loaded: true,
         firstname: profile.firstName,
         lastname: profile.lastName,
         email: profile.email,
@@ -41,28 +49,31 @@ class Profile extends React.Component {
 
   getProfilePic() {
     if (this.state.enableImage && this.state.image !== "") return <Avatar image={this.state.image} size="xlarge" />
-    else if (this.state.firstname !== "") return <Avatar label={this.state.firstname[0]} size="xlarge" />
+    else if (this.state.firstname !== "") return <Avatar label={this.state.firstname[0].toUpperCase()} size="xlarge" />
     else return <Avatar icon="pi pi-user" size="xlarge" />
   }
 
   render() {
     return (
-    <div>
-      <div>
-        <Link to={"/"}>
-          <Button className={"p-button-secondary"} label={"Terug"} style={{float: "right"}} icon="pi pi-arrow-left" iconPos="left" />
-        </Link>
-
-          <Link key={this.state.id} style={{ textDecoration: 'none' }} to={"/profile/" + this.state.id}>
-            {this.getProfilePic()}
-
-            <div>
-              <h1>Naam: {this.state.firstname} {this.state.lastname}</h1>
-              <div>Email: {this.state.email}</div>
-            </div>  
-          </Link>
-      </div>
-      <div>
+    <div class="p-col-12 p-md-8">
+      <div class="profile-info">
+        <div class="profile-name">
+          {this.getProfilePic()}
+          <h1 class="account-name">{this.state.loaded ? this.state.firstname : "loading..."} {this.state.lastname}</h1>
+        </div>
+        <div class="account-email">Email: {this.state.email}</div>
+      </div>  
+      <Divider align="left">
+        <span className="p-tag"
+          style={{
+            backgroundColor: "transparent",
+            border: "1px solid #dee2e6",
+            color: "#49506c",
+            fontSize: "1.2em",
+            fontWeight: "normal"
+          }}>Berichten</span>
+        </Divider>
+      <div class="messages">
       {this.state.messages.map(message => {
                 return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
                     <Message guest={message.guest}

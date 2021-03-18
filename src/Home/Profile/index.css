@@ -1,0 +1,35 @@
+.p-avatar {
+  background-color: var(--ringkey-element);
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.dark .p-avatar {
+  background-color: var(--ringkey-dark-element);
+}
+
+.p-avatar img {
+  border-radius: 10px;
+}
+
+.p-avatar-xl {
+  width: 6rem !important;
+  height: 6rem !important;
+  font-size: 3rem !important;
+}
+
+.p-avatar-icon {
+  font-size: 3rem !important;
+}
+
+.profile-name {
+  display: flex;
+  margin-top: 20px;
+}
+
+.account-name {
+  flex-direction: row;
+  margin-inline-start: 10px;
+  margin-block-start: 0px;
+  font-size: 4rem;
+}
