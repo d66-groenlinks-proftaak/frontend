@@ -23,7 +23,9 @@ function Reply(props) {
 
                 <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
                         iconPos="right"
-                        onClick={(event) => props.menuRef.current.toggle(event)}/>
+                        onClick={(event) =>{ props.menuRef.current.toggle(event)
+                            props.setReportId(props.id)
+                        }}/>
 
                 <Button onClick={() => {
                     props.setPostWindow(true)

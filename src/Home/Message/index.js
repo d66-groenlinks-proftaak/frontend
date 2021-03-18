@@ -39,7 +39,8 @@ class Message extends React.Component {
             reportConfirmation: false,
             activeIndex: false,
             replyingTo: "",
-            replyingToId: ""
+            replyingToId: "",
+            reportId: ""
         }
 
         this.menuRef = React.createRef();
@@ -157,6 +158,12 @@ class Message extends React.Component {
             }
 
         return replies;
+    }
+
+    setReportId = (id) =>{
+        this.setState({
+            reportId: id
+        })
     }
 
     GetSubReplies(reply) {
@@ -294,7 +301,9 @@ class Message extends React.Component {
 
                         <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
                                 iconPos="right"
-                                onClick={(event) => this.menuRef.current.toggle(event)}/>
+                                onClick={(event) =>{ this.menuRef.current.toggle(event)
+                                this.setReportId(this.state.id)
+                                }}/>
 
                         <Button onClick={() => {
                             this.togglePostWindow()
@@ -358,13 +367,14 @@ class Message extends React.Component {
                     </div>
                 </Sidebar>
             </div>
+
             <Sidebar  visible={this.state.newReportOpen} style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} onHide={() => this.props.setReportWindow(false)}position="right">
-                <Report id = {this.state.id} connection = {this.props.connection} setReportWindow={this.setReportWindow}/>
+                <Report id = {this.state.reportId} connection = {this.props.connection} setReportWindow={this.setReportWindow}/>
             </Sidebar>
 
             <div style={{paddingBottom: 20}}>
                 {this.state.replies.map(reply => {
-                    return <div><Reply setReplyingTo={(a, b) => {
+                    return <div><Reply setReportId={this.setReportId} setReplyingTo={(a, b) => {
                         this.setReplyingTo(a, b)
                     }} setPostWindow={(b) => {
                         this.setPostWindow(b)
