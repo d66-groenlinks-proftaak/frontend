@@ -353,6 +353,18 @@ Darkmode
     border: 1px solid #212121 !important;
 }
 
+.p-card {
+    border-radius: 3px 3px 3px 0px;
+}
+
+.post-child {
+    border-left: 3px solid #dee2e6 !important;
+}
+
+.dark .post-child {
+    border-left: 3px solid #212121 !important;
+}
+
 .dark .ql-editor {
     color: white !important;
 }

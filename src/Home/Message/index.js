@@ -52,7 +52,9 @@ class Message extends React.Component {
             reportMessage: "",
             activeIndex: false,
             replyingTo: "",
-            replyingToId: ""
+            replyingToId: "",
+            loadingMore: {},
+            displayMore: {}
         }
 
         this.menuRef = React.createRef();
@@ -147,7 +149,8 @@ class Message extends React.Component {
                     this.setReplyingTo(a, b)
                 }} setPostWindow={(b) => {
                     this.setPostWindow(b)
-                }} level={level} content={reply.content} menuRef={this.menuRef} created={reply.created}
+                }} level={level} content={reply.content} menuRef={this.menuRef}
+                                       created={reply.created}
                                        id={reply.id}
                                        author={reply.author}
                                        authorId={reply.authorId}
@@ -178,11 +181,45 @@ class Message extends React.Component {
     GetReplies(level, message) {
         let replies = this.GetRepliesDepth(level, message);
 
+        let cur = 0;
+        let addToEnd = <span></span>
         return <div>
             {replies.map(reply => {
+                cur++;
+
+                let parent;
+
+                for (let _reply of this.state.replies) {
+                    if (_reply.id === reply.parent) {
+                        parent = _reply;
+                        break;
+                    }
+                }
+
+                if (cur === replies.length && (replies.length < parent.replies)) {
+                    if (this.state.displayMore[reply.parent] == true) {
+                        addToEnd = <span></span>
+                    }
+
+                    addToEnd = <Button onClick={() => {
+                        this.setState(state => {
+                            const loadingMore = Object.assign({}, state.loadingMore);
+
+                            loadingMore[reply.parent] = true;
+
+                            return {loadingMore}
+                        })
+
+                        this.props.connection.send("LoadSubReplies", reply.id)
+                    }} className={"p-button-text p-ml-5"} style={{width: "200px"}}
+                                       icon={this.state.loadingMore[reply.parent] ? "pi pi-spin pi-spinner" : ""}
+                                       iconPos="right"
+                                       disabled={this.state.loadingMore[reply.parent]} label={"Meer Laden"}/>
+                }
+
                 return <div>
                     {reply.element}
-                    {this.GetSubReplies(reply)}
+                    {addToEnd}
                 </div>;
             })}
         </div>
@@ -216,21 +253,63 @@ class Message extends React.Component {
             }, 500);
         })
 
+        this.props.connection.on("SendChildren", children => {
+            const _children = Object.assign([], this.state.replies);
+            const displayMore = Object.assign([], this.state.displayMore);
+            const loadingMore = Object.assign([], this.state.loadingMore);
+
+            console.log(children);
+
+            for (let child of children) {
+                if (this.GetParent(_children, child.parent).replyContent)
+                    this.GetParent(_children, child.parent).replyContent.push(child);
+                else
+                    this.GetParent(_children, child.parent).replyContent = [child]
+            }
+
+            if (children.length > 3) {
+                displayMore[children[0].parent] = false;
+                loadingMore[children[0].parent] = false;
+            } else {
+                displayMore[children[0].parent] = true;
+                loadingMore[children[0].parent] = true;
+            }
+
+            console.log(this.GetParent(_children, children[0].parent))
+
+            this.setState({replies: _children, displayMore: displayMore, loadingMore: loadingMore})
+        })
+
         this.props.connection.on("SendChild", child => {
             const children = Object.assign([], this.state.replies);
+            const displayMore = Object.assign({}, this.state.displayMore);
+            const loadingMore = Object.assign({}, this.state.loadingMore);
 
-            console.log(child)
+            let parent;
+            for (let _reply in children) {
+                if (children[_reply].id === child.parent)
+                    parent = _reply;
+            }
 
-            if (child.parent === this.props.id)
+            console.log(parent)
+
+            if (child.parent === this.props.id) {
                 children.unshift(child);
-            else {
-                if (this.GetParent(children, child.parent).replyContent)
+            } else {
+                if (this.GetParent(children, child.parent).replyContent) {
                     this.GetParent(children, child.parent).replyContent.unshift(child);
-                else
+
+                    if (this.GetParent(children, child.parent).replyContent.length >= 4) {
+                        displayMore[child.parent] = false;
+                        loadingMore[child.parent] = false;
+                        children[parent].replies += 1;
+                        this.GetParent(children, child.parent).replyContent.pop();
+                    }
+                } else
                     this.GetParent(children, child.parent).replyContent = [child]
             }
 
-            this.setState({replies: children})
+            this.setState({replies: children, displayMore: displayMore, loadingMore: loadingMore})
         })
 
         this.props.connection.on("ConfirmReport", (ReportConfirmation) => {
@@ -366,14 +445,14 @@ class Message extends React.Component {
 
             <div style={{paddingBottom: 20}}>
                 {this.state.replies.map(reply => {
-                    return <div><Reply setReplyingTo={(a, b) => {
+                    return <div style={{marginBottom: 20}}><Reply setReplyingTo={(a, b) => {
                         this.setReplyingTo(a, b)
                     }} setPostWindow={(b) => {
                         this.setPostWindow(b)
                     }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
-                                       author={reply.author}
-                                       authorId={reply.authorId}
-                                       extraOptions={extraOptions}/>
+                                                                  author={reply.author}
+                                                                  authorId={reply.authorId}
+                                                                  extraOptions={extraOptions}/>
 
                         {this.GetReplies(1, reply)}
                     </div>
