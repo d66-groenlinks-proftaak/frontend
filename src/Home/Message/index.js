@@ -12,21 +12,9 @@ import {Accordion, AccordionTab} from "primereact/accordion";
 import {DateTime} from "luxon"
 import {Tooltip} from 'primereact/tooltip';
 import Reply from "./Reply";
+import Report from "./Report";
 
-const extraOptions = [{
-    label: "Rapporteer",
-    icon: "pi pi-ban",
-    command: () => {
-        this.setReportWindow(true);
-    }
-},
-    {
-        label: "Bewerken",
-        icon: "pi pi-pencil",
-        command: () => {
-        }
-    }
-]
+
 
 class Message extends React.Component {
     constructor(props) {
@@ -49,7 +37,6 @@ class Message extends React.Component {
             },
             newReportOpen: false,
             reportConfirmation: false,
-            reportMessage: "",
             activeIndex: false,
             replyingTo: "",
             replyingToId: ""
@@ -58,6 +45,21 @@ class Message extends React.Component {
         this.menuRef = React.createRef();
     }
 
+    extraOptions = [{
+        label: "Rapporteer",
+        icon: "pi pi-ban",
+        command: () => {
+            this.setReportWindow(true);
+        }
+    },
+        {
+            label: "Bewerken",
+            icon: "pi pi-pencil",
+            command: () => {
+            }
+        }
+    ]
+    
     setPostWindow = (open) => {
         this.setState(state => {
             return {activeIndex: open}
@@ -72,7 +74,7 @@ class Message extends React.Component {
 
     setReportWindow = (open) => {
         this.setState({
-            newReportOpen: open
+            newReportOpen: open            
         });
     }
 
@@ -124,13 +126,6 @@ class Message extends React.Component {
             })
     }
 
-    SendReport() {
-        this.props.connection.send("ReportMessage", {
-            ReportMessage: this.state.ReportMessage
-        })
-        this.setReportWindow(false)
-    }
-
     GetRepliesDepth(level, message) {
         let replies = [];
 
@@ -151,7 +146,7 @@ class Message extends React.Component {
                                        id={reply.id}
                                        author={reply.author}
                                        authorId={reply.authorId}
-                                       extraOptions={extraOptions}/>)
+                                       extraOptions={this.extraOptions}/>)
 
                 if (reply.replyContent && reply.replyContent.length > 0) {
                     for (let r of this.GetRepliesDepth(level + 1, reply))
@@ -295,7 +290,7 @@ class Message extends React.Component {
                         {DateTime.fromMillis(this.state.created).toRelative({locale: "nl"})}
                     </div>
                     <div>
-                        <Menu ref={this.menuRef} popup model={extraOptions}/>
+                        <Menu ref={this.menuRef} popup model={this.extraOptions}/>
 
                         <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
                                 iconPos="right"
@@ -363,6 +358,9 @@ class Message extends React.Component {
                     </div>
                 </Sidebar>
             </div>
+            <Sidebar  visible={this.state.newReportOpen} style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} onHide={() => this.props.setReportWindow(false)}position="right">
+                <Report id = {this.state.id} connection = {this.props.connection} setReportWindow={this.setReportWindow}/>
+            </Sidebar>
 
             <div style={{paddingBottom: 20}}>
                 {this.state.replies.map(reply => {
@@ -373,36 +371,12 @@ class Message extends React.Component {
                     }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
                                        author={reply.author}
                                        authorId={reply.authorId}
-                                       extraOptions={extraOptions}/>
+                                       extraOptions={this.extraOptions}/>
 
                         {this.GetReplies(1, reply)}
                     </div>
                 })}
             </div>
-
-            <div className={"p-grid"}>
-                <Sidebar style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} position="right"
-                         visible={this.state.newReportOpen} onHide={() => this.setReportWindow(false)}>
-                    <div className="p-grid p-fluid p-p-3 p-pt-3">
-                        <h1>Report</h1>
-
-                        <div className="p-col-12">
-                            <h3>Bericht</h3>
-                            <Editor style={{height: '320px'}} value={this.state.ReportMessage} onTextChange={(e) => {
-                                this.onInputChanged("content", e.htmlValue)
-                            }}/>
-                        </div>
-
-                        <div className={"p-col-12 p-md-6 p-mt-5"}>
-                            <Button {...this.state.additionalProps} iconPos={"right"} onClick={() => {
-                                this.SendReport()
-                            }} label={"Sturen"}/>
-                        </div>
-                    </div>
-                </Sidebar>
-            </div>
-
-
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
         </div>
     }
