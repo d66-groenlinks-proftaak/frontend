@@ -51,20 +51,16 @@ class Home extends React.Component {
                     </div>
                 }/>
 
+                <Route path={"/profile/:id"} render={(props) =>
+                    <Profile connection={this.props.connection} id={props.match.params.id}/>
+                }/>
+
                 <Route path={"/"}>
                     <div className={"p-col-12 p-sm-2 p-md-2 p-xl-1 hidden-sm hidden-xs"}>
                         <Categories/>
                     </div>
                     <div className="p-col-12 p-md-7 p-pl-5">
-                        <Switch>
-                            <Route path={"/profile/:id"} render={(props) =>
-                                <Profile connection={this.props.connection} id={props.match.params.id}/>
-                            }/>
-
-                            <Route path={"/"}>
-                                <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
-                            </Route>
-                        </Switch>
+                        <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
                     </div>
                 </Route>
             </Switch>
