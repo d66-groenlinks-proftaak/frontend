@@ -8,20 +8,14 @@ import {Editor} from "primereact/editor";
 import LoadingMessage from "./LoadingMessage";
 import {Menu} from "primereact/menu";
 import {Divider} from "primereact/divider";
-import {Accordion, AccordionTab} from "primereact/accordion";
 import {DateTime} from "luxon"
 import {Tooltip} from 'primereact/tooltip';
+import {ScrollTop} from 'primereact/scrolltop';
 import Reply from "./Reply";
 import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
 import {List, CellMeasurer, CellMeasurerCache, AutoSizer, WindowScroller} from "react-virtualized";
-
-
-const TestList = [
-    "Haha",
-    "Haha2'"
-]
 
 class Message extends React.Component {
     constructor(props) {
@@ -79,7 +73,7 @@ class Message extends React.Component {
     ]
 
     setPostWindow = (open) => {
-        this.setState(state => {
+        this.setState(_ => {
             return {activeIndex: open}
         });
     }
@@ -123,7 +117,7 @@ class Message extends React.Component {
             Content: this.state.newPost.content,
             Email: this.state.newPost.email,
             Author: this.state.newPost.author,
-        }).then(result => {
+        }).then(_ => {
             this.setState({
                 additionalProps: {},
                 newPost: {
@@ -199,7 +193,7 @@ class Message extends React.Component {
         let replies = this.GetRepliesDepth(level, message);
 
         let cur = 0;
-        let addToEnd = <span></span>
+        let addToEnd = <span/>
         return <div>
             {replies.map(reply => {
                 cur++;
@@ -214,8 +208,8 @@ class Message extends React.Component {
                 }
 
                 if (cur === replies.length && (replies.length < parent.replies)) {
-                    if (this.state.displayMore[reply.parent] == true) {
-                        addToEnd = <span></span>
+                    if (this.state.displayMore[reply.parent] === true) {
+                        addToEnd = <span/>
                     }
 
                     addToEnd = <Button onClick={() => {
@@ -267,7 +261,7 @@ class Message extends React.Component {
         const reply = this.state.replies[index];
 
         return <CellMeasurer parent={parent} cache={this._cache} columnIndex={0} rowIndex={index} key={key}>
-            {({measure, registerChild}) => {
+            {() => {
                 return <div style={{...style}}>
                     <Reply
                         setReportId={this.setReportId} setReplyingTo={(a, b) => {
@@ -335,7 +329,7 @@ class Message extends React.Component {
 
             let parent;
             for (let _reply in children) {
-                if (children[_reply].id === child.parent)
+                if (children.hasOwnProperty(_reply) && children[_reply].id === child.parent)
                     parent = _reply;
             }
 
@@ -514,7 +508,7 @@ class Message extends React.Component {
 
             <div>
                 <WindowScroller scrollElement={window}>
-                    {({height, isScrolling, registerChild, onChildScroll, scrollTop}) => (
+                    {({height, isScrolling, onChildScroll, scrollTop}) => (
                         <AutoSizer disableHeight>
                             {({width}) => <List autoHeight
                                                 isScrolling={isScrolling}
@@ -523,7 +517,7 @@ class Message extends React.Component {
                                                 scrollTop={scrollTop} ref={this.listRef}
                                                 deferredMeasurementCache={this._cache}
                                                 rowHeight={this._cache.rowHeight}
-                                                autoHeight width={width} height={height}
+                                                width={width} height={height}
                                                 rowCount={this.state.replies.length}
                                                 rowRenderer={this._rowRenderer}/>
                             }
@@ -531,7 +525,9 @@ class Message extends React.Component {
                     )}
                 </WindowScroller>
             </div>
+
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
+            <ScrollTop/>
         </div>
     }
 }
