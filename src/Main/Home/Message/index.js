@@ -287,17 +287,15 @@ class Message extends React.Component {
 
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
-            setTimeout(() => {
-                this.setState({
-                    author: thread.parent.author,
-                    content: thread.parent.content,
-                    created: thread.parent.created,
-                    id: thread.parent.id,
-                    title: thread.parent.title,
-                    authorId: thread.parent.authorId,
-                    replies: thread.children
-                })
-            }, 500);
+            this.setState({
+                author: thread.parent.author,
+                content: thread.parent.content,
+                created: thread.parent.created,
+                id: thread.parent.id,
+                title: thread.parent.title,
+                authorId: thread.parent.authorId,
+                replies: thread.children
+            })
         })
 
         this.props.connection.on("SendChildren", children => {
