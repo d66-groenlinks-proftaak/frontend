@@ -4,6 +4,8 @@ import {Sidebar} from 'primereact/sidebar';
 import {InputText} from "primereact/inputtext";
 import {Editor} from 'primereact/editor';
 import {Dropdown} from "primereact/dropdown";
+import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
+import {connect} from "react-redux";
 
 class Header extends React.Component {
     constructor(props) {
@@ -244,4 +246,8 @@ class Header extends React.Component {
     }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+    return {loggedIn: getAuthAuthenticated(state)}
+}
+
+export default connect(mapStateToProps)(Header);

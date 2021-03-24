@@ -4,6 +4,9 @@ import Account from "./Account";
 import {InputText} from "primereact/inputtext";
 import {faSun} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {connect} from "react-redux";
+import {getDarkMode} from "../../Core/Global/global.selectors";
+import {setDarkMode} from "../../Core/Global/global.actions";
 
 class index extends React.Component {
     render() {
@@ -28,7 +31,8 @@ class index extends React.Component {
                              accountName={this.props.accountName}
                              loggedIn={this.props.loggedIn}/>
 
-                    <span onClick={this.props.toggleDarkMode} className={"darkmode-toggle"}
+                    <span onClick={() => this.props.dispatch(setDarkMode(!this.props.darkmode))}
+                          className={"darkmode-toggle"}
                           style={{paddingLeft: 10, fontSize: "1.2em"}}>
                         <FontAwesomeIcon icon={faSun}/>
                     </span>
@@ -38,4 +42,8 @@ class index extends React.Component {
     }
 }
 
-export default index;
+const mapStateToProps = (state) => {
+    return {darkmode: getDarkMode(state)}
+}
+
+export default connect(mapStateToProps)(index);

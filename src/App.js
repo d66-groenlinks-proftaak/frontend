@@ -5,6 +5,8 @@ import 'primeflex/primeflex.css';
 
 import './App.css';
 
+import {connect} from "react-redux";
+
 import Home from "./Main/Home";
 import Header from "./Shared/Header";
 import React from "react";
@@ -13,32 +15,16 @@ import {HubConnectionBuilder} from "@microsoft/signalr";
 import PageListener from "./Main/Home/PageListener";
 import Footer from "./Shared/Layout/Footer";
 import Account from "./Main/Account";
+import {getDarkMode, getGlobalConnection} from "./Core/Global/global.selectors";
+import {setConnection, setDarkMode} from "./Core/Global/global.actions";
+import {loginSuccess} from "./Core/Authentication/authentication.actions";
 
 
 class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            loggedIn: false,
-            accountName: false,
-            accountId: "",
-            registerCallback: undefined,
-            loginCallback: undefined,
-            authenticationError: false,
-            darkMode: (localStorage.getItem("dark") === "1")
-        }
-    }
-
-    login(username, password) {
-        this.setState({
-            authenticationError: false
-        })
-
-        this.state.connection.send("Login", {
-            Email: username,
-            Password: password
-        });
+        this.props.dispatch(setDarkMode(localStorage.getItem("dark") === "1"));
     }
 
     register(firstname, lastname, password, email) {
@@ -54,14 +40,6 @@ class App extends React.Component {
         })
     }
 
-    toggleDarkMode = () => {
-        localStorage.setItem("dark", (this.state.darkMode) ? "0" : "1");
-
-        this.setState(state => {
-            return {darkMode: !state.darkMode};
-        })
-    }
-
     componentDidMount() {
         const connection = new HubConnectionBuilder()
             .withUrl('http://localhost:5000/hub/message')
@@ -70,19 +48,11 @@ class App extends React.Component {
 
         connection.start()
             .then(result => {
-                this.setState({
-                    connection: connection
-                })
+                this.props.dispatch(setConnection(connection))
 
                 connection.send('UpdatePage', this.props.location.pathname);
                 connection.on("Authenticated", account => {
-                    this.setState({
-                        loggedIn: true,
-                        accountName: account.email,
-                        accountId: account.accountId
-                    });
-
-                    localStorage.setItem("token", account.token);
+                    this.props.dispatch(loginSuccess(account.email, account.accountId, account.token))
                 });
 
                 connection.on("AuthenticateFailed", error => {
@@ -104,30 +74,22 @@ class App extends React.Component {
     }
 
     render() {
-        if (!this.state.connection || !this.state.connection.connectionStarted)
-            return <div style={{height: "100vh"}} className={(this.state.darkMode ? "dark" : "")}>Connecting...</div>
+        if (!this.props.connection || !this.props.connection.connectionStarted)
+            return <div style={{height: "100vh"}} className={(this.props.darkmode ? "dark" : "")}>Connecting...</div>
         return (
-            <div className={"p-grid p-nogutter " + (this.state.darkMode ? "dark" : "")}
-                 style={{width: "100%", height: "100vh"}}>
+            <div className={"p-grid p-nogutter " + (this.props.darkmode ? "dark" : "")}
+                 style={{width: "100vw", height: "100vh"}}>
 
                 <title>Ringkey</title>
 
                 <div className={"p-col-12"}>
-                    <PageListener connection={this.state.connection}/>
-                    <Header darkMode={this.state.darkMode} toggleDarkMode={() => {
-                        this.toggleDarkMode()
-                    }} accountId={this.state.accountId} accountName={this.state.accountName}
-                            loggedIn={this.state.loggedIn}
-                            connection={this.state.connection}/>
+                    <PageListener/>
+                    <Header/>
                     <Switch>
                         <Route path={"/account"} render={(props) => {
-                            return <Account loggedIn={this.state.loggedIn}
-                                            authenticationError={this.state.authenticationError}
-                                            login={(username, password, cb) => this.login(username, password, cb)}
-                                            register={(firstname, lastname, password, email) => this.register(firstname, lastname, password, email)} {...props} />
+                            return <Account {...props} />
                         }}/>
-                        <Route path={"/"} render={(props) => <Home loggedIn={this.state.loggedIn}
-                                                                   connection={this.state.connection}/>}/>
+                        <Route path={"/"} render={(props) => <Home/>}/>
                     </Switch>
                 </div>
 
@@ -139,4 +101,8 @@ class App extends React.Component {
     }
 }
 
-export default withRouter(App);
+const mapStateToProps = (state) => {
+    return {connection: getGlobalConnection(state), darkmode: getDarkMode(state)}
+}
+
+export default connect(mapStateToProps)(withRouter(App));

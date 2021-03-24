@@ -29,11 +29,12 @@ function Reply(props) {
                 <div>
                     <Menu ref={props.menuRef} popup model={props.extraOptions}/>
 
-                <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
-                        iconPos="right"
-                        onClick={(event) =>{ props.menuRef.current.toggle(event)
-                            props.setReportId(props.id)
-                        }}/>
+                    <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
+                            iconPos="right"
+                            onClick={(event) => {
+                                props.menuRef.current.toggle(event)
+                                props.setReportId(props.id)
+                            }}/>
 
                     {props.level === undefined ? <Button onClick={() => {
                         props.setPostWindow(true)

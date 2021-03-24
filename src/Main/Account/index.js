@@ -2,31 +2,39 @@ import React from "react";
 import {Route, Switch, Redirect} from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import {login} from "../../Core/Authentication/authentication.actions";
+import {useSelector, connect} from "react-redux";
+import {
+    getAuthAuthenticated,
+    getAuthAuthenticating
+} from "../../Core/Authentication/authentication.selectors";
 
-class Account extends React.Component {
-    render() {
-        return <div>
-            <Switch>
-                <Route path={"/account/login"} render={(props) => {
-                    if (this.props.loggedIn)
-                        return <Redirect to={"/"}/>
+const Account = (props) => {
+    return <div>
+        <Switch>
+            <Route path={"/account/login"} render={(_props) => {
+                if (props.authenticated)
+                    return <Redirect to={"/"}/>
 
-                    return <Login
-                        authenticationError={this.props.authenticationError}
-                        login={(username, password, cb) => this.props.login(username, password, cb)} {...props} />
-                }}/>
+                return <Login
+                    login={(username, password) => {
+                        props.dispatch(login(username, password, ""))
+                    }} {..._props} loggingIn={props.authenticating}/>
+            }}/>
 
-                <Route path={"/account/register"} render={(props) => {
-                    if (this.props.loggedIn)
-                        return <Redirect to={"/"}/>
+            <Route path={"/account/register"} render={(_props) => {
+                if (props.authenticated)
+                    return <Redirect to={"/"}/>
 
-                    return <Register
-                        authenticationError={this.props.authenticationError}
-                        register={(firstname, lastname, password, email) => this.props.register(firstname, lastname, password, email)} {...props} />
-                }}/>
-            </Switch>
-        </div>
-    }
+                return <Register
+                    register={(firstname, lastname, password, email) => _props.register(firstname, lastname, password, email)} {...props} />
+            }}/>
+        </Switch>
+    </div>
 }
 
-export default Account;
+const mapStateToProps = state => {
+    return {authenticating: getAuthAuthenticating(state), authenticated: getAuthAuthenticated(state)}
+}
+
+export default connect(mapStateToProps)(Account);
