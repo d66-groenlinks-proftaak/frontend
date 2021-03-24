@@ -61,7 +61,7 @@ class App extends React.Component {
             return <div style={{height: "100vh"}} className={(this.props.darkmode ? "dark" : "")}>Connecting...</div>
         return (
             <div className={"p-grid p-nogutter " + (this.props.darkmode ? "dark" : "")}
-                 style={{width: "100vw", height: "100vh"}}>
+                 style={{width: "100%", height: "100vh"}}>
 
                 <title>Ringkey</title>
 

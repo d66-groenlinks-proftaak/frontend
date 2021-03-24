@@ -15,7 +15,7 @@ import Reply from "./Reply";
 import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
-import {List, CellMeasurer, CellMeasurerCache, AutoSizer} from "react-virtualized";
+import {List, CellMeasurer, CellMeasurerCache, AutoSizer, WindowScroller} from "react-virtualized";
 
 
 const TestList = [
@@ -414,41 +414,46 @@ class Message extends React.Component {
             </div>
         }
 
+        const threadStart = <Card title={this.state.title}
+                                  subTitle={<span><Link to={"/profile/" + this.state.authorId}
+                                                        style={{color: "blue"}}>@{this.state.author}</Link></span>}
+                                  className={"p-mt-5 p-mb-5"}>
+            <div style={{wordBreak: "break-all"}}
+                 dangerouslySetInnerHTML={{__html: this.state.content}}/>
+            <div className="p-d-flex p-jc-between p-ai-center">
+                <div className={"message-posted"}
+                     data-pr-tooltip={DateTime.fromMillis(this.state.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
+                    {DateTime.fromMillis(this.state.created).toRelative({locale: "nl"})}
+                </div>
+                <div>
+                    <Menu ref={this.menuRef} popup model={this.extraOptions}/>
+
+                    <Button className={"p-button-secondary p-mr-2 p-button-text"}
+                            icon="pi pi-ellipsis-h"
+                            iconPos="right"
+                            onClick={(event) => {
+                                this.menuRef.current.toggle(event)
+                                this.setReportId(this.state.id)
+                            }}/>
+
+                    <Button onClick={() => {
+                        this.togglePostWindow()
+                        this.setState({
+                            replyingTo: "",
+                            replyingToId: ""
+                        })
+                    }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
+                            label={"Reageer"}
+                            iconPos="right"/>
+                </div>
+            </div>
+        </Card>
+
         return <div className={"p-mt-5"}>
             {header}
-            <Card title={this.state.title} subTitle={<span><Link to={"/profile/" + this.state.authorId}
-                                                                 style={{color: "blue"}}>@{this.state.author}</Link></span>}
-                  className={"p-mt-5 p-mb-5"}>
-                <div style={{wordBreak: "break-all"}}
-                     dangerouslySetInnerHTML={{__html: this.state.content}}/>
-                <div className="p-d-flex p-jc-between p-ai-center">
-                    <div className={"message-posted"}
-                         data-pr-tooltip={DateTime.fromMillis(this.state.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
-                        {DateTime.fromMillis(this.state.created).toRelative({locale: "nl"})}
-                    </div>
-                    <div>
-                        <Menu ref={this.menuRef} popup model={this.extraOptions}/>
 
-                        <Button className={"p-button-secondary p-mr-2 p-button-text"}
-                                icon="pi pi-ellipsis-h"
-                                iconPos="right"
-                                onClick={(event) => {
-                                    this.menuRef.current.toggle(event)
-                                    this.setReportId(this.state.id)
-                                }}/>
 
-                        <Button onClick={() => {
-                            this.togglePostWindow()
-                            this.setState({
-                                replyingTo: "",
-                                replyingToId: ""
-                            })
-                        }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
-                                label={"Reageer"}
-                                iconPos="right"/>
-                    </div>
-                </div>
-            </Card>
+            {threadStart}
 
             <Divider align="left">
             <span className="p-tag"
@@ -461,7 +466,7 @@ class Message extends React.Component {
                   }}>Reacties</span>
             </Divider>
 
-            <div className={"p-grid"}>
+            <div className={"p-grid p-nogutter"}>
                 <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
                          style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
                          position="bottom"
@@ -509,16 +514,24 @@ class Message extends React.Component {
                         setReportWindow={this.setReportWindow}/>
             </Sidebar>
 
-            <div style={{paddingBottom: 20, height: 600, width: "100%"}}>
-                <AutoSizer>
-                    {({height, width}) => {
-                        return <List ref={this.listRef} deferredMeasurementCache={this._cache}
-                                     rowHeight={this._cache.rowHeight}
-                                     height={height} width={width}
-                                     rowCount={this.state.replies.length}
-                                     rowRenderer={this._rowRenderer}/>
-                    }}
-                </AutoSizer>
+            <div>
+                <WindowScroller scrollElement={window}>
+                    {({height, isScrolling, registerChild, onChildScroll, scrollTop}) => (
+                        <AutoSizer disableHeight>
+                            {({width}) => <List autoHeight
+                                                isScrolling={isScrolling}
+                                                onScroll={onChildScroll}
+                                                overscanRowCount={2}
+                                                scrollTop={scrollTop} ref={this.listRef}
+                                                deferredMeasurementCache={this._cache}
+                                                rowHeight={this._cache.rowHeight}
+                                                autoHeight width={width} height={height}
+                                                rowCount={this.state.replies.length}
+                                                rowRenderer={this._rowRenderer}/>
+                            }
+                        </AutoSizer>
+                    )}
+                </WindowScroller>
             </div>
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
         </div>

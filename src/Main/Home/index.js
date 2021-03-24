@@ -45,7 +45,7 @@ class Home extends React.Component {
     }
 
     render() {
-        return <div style={{width: "100%"}} className="p-grid p-justify-center p-nogutter p-pl-2 p-pr-2">
+        return <div style={{width: "100%"}} className="p-grid p-justify-center p-nogutter">
             <Switch>
                 <Route path={"/thread/:id"} render={(props) =>
                     <div className={"p-col-12 p-md-8"}>

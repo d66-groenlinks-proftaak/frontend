@@ -6,7 +6,7 @@ import {Card} from "primereact/card";
 import React from "react";
 
 function Reply(props) {
-    
+
     return <div
         className={props.level > 0 ? "post-child" : ""}
         style={{
