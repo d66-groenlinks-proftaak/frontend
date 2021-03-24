@@ -1,5 +1,7 @@
 import React from "react";
 import {withRouter} from "react-router";
+import {getGlobalConnection} from "../../Core/Global/global.selectors";
+import {connect} from "react-redux";
 
 class PageListener extends React.Component {
     componentDidMount() {
@@ -14,4 +16,7 @@ class PageListener extends React.Component {
     }
 }
 
-export default withRouter(PageListener);
+const mapStateToProps = (state) => {
+    return {connection: getGlobalConnection(state)}
+}
+export default connect(mapStateToProps)(withRouter(PageListener));

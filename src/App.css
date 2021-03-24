@@ -285,8 +285,7 @@ Darkmode
 
 .dark .p-editor-toolbar {
     background: #121212 !important;
-    border: 1px solid #212121 !important;
-    ;
+    border: 1px solid #212121 !important;;
 }
 
 .dark .ql-picker-options {
@@ -317,15 +316,13 @@ Darkmode
 .dark .ql-picker-item:hover {
     background: #212121 !important;
     color: white !important;
-    border: 1px solid #212121 !important;
-    ;
+    border: 1px solid #212121 !important;;
 }
 
 .dark .ql-picker-item {
     background: #121212 !important;
     color: white !important;
-    border: 1px solid #212121 !important;
-    ;
+    border: 1px solid #212121 !important;;
 }
 
 

@@ -28,12 +28,12 @@ class Login extends React.Component {
     }
 
     render() {
-        return <div className={"p-grid p-justify-center"}>
+        return <div className={"p-grid p-nogutter p-justify-center"}>
             <div className={"p-col-12 p-md-4 p-lg-3 p-xl-2"}>
                 <h1 style={{textAlign: "center"}}>Login</h1>
 
                 <div className="p-fluid">
-                    <div className="p-field p-grid">
+                    <div className="p-field p-grid p-nogutter">
                         <label htmlFor="username" className="p-col-12">Gebruikersnaam</label>
                         <div className="p-col-12">
                             <InputText onInput={(input) => this.onChangeUsername(input)} value={this.state.username}
@@ -49,7 +49,7 @@ class Login extends React.Component {
                         </div>
                     </div>
 
-                    <Button onClick={() => {
+                    <Button disabled={this.props.loggingIn} onClick={() => {
                         this.props.login(this.state.username, this.state.password);
                     }} label={"Login"}/>
 

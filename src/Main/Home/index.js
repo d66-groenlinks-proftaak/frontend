@@ -11,6 +11,9 @@ import Profile from "./Profile"
 import {Toast} from "primereact/toast";
 import Categories from "./Categories";
 
+import {connect} from "react-redux";
+import {getGlobalConnection} from "../../Core/Global/global.selectors";
+
 const errors = [
     "Geen fout",
     "Tekstbericht was te kort",
@@ -70,4 +73,8 @@ class Home extends React.Component {
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {connection: getGlobalConnection(state)}
+}
+
+export default connect(mapStateToProps)(Home);

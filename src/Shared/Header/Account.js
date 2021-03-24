@@ -2,6 +2,8 @@ import React from "react";
 import {Button} from "primereact/button";
 import {Link, Redirect} from "react-router-dom";
 import {Menu} from 'primereact/menu';
+import {connect} from "react-redux";
+import {getAuthAuthenticated, getAuthEmail, getAuthId} from "../../Core/Authentication/authentication.selectors";
 
 class Account extends React.Component {
     constructor(props) {
@@ -66,4 +68,8 @@ class Account extends React.Component {
     }
 }
 
-export default Account;
+const mapStateToProps = (state) => {
+    return {loggedIn: getAuthAuthenticated(state), accountName: getAuthEmail(state), accountId: getAuthId(state)}
+}
+
+export default connect(mapStateToProps)(Account);

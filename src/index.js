@@ -4,15 +4,19 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import {Provider} from "react-redux";
+import store from "./Core/app.reducer";
 
 ReactDOM.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <div style={{overflowY: "scroll"}}>
-                <App/>
-            </div>
-        </BrowserRouter>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <React.StrictMode>
+            <BrowserRouter>
+                <div>
+                    <App/>
+                </div>
+            </BrowserRouter>
+        </React.StrictMode>
+    </Provider>,
     document.getElementById('root')
 );
 

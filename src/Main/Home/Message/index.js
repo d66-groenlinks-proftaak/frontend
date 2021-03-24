@@ -13,7 +13,8 @@ import {DateTime} from "luxon"
 import {Tooltip} from 'primereact/tooltip';
 import Reply from "./Reply";
 import Report from "./Report";
-
+import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
+import {connect} from "react-redux";
 
 
 class Message extends React.Component {
@@ -62,7 +63,7 @@ class Message extends React.Component {
             }
         }
     ]
-    
+
     setPostWindow = (open) => {
         this.setState(state => {
             return {activeIndex: open}
@@ -77,7 +78,7 @@ class Message extends React.Component {
 
     setReportWindow = (open) => {
         this.setState({
-            newReportOpen: open            
+            newReportOpen: open
         });
     }
 
@@ -163,7 +164,7 @@ class Message extends React.Component {
         return replies;
     }
 
-    setReportId = (id) =>{
+    setReportId = (id) => {
         this.setState({
             reportId: id
         })
@@ -389,8 +390,9 @@ class Message extends React.Component {
 
                         <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
                                 iconPos="right"
-                                onClick={(event) =>{ this.menuRef.current.toggle(event)
-                                this.setReportId(this.state.id)
+                                onClick={(event) => {
+                                    this.menuRef.current.toggle(event)
+                                    this.setReportId(this.state.id)
                                 }}/>
 
                         <Button onClick={() => {
@@ -456,8 +458,10 @@ class Message extends React.Component {
                 </Sidebar>
             </div>
 
-            <Sidebar  visible={this.state.newReportOpen} style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"} onHide={() => this.props.setReportWindow(false)}position="right">
-                <Report id = {this.state.reportId} connection = {this.props.connection} setReportWindow={this.setReportWindow}/>
+            <Sidebar visible={this.state.newReportOpen} style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"}
+                     onHide={() => this.props.setReportWindow(false)} position="right">
+                <Report id={this.state.reportId} connection={this.props.connection}
+                        setReportWindow={this.setReportWindow}/>
             </Sidebar>
 
             <div style={{paddingBottom: 20}}>
@@ -480,4 +484,8 @@ class Message extends React.Component {
     }
 }
 
-export default Message;
+const mapStateToProps = (state) => {
+    return {loggedIn: getAuthAuthenticated(state)}
+}
+
+export default connect(mapStateToProps)(Message);
