@@ -24,12 +24,10 @@ class Messages extends React.Component {
 
     componentDidMount() {
         this.props.connection.on("SendThreads", _messages => {
-            setTimeout(() => {
-                this.setState({
-                    messages: _messages,
-                    loaded: true
-                })
-            }, 500)
+            this.setState({
+                messages: _messages,
+                loaded: true
+            })
         })
 
         this.props.connection.on("SendMessage", _message => {
