@@ -15,7 +15,13 @@ import Reply from "./Reply";
 import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
+import {List, CellMeasurer, CellMeasurerCache, AutoSizer} from "react-virtualized";
 
+
+const TestList = [
+    "Haha",
+    "Haha2'"
+]
 
 class Message extends React.Component {
     constructor(props) {
@@ -29,6 +35,7 @@ class Message extends React.Component {
             id: "",
             title: "",
             replies: [],
+            repliesStr: ["test", "test2"],
             newPostOpen: false,
             additionalProps: {},
             newPost: {
@@ -46,7 +53,14 @@ class Message extends React.Component {
             reportId: ""
         }
 
+        this.listRef = React.createRef();
+
         this.menuRef = React.createRef();
+        this._cache = new CellMeasurerCache({
+            fixedWidth: true
+        })
+
+        this._rowRenderer.bind(this)
     }
 
     extraOptions = [{
@@ -213,6 +227,7 @@ class Message extends React.Component {
                             return {loadingMore}
                         })
 
+
                         this.props.connection.send("LoadSubReplies", reply.id)
                     }} className={"p-button-text p-ml-5"} style={{width: "200px"}}
                                        icon={this.state.loadingMore[reply.parent] ? "pi pi-spin pi-spinner" : ""}
@@ -247,6 +262,29 @@ class Message extends React.Component {
         this.props.connection.off("SendChild");
     }
 
+
+    _rowRenderer = ({index, key, parent, style}) => {
+        const reply = this.state.replies[index];
+
+        return <CellMeasurer parent={parent} cache={this._cache} columnIndex={0} rowIndex={index} key={key}>
+            {({measure, registerChild}) => {
+                return <div style={{...style}}>
+                    <Reply
+                        setReportId={this.setReportId} setReplyingTo={(a, b) => {
+                        this.setReplyingTo(a, b)
+                    }} setPostWindow={(b) => {
+                        this.setPostWindow(b)
+                    }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
+                        author={reply.author}
+                        authorId={reply.authorId}
+                        extraOptions={this.extraOptions}/>
+
+                    {this.GetReplies(1, reply)}
+                </div>
+            }}
+        </CellMeasurer>
+    }
+
     componentDidMount() {
         this.props.connection.on("SendThreadDetails", thread => {
             setTimeout(() => {
@@ -276,8 +314,6 @@ class Message extends React.Component {
                     this.GetParent(_children, child.parent).replyContent = [child]
             }
 
-            console.log("DONE ADDING")
-
             if (children.length > 3) {
                 displayMore[children[0].parent] = false;
                 loadingMore[children[0].parent] = false;
@@ -287,9 +323,11 @@ class Message extends React.Component {
             }
 
             console.log(this.GetParent(_children, children[0].parent))
-            console.log("SETTING STATE")
 
-            this.setState({replies: _children, displayMore: displayMore, loadingMore: loadingMore})
+            this.setState({replies: _children, displayMore: displayMore, loadingMore: loadingMore}, () => {
+                this._cache.clearAll()
+                this.listRef.current.forceUpdateGrid()
+            })
         })
 
         this.props.connection.on("SendChild", child => {
@@ -302,8 +340,6 @@ class Message extends React.Component {
                 if (children[_reply].id === child.parent)
                     parent = _reply;
             }
-
-            console.log(parent)
 
             if (child.parent === this.props.id) {
                 children.unshift(child);
@@ -321,7 +357,10 @@ class Message extends React.Component {
                     this.GetParent(children, child.parent).replyContent = [child]
             }
 
-            this.setState({replies: children, displayMore: displayMore, loadingMore: loadingMore})
+            this.setState({replies: children, displayMore: displayMore, loadingMore: loadingMore}, () => {
+                this._cache.clearAll()
+                this.listRef.current.forceUpdateGrid()
+            })
         })
 
         this.props.connection.on("ConfirmReport", (ReportConfirmation) => {
@@ -356,7 +395,8 @@ class Message extends React.Component {
 
         let header = <div className="p-d-flex p-jc-between p-ai-center">
             <Link to={"/"}>
-                <Button className={"p-button-info p-button-outlined"} label={"Terug"} style={{float: "right"}}
+                <Button className={"p-button-info p-button-outlined"} label={"Terug"}
+                        style={{float: "right"}}
                         icon="pi pi-arrow-left" iconPos="left"/>
             </Link>
             <div>
@@ -379,7 +419,8 @@ class Message extends React.Component {
             <Card title={this.state.title} subTitle={<span><Link to={"/profile/" + this.state.authorId}
                                                                  style={{color: "blue"}}>@{this.state.author}</Link></span>}
                   className={"p-mt-5 p-mb-5"}>
-                <div style={{wordBreak: "break-all"}} dangerouslySetInnerHTML={{__html: this.state.content}}/>
+                <div style={{wordBreak: "break-all"}}
+                     dangerouslySetInnerHTML={{__html: this.state.content}}/>
                 <div className="p-d-flex p-jc-between p-ai-center">
                     <div className={"message-posted"}
                          data-pr-tooltip={DateTime.fromMillis(this.state.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
@@ -388,7 +429,8 @@ class Message extends React.Component {
                     <div>
                         <Menu ref={this.menuRef} popup model={this.extraOptions}/>
 
-                        <Button className={"p-button-secondary p-mr-2 p-button-text"} icon="pi pi-ellipsis-h"
+                        <Button className={"p-button-secondary p-mr-2 p-button-text"}
+                                icon="pi pi-ellipsis-h"
                                 iconPos="right"
                                 onClick={(event) => {
                                     this.menuRef.current.toggle(event)
@@ -401,7 +443,8 @@ class Message extends React.Component {
                                 replyingTo: "",
                                 replyingToId: ""
                             })
-                        }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus" label={"Reageer"}
+                        }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
+                                label={"Reageer"}
                                 iconPos="right"/>
                     </div>
                 </div>
@@ -428,7 +471,8 @@ class Message extends React.Component {
                         <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
                             <span>&nbsp;</span>}</div>
 
-                        {this.state.replyingTo !== "" ? <span><b>Reageren op:</b> {this.state.replyingTo}</span> : ""}
+                        {this.state.replyingTo !== "" ?
+                            <span><b>Reageren op:</b> {this.state.replyingTo}</span> : ""}
 
                         <Editor placeholder={"Typ hier uw reactie"} modules={{
                             toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link', 'blockquote']]
@@ -458,34 +502,37 @@ class Message extends React.Component {
                 </Sidebar>
             </div>
 
-            <Sidebar visible={this.state.newReportOpen} style={{overflowY: "scroll"}} className={"p-col-12 p-md-4"}
+            <Sidebar visible={this.state.newReportOpen} style={{overflowY: "scroll"}}
+                     className={"p-col-12 p-md-4"}
                      onHide={() => this.props.setReportWindow(false)} position="right">
                 <Report id={this.state.reportId} connection={this.props.connection}
                         setReportWindow={this.setReportWindow}/>
             </Sidebar>
 
-            <div style={{paddingBottom: 20}}>
-                {this.state.replies.map(reply => {
-                    return <div><Reply setReportId={this.setReportId} setReplyingTo={(a, b) => {
-                        this.setReplyingTo(a, b)
-                    }} setPostWindow={(b) => {
-                        this.setPostWindow(b)
-                    }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
-                                       author={reply.author}
-                                       authorId={reply.authorId}
-                                       extraOptions={this.extraOptions}/>
-
-                        {this.GetReplies(1, reply)}
-                    </div>
-                })}
+            <div style={{paddingBottom: 20, height: 600, width: "100%"}}>
+                <AutoSizer>
+                    {({height, width}) => {
+                        return <List ref={this.listRef} deferredMeasurementCache={this._cache}
+                                     rowHeight={this._cache.rowHeight}
+                                     height={height} width={width}
+                                     rowCount={this.state.replies.length}
+                                     rowRenderer={this._rowRenderer}/>
+                    }}
+                </AutoSizer>
             </div>
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
         </div>
     }
 }
 
-const mapStateToProps = (state) => {
-    return {loggedIn: getAuthAuthenticated(state)}
-}
+const
+    mapStateToProps = (state) => {
+        return {loggedIn: getAuthAuthenticated(state)}
+    }
 
-export default connect(mapStateToProps)(Message);
+export default connect(mapStateToProps)
+
+(
+    Message
+)
+;
