@@ -17,7 +17,7 @@ import Footer from "./Shared/Layout/Footer";
 import Account from "./Main/Account";
 import {getDarkMode, getGlobalConnection} from "./Core/Global/global.selectors";
 import {setConnection, setDarkMode} from "./Core/Global/global.actions";
-import {loginSuccess} from "./Core/Authentication/authentication.actions";
+import {authenticateFailed, loginSuccess} from "./Core/Authentication/authentication.actions";
 
 
 class App extends React.Component {
@@ -25,19 +25,6 @@ class App extends React.Component {
         super(props);
 
         this.props.dispatch(setDarkMode(localStorage.getItem("dark") === "1"));
-    }
-
-    register(firstname, lastname, password, email) {
-        this.setState({
-            authenticationError: false
-        })
-
-        this.state.connection.send("Register", {
-            FirstName: firstname,
-            LastName: lastname,
-            Password: password,
-            Email: email
-        })
     }
 
     componentDidMount() {
@@ -56,11 +43,7 @@ class App extends React.Component {
                 });
 
                 connection.on("AuthenticateFailed", error => {
-                    console.log(error);
-                    this.setState({
-                        loggedIn: false,
-                        authenticationError: error
-                    })
+                    this.props.dispatch(authenticateFailed(error))
                 });
 
                 connection.on("MessageCreationError", err => {

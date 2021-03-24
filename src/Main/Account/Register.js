@@ -4,6 +4,9 @@ import {Button} from "primereact/button";
 import {Divider} from "primereact/divider";
 import {Link} from "react-router-dom";
 import {Password} from "primereact/password";
+import {connect} from "react-redux";
+import {getAuthAuthenticating, getAuthError} from "../../Core/Authentication/authentication.selectors";
+import {register} from "../../Core/Authentication/authentication.actions";
 
 class Register extends React.Component {
     constructor(props) {
@@ -183,18 +186,14 @@ class Register extends React.Component {
                         </div>
                     </div>
 
-                    <Button icon={this.state.loading ? "pi pi-spin pi-spinner" : "pi pi-check"} iconPos={"right"}
-                            disabled={this.state.loading}
+                    {this.props.error ? <span>{this.props.error}</span> :
+                        <span>&nbsp; </span>}
+
+                    <Button icon={this.props.loading ? "pi pi-spin pi-spinner" : "pi pi-check"} iconPos={"right"}
+                            disabled={this.props.loading}
                             onClick={() => {
-                                this.setState({
-                                    loading: true
-                                })
-
-                                this.props.register(this.state.firstname, this.state.lastname, this.state.password, this.state.email)
+                                this.props.dispatch(register(this.state.firstname, this.state.lastname, this.state.password, this.state.email))
                             }} label={"Aanmelden"}/>
-
-                    {this.props.authenticationError ? <span>{this.props.authenticationError}</span> :
-                        <span>&nbsp; t</span>}
 
                     <Divider/>
                     <p style={{textAlign: "center"}}>Heeft u al een account?</p>
@@ -208,4 +207,8 @@ class Register extends React.Component {
     }
 }
 
-export default Register;
+const mapStateToProps = (state) => {
+    return {error: getAuthError(state), loading: getAuthAuthenticating(state)}
+}
+
+export default connect(mapStateToProps)(Register);

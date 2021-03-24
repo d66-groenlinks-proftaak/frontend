@@ -5,4 +5,5 @@ export const getAuthAuthenticated = store => getAuthState(store).authenticated;
 export const getAuthToken = store => getAuthState(store).token;
 export const getAuthEmail = store => getAuthState(store).email;
 export const getAuthId = store => getAuthState(store).id;
+export const getAuthError = store => getAuthState(store).error;
 

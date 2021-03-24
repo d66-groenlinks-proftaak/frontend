@@ -4,6 +4,10 @@ import {Button} from "primereact/button";
 import {Divider} from "primereact/divider";
 import {Link} from "react-router-dom";
 import {Password} from "primereact/password";
+import {
+    getAuthAuthenticating, getAuthError
+} from "../../Core/Authentication/authentication.selectors";
+import {connect} from "react-redux";
 
 class Login extends React.Component {
     constructor(props) {
@@ -48,6 +52,8 @@ class Login extends React.Component {
                                       id="password" type="text"/>
                         </div>
                     </div>
+                    {this.props.error ? <span>{this.props.error}</span> :
+                        <span>&nbsp; </span>}
 
                     <Button disabled={this.props.loggingIn} onClick={() => {
                         this.props.login(this.state.username, this.state.password);
@@ -65,4 +71,8 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+    return {error: getAuthError(state), loggingIn: getAuthAuthenticating(state)}
+}
+
+export default connect(mapStateToProps)(Login);
