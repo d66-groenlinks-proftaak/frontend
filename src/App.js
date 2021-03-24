@@ -5,14 +5,14 @@ import 'primeflex/primeflex.css';
 
 import './App.css';
 
-import Home from "./Home";
-import Header from "./Header";
+import Home from "./Main/Home";
+import Header from "./Shared/Header";
 import React from "react";
 import {Route, Switch, withRouter} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
-import PageListener from "./Home/PageListener";
-import Footer from "./Layout/Footer";
-import Account from "./Account";
+import PageListener from "./Main/Home/PageListener";
+import Footer from "./Shared/Layout/Footer";
+import Account from "./Main/Account";
 
 
 class App extends React.Component {
