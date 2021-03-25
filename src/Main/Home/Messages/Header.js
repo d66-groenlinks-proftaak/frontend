@@ -4,8 +4,10 @@ import {Sidebar} from 'primereact/sidebar';
 import {InputText} from "primereact/inputtext";
 import {Editor} from 'primereact/editor';
 import {Dropdown} from "primereact/dropdown";
-import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
+import {getAuthAuthenticated, getAuthToken} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
+import {FileUpload} from "primereact/fileupload";
+import { Toast } from "primereact/toast";
 
 class Header extends React.Component {
     constructor(props) {
@@ -26,6 +28,10 @@ class Header extends React.Component {
             invalidAuthor: false,
             currentMessages: 0
         }
+
+        this.uploadRef = undefined
+        this.toastRef = React.createRef();
+        this.upload.bind(this)
     }
 
     setPostWindow = (open) => {
@@ -91,38 +97,16 @@ class Header extends React.Component {
         })
     }
 
-    fullPost() {
-        this.setState({
-            additionalProps: {
-                disabled: true,
-                icon: "pi pi-spin pi-spinner"
-            }
-        })
-
-        this.props.connection.send("CreateMessage", {
-            Title: this.state.newPost.title,
-            Content: this.state.newPost.content,
-            Email: this.state.newPost.email,
-            Author: this.state.newPost.author,
-        })
-            .then(result => {
-                this.setState({
-                    additionalProps: {}
-                })
-
-                this.setPostWindow(false);
-            })
-    }
-
     createPost() {
+        console.log("CREATE")
         this.validateInput("title", this.state.newPost.title, () => {
             this.validateInput("content", this.state.newPost.content, () => {
                 this.validateInput("email", this.state.newPost.email, () => {
                     this.validateInput("author", this.state.newPost.author, () => {
                         if (this.props.loggedIn && !this.state.invalidTitle && !this.state.invalidContent) {
-                            this.fullPost();
+                            this.uploadRef.upload();
                         } else if (!this.state.invalidAuthor && !this.state.invalidEmail && !this.state.invalidTitle && !this.state.invalidContent) {
-                            this.fullPost();
+                            this.uploadRef.upload();
                         }
                     });
                 });
@@ -139,6 +123,40 @@ class Header extends React.Component {
         this.props.setLoaded(false);
 
         this.props.connection.send("RequestSortedList", current);
+    }
+
+    upload(files, ref) {
+        let formData = new FormData();
+        
+        for(let i in files.files) {
+            formData.append(files.files[i].name, files.files[i]);
+        }
+
+        this.setState({
+            additionalProps: {
+                disabled: true,
+                icon: "pi pi-spin pi-spinner"
+            }
+        })
+
+        formData.append("Title", this.state.newPost.title);
+        formData.append("Content", this.state.newPost.content);
+        formData.append("Email", this.state.newPost.email);
+        formData.append("Author", this.state.newPost.author);
+        formData.append("Token", this.props.token);
+
+        fetch('http://localhost:5000/message/create', {
+            method: 'POST',
+            body: formData
+        }).then(() => {
+            this.setState({
+                additionalProps: {}
+            })
+            ref.clear();
+            this.setPostWindow(false);
+        }).catch((e) => {
+            console.log(e);
+        })
     }
 
     render() {
@@ -222,8 +240,16 @@ class Header extends React.Component {
                             console.log(e)
                             this.onInputChanged("content", e.htmlValue)
                         }}/>
+
                         <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
                             <span>&nbsp;</span>}</div>
+
+                        <b>Voeg maximaal 2 bestanden toe</b>
+                        <FileUpload ref={(ref) => {
+                            this.uploadRef = ref;
+                        }} onProgress={this.select} customUpload={true} uploadHandler={(files) => {
+                            this.upload(files, this.uploadRef);
+                        }} chooseLabel="Bestanden Kiezen" name="demo[]" url="./upload" multiple />
 
 
                         {authenticated}
@@ -241,13 +267,14 @@ class Header extends React.Component {
                         </div>
                     </div>
                 </Sidebar>
+                <Toast ref={this.toastRef}/>
             </div>
         </div>
     }
 }
 
 const mapStateToProps = (state) => {
-    return {loggedIn: getAuthAuthenticated(state)}
+    return {loggedIn: getAuthAuthenticated(state), token: getAuthToken(state)}
 }
 
 export default connect(mapStateToProps)(Header);

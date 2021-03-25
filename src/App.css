@@ -407,3 +407,22 @@ Darkmode
 .dark .p-grid {
     background: #121212;
 }
+
+.dark .p-fileupload-buttonbar {
+    background: #121212;
+    border: 1px solid #1e1e1e;
+}
+
+.p-fileupload-buttonbar .p-button:nth-child(2) {
+    display: none;
+}
+
+.p-fileupload-buttonbar .p-button:last-child {
+    display: none;
+}
+
+.dark .p-fileupload-content {
+    background: #212121;
+    border: none;
+    margin-bottom: 20px;
+}

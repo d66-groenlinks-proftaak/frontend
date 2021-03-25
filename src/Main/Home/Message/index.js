@@ -44,7 +44,8 @@ class Message extends React.Component {
             replyingToId: "",
             loadingMore: {},
             displayMore: {},
-            reportId: ""
+            reportId: "",
+            attachments: []
         }
 
         this.listRef = React.createRef();
@@ -288,6 +289,7 @@ class Message extends React.Component {
                 id: thread.parent.id,
                 title: thread.parent.title,
                 authorId: thread.parent.authorId,
+                attachments: thread.parent.attachments || [],
                 replies: thread.children
             })
         })
@@ -437,8 +439,27 @@ class Message extends React.Component {
                     }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
                             label={"Reageer"}
                             iconPos="right"/>
-                </div>
+                </div>                
             </div>
+
+            {this.state.attachments.length > 0 ? <div>
+                <Divider />
+                        <h3>Bijvoegingen</h3>
+
+                        <div className="p-grid">
+                            { this.state.attachments.map(attachment => {
+                                return <div className="p-col-4" style={{position: "relative", marginBottom: 5}}>
+                                    <div style={{paddingBottom: 20}}>
+                                        <img src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`} alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}} />
+                                    </div>
+                                    <div style={{position: "absolute", bottom: 0}}>
+                                        { attachment.name }
+                                    </div>
+                                </div>
+                            })}
+                        </div>
+            </div> : "" }
+            
         </Card>
 
         return <div className={"p-mt-5"}>
