@@ -188,21 +188,6 @@ class Header extends React.Component {
             {label: "Oudste", value: 2},
         ]
 
-        const editorHeader = (
-            <span id={"toolbar"}>
-                <select className="ql-size">
-                    <option className={"ql-small"} value="small"/>
-                    <option selected/>
-                    <option value="large"/>
-                    <option value="huge"/>
-                </select>
-                <button className="ql-bold" aria-label="Bold"/>
-                <button className="ql-italic" aria-label="Italic"/>
-                <button className="ql-underline" aria-label="Underline"/>
-                <button className="ql-blockquote" aria-label="Blockquote"/>
-            </span>
-        );
-
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
