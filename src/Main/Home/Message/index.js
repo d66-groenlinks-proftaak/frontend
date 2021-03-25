@@ -9,6 +9,7 @@ import LoadingMessage from "./LoadingMessage";
 import {Menu} from "primereact/menu";
 import {Divider} from "primereact/divider";
 import {DateTime} from "luxon"
+import {Dialog} from 'primereact/dialog';
 import {Tooltip} from 'primereact/tooltip';
 import {ScrollTop} from 'primereact/scrolltop';
 import Reply from "./Reply";
@@ -45,7 +46,9 @@ class Message extends React.Component {
             loadingMore: {},
             displayMore: {},
             reportId: "",
-            attachments: []
+            attachments: [],
+            showAttachment: false,
+            attachment: ""
         }
 
         this.listRef = React.createRef();
@@ -72,6 +75,13 @@ class Message extends React.Component {
             }
         }
     ]
+
+    showAttachment(bool, url) {
+        this.setState({
+            showAttachment: bool,
+            attachment: url
+        })
+    }
 
     setPostWindow = (open) => {
         this.setState(_ => {
@@ -371,6 +381,12 @@ class Message extends React.Component {
         })
     }
 
+    onHide = () => {
+        this.setState({
+            showAttachment: false
+        })
+    }
+
     render() {
         let authenticated = <div>
             <h3>E-Mail</h3>
@@ -450,7 +466,9 @@ class Message extends React.Component {
                             { this.state.attachments.map(attachment => {
                                 return <div className="p-col-4" style={{position: "relative", marginBottom: 5}}>
                                     <div style={{paddingBottom: 20}}>
-                                        <img src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`} alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}} />
+                                        <img onClick={() => {
+                                            this.showAttachment(true, `http://localhost:5000/images/${attachment.id}_${attachment.name}`)
+                                        }} src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`} alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}} />
                                     </div>
                                     <div style={{position: "absolute", bottom: 0}}>
                                         { attachment.name }
@@ -546,6 +564,12 @@ class Message extends React.Component {
                     )}
                 </WindowScroller>
             </div>
+
+            <Dialog breakpoints={{'960px': '75vw', '640px': '100vw'}} dismissableMask={true} keepInViewport={true} header="Bijlage" visible={this.state.showAttachment} onHide={() => {
+                this.onHide();
+            }}>
+                <img src={ this.state.attachment } alt="Bijlage" style={{width: "100%", maxHeight: "100%"}} />
+            </Dialog>
 
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
             <ScrollTop/>

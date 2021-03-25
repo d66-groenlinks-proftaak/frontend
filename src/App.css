@@ -131,6 +131,11 @@ html {
     height: 100%;
     width: 100%;
 }
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    }
 
 /*
 Darkmode
@@ -147,6 +152,19 @@ Darkmode
 
 .brand {
     color: black;
+}
+
+.p-dialog-header {
+    background: #121212 !important;
+}
+
+.p-dialog-title {    
+    color: white !important;
+}
+
+.p-dialog-content {
+    
+    background: #1e1e1e !important;
 }
 
 .dark .header {
