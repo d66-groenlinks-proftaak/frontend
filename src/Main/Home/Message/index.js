@@ -17,6 +17,7 @@ import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
 import {List, CellMeasurer, CellMeasurerCache, AutoSizer, WindowScroller} from "react-virtualized";
+import Replies from "./Replies";
 
 class Message extends React.Component {
     constructor(props) {
@@ -57,8 +58,6 @@ class Message extends React.Component {
         this._cache = new CellMeasurerCache({
             fixedWidth: true
         })
-
-        this._rowRenderer.bind(this)
     }
 
     extraOptions = [{
@@ -149,40 +148,6 @@ class Message extends React.Component {
             })
     }
 
-    GetRepliesDepth(level, message) {
-        let replies = [];
-
-        if (message.replyContent)
-            for (let reply of message.replyContent) {
-                let item = {
-                    parent: message.id,
-                    id: reply.id,
-                    children: [],
-                    created: reply.created
-                }
-
-                item.element = (<Reply setReplyingTo={(a, b) => {
-                    this.setReplyingTo(a, b)
-                }} setPostWindow={(b) => {
-                    this.setPostWindow(b)
-                }} level={level} content={reply.content} menuRef={this.menuRef}
-                                       created={reply.created}
-                                       id={reply.id}
-                                       author={reply.author}
-                                       authorId={reply.authorId}
-                                       extraOptions={this.extraOptions}/>)
-
-                if (reply.replyContent && reply.replyContent.length > 0) {
-                    for (let r of this.GetRepliesDepth(level + 1, reply))
-                        item.children.push(r)
-                }
-
-                replies.push(item)
-            }
-
-        return replies;
-    }
-
     setReportId = (id) => {
         this.setState({
             reportId: id
@@ -200,94 +165,8 @@ class Message extends React.Component {
         }
     }
 
-    GetReplies(level, message) {
-        let replies = this.GetRepliesDepth(level, message);
-
-        let cur = 0;
-        let addToEnd = <span/>
-        return <div>
-            {replies.map(reply => {
-                cur++;
-
-                let parent;
-
-                for (let _reply of this.state.replies) {
-                    if (_reply.id === reply.parent) {
-                        parent = _reply;
-                        break;
-                    }
-                }
-
-                if (cur === replies.length && (replies.length < parent.replies)) {
-                    if (this.state.displayMore[reply.parent] === true) {
-                        addToEnd = <span/>
-                    }
-
-                    addToEnd = <Button onClick={() => {
-                        this.setState(state => {
-                            const loadingMore = Object.assign({}, state.loadingMore);
-
-                            loadingMore[reply.parent] = true;
-
-                            return {loadingMore}
-                        })
-
-
-                        this.props.connection.send("LoadSubReplies", reply.id)
-                    }} className={"p-button-text p-ml-5"} style={{width: "200px"}}
-                                       icon={this.state.loadingMore[reply.parent] ? "pi pi-spin pi-spinner" : ""}
-                                       iconPos="right"
-                                       disabled={this.state.loadingMore[reply.parent]} label={"Meer Laden"}/>
-                }
-
-                return <div>
-                    {reply.element}
-                    {addToEnd}
-                </div>;
-            })}
-        </div>
-    }
-
-    GetParent(replies, id) {
-        for (let reply of replies)
-            if (reply.id === id)
-                return reply;
-
-        for (let reply of replies)
-            if (reply.replyContent && reply.replyContent.length > 0) {
-                let rValue = this.GetParent(reply.replyContent, id);
-                if (rValue)
-                    return rValue;
-            }
-    }
-
     componentWillUnmount() {
         this.props.connection.off("SendThreadDetails");
-        this.props.connection.off("SendChildren");
-        this.props.connection.off("SendChild");
-    }
-
-
-    _rowRenderer = ({index, key, parent, style}) => {
-        const reply = this.state.replies[index];
-
-        return <CellMeasurer parent={parent} cache={this._cache} columnIndex={0} rowIndex={index} key={key}>
-            {() => {
-                return <div style={{...style}}>
-                    <Reply
-                        setReportId={this.setReportId} setReplyingTo={(a, b) => {
-                        this.setReplyingTo(a, b)
-                    }} setPostWindow={(b) => {
-                        this.setPostWindow(b)
-                    }} content={reply.content} menuRef={this.menuRef} created={reply.created} id={reply.id}
-                        author={reply.author}
-                        authorId={reply.authorId}
-                        extraOptions={this.extraOptions}/>
-
-                    {this.GetReplies(1, reply)}
-                </div>
-            }}
-        </CellMeasurer>
     }
 
     componentDidMount() {
@@ -301,69 +180,6 @@ class Message extends React.Component {
                 authorId: thread.parent.authorId,
                 attachments: thread.parent.attachments || [],
                 replies: thread.children
-            })
-        })
-
-        this.props.connection.on("SendChildren", children => {
-            const _children = Object.assign([], this.state.replies);
-            const displayMore = Object.assign([], this.state.displayMore);
-            const loadingMore = Object.assign([], this.state.loadingMore);
-
-            console.log(children);
-
-            for (let child of children) {
-                if (this.GetParent(_children, child.parent).replyContent)
-                    this.GetParent(_children, child.parent).replyContent.push(child);
-                else
-                    this.GetParent(_children, child.parent).replyContent = [child]
-            }
-
-            if (children.length > 3) {
-                displayMore[children[0].parent] = false;
-                loadingMore[children[0].parent] = false;
-            } else {
-                displayMore[children[0].parent] = true;
-                loadingMore[children[0].parent] = true;
-            }
-
-            console.log(this.GetParent(_children, children[0].parent))
-
-            this.setState({replies: _children, displayMore: displayMore, loadingMore: loadingMore}, () => {
-                this._cache.clearAll()
-                this.listRef.current.forceUpdateGrid()
-            })
-        })
-
-        this.props.connection.on("SendChild", child => {
-            const children = Object.assign([], this.state.replies);
-            const displayMore = Object.assign({}, this.state.displayMore);
-            const loadingMore = Object.assign({}, this.state.loadingMore);
-
-            let parent;
-            for (let _reply in children) {
-                if (children.hasOwnProperty(_reply) && children[_reply].id === child.parent)
-                    parent = _reply;
-            }
-
-            if (child.parent === this.props.id) {
-                children.unshift(child);
-            } else {
-                if (this.GetParent(children, child.parent).replyContent) {
-                    this.GetParent(children, child.parent).replyContent.unshift(child);
-
-                    if (this.GetParent(children, child.parent).replyContent.length >= 4) {
-                        displayMore[child.parent] = false;
-                        loadingMore[child.parent] = false;
-                        children[parent].replies += 1;
-                        this.GetParent(children, child.parent).replyContent.pop();
-                    }
-                } else
-                    this.GetParent(children, child.parent).replyContent = [child]
-            }
-
-            this.setState({replies: children, displayMore: displayMore, loadingMore: loadingMore}, () => {
-                this._cache.clearAll()
-                this.listRef.current.forceUpdateGrid()
             })
         })
 
@@ -455,29 +271,30 @@ class Message extends React.Component {
                     }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
                             label={"Reageer"}
                             iconPos="right"/>
-                </div>                
+                </div>
             </div>
 
             {this.state.attachments.length > 0 ? <div>
-                <Divider />
-                        <h3>Bijvoegingen</h3>
+                <Divider/>
+                <h3>Bijvoegingen</h3>
 
-                        <div className="p-grid">
-                            { this.state.attachments.map(attachment => {
-                                return <div className="p-col-4" style={{position: "relative", marginBottom: 5}}>
-                                    <div style={{paddingBottom: 20}}>
-                                        <img onClick={() => {
-                                            this.showAttachment(true, `http://localhost:5000/images/${attachment.id}_${attachment.name}`)
-                                        }} src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`} alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}} />
-                                    </div>
-                                    <div style={{position: "absolute", bottom: 0}}>
-                                        { attachment.name }
-                                    </div>
-                                </div>
-                            })}
+                <div className="p-grid">
+                    {this.state.attachments.map(attachment => {
+                        return <div className="p-col-4" style={{position: "relative", marginBottom: 5}}>
+                            <div style={{paddingBottom: 20}}>
+                                <img onClick={() => {
+                                    this.showAttachment(true, `http://localhost:5000/images/${attachment.id}_${attachment.name}`)
+                                }} src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`}
+                                     alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}}/>
+                            </div>
+                            <div style={{position: "absolute", bottom: 0}}>
+                                {attachment.name}
+                            </div>
                         </div>
-            </div> : "" }
-            
+                    })}
+                </div>
+            </div> : ""}
+
         </Card>
 
         return <div className={"p-mt-5"}>
@@ -548,27 +365,23 @@ class Message extends React.Component {
             <div>
                 <WindowScroller scrollElement={window}>
                     {({height, isScrolling, onChildScroll, scrollTop}) => (
-                        <AutoSizer disableHeight>
-                            {({width}) => <List autoHeight
-                                                isScrolling={isScrolling}
-                                                onScroll={onChildScroll}
-                                                overscanRowCount={2}
-                                                scrollTop={scrollTop} ref={this.listRef}
-                                                deferredMeasurementCache={this._cache}
-                                                rowHeight={this._cache.rowHeight}
-                                                width={width} height={height}
-                                                rowCount={this.state.replies.length}
-                                                rowRenderer={this._rowRenderer}/>
-                            }
-                        </AutoSizer>
+                        <Replies setPostWindow={this.setPostWindow} menuRef={this.menuRef}
+                                 setReportId={this.setReportId}
+                                 setReplyingTo={this.setReplyingTo}
+                                 replies={this.state.replies}
+                                 connection={this.props.connection} height={height}
+                                 isScrolling={isScrolling}
+                                 onChilScroll={onChildScroll}
+                                 scrollTop={scrollTop}/>
                     )}
                 </WindowScroller>
             </div>
 
-            <Dialog breakpoints={{'960px': '75vw', '640px': '100vw'}} dismissableMask={true} keepInViewport={true} header="Bijlage" visible={this.state.showAttachment} onHide={() => {
+            <Dialog breakpoints={{'960px': '75vw', '640px': '100vw'}} dismissableMask={true} keepInViewport={true}
+                    header="Bijlage" visible={this.state.showAttachment} onHide={() => {
                 this.onHide();
             }}>
-                <img src={ this.state.attachment } alt="Bijlage" style={{width: "100%", maxHeight: "100%"}} />
+                <img src={this.state.attachment} alt="Bijlage" style={{width: "100%", maxHeight: "100%"}}/>
             </Dialog>
 
             <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
