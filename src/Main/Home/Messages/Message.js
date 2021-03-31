@@ -7,12 +7,8 @@ import {DateTime} from "luxon";
 import {Tooltip} from "primereact/tooltip";
 
 class Message extends React.Component {
-    testPrint() {
-
-    }
-
     render() {
-        return <div className={"message"}>
+        return <div className={"message p-component"}>
             <div class={"p-d-flex p-jc-between p-ai-center"}>
                 <div>
                     <div className={"message-title"} style={{fontWeight: "bold", color: "black"}}>
@@ -34,7 +30,7 @@ class Message extends React.Component {
                 <div style={{
                     marginTop: 5,
                     wordBreak: "break-all"
-                }} className={"message-content"}>{this.props.children}</div>
+                }} className={"message-content"}>{this.props.content}</div>
                 <div style={{
                     minWidth: 55,
                     textAlign: "right"

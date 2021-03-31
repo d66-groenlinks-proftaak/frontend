@@ -63,8 +63,8 @@ function Messages(props) {
                          title={message.title}
                          authorId={message.authorId}
                          author={message.author}
-                         created={message.created}>
-                    {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
+                         created={message.created}
+                         content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
             </Link>
         })}

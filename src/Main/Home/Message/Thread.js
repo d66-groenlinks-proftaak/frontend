@@ -23,7 +23,8 @@ export default function Thread(props) {
                         icon="pi pi-ellipsis-h"
                         iconPos="right"
                         onClick={(event) => {
-                            props.menuRef.current.toggle(event)
+                            if (props.menuRef.current)
+                                props.menuRef.current.toggle(event)
                             props.setReportId(props.id)
                         }}/>
 
