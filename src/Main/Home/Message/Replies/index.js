@@ -1,5 +1,5 @@
 import {AutoSizer, CellMeasurer, List, CellMeasurerCache} from "react-virtualized";
-import Reply from "../Reply";
+import Reply from "./Reply";
 import React, {useEffect, useState} from "react";
 import {Button} from "primereact/button";
 

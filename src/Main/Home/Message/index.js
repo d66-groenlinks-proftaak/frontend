@@ -12,12 +12,13 @@ import {DateTime} from "luxon"
 import {Dialog} from 'primereact/dialog';
 import {Tooltip} from 'primereact/tooltip';
 import {ScrollTop} from 'primereact/scrolltop';
-import Reply from "./Reply";
+import Reply from "./Replies/Reply";
 import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
 import {List, CellMeasurer, CellMeasurerCache, AutoSizer, WindowScroller} from "react-virtualized";
 import Replies from "./Replies";
+import Thread from "./Thread";
 
 class Message extends React.Component {
     constructor(props) {
@@ -240,68 +241,19 @@ class Message extends React.Component {
             </div>
         }
 
-        const threadStart = <Card title={this.state.title}
-                                  subTitle={<span><Link to={"/profile/" + this.state.authorId}
-                                                        style={{color: "blue"}}>@{this.state.author}</Link></span>}
-                                  className={"p-mt-5 p-mb-5"}>
-            <div style={{wordBreak: "break-all"}}
-                 dangerouslySetInnerHTML={{__html: this.state.content}}/>
-            <div className="p-d-flex p-jc-between p-ai-center">
-                <div className={"message-posted"}
-                     data-pr-tooltip={DateTime.fromMillis(this.state.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}>
-                    {DateTime.fromMillis(this.state.created).toRelative({locale: "nl"})}
-                </div>
-                <div>
-                    <Menu ref={this.menuRef} popup model={this.extraOptions}/>
-
-                    <Button className={"p-button-secondary p-mr-2 p-button-text"}
-                            icon="pi pi-ellipsis-h"
-                            iconPos="right"
-                            onClick={(event) => {
-                                this.menuRef.current.toggle(event)
-                                this.setReportId(this.state.id)
-                            }}/>
-
-                    <Button onClick={() => {
-                        this.togglePostWindow()
-                        this.setState({
-                            replyingTo: "",
-                            replyingToId: ""
-                        })
-                    }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
-                            label={"Reageer"}
-                            iconPos="right"/>
-                </div>
-            </div>
-
-            {this.state.attachments.length > 0 ? <div>
-                <Divider/>
-                <h3>Bijvoegingen</h3>
-
-                <div className="p-grid">
-                    {this.state.attachments.map(attachment => {
-                        return <div className="p-col-4" style={{position: "relative", marginBottom: 5}}>
-                            <div style={{paddingBottom: 20}}>
-                                <img onClick={() => {
-                                    this.showAttachment(true, `http://localhost:5000/images/${attachment.id}_${attachment.name}`)
-                                }} src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`}
-                                     alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}}/>
-                            </div>
-                            <div style={{position: "absolute", bottom: 0}}>
-                                {attachment.name}
-                            </div>
-                        </div>
-                    })}
-                </div>
-            </div> : ""}
-
-        </Card>
-
         return <div className={"p-mt-5"}>
+            <Menu ref={this.menuRef} popup model={this.extraOptions}/>
+
             {header}
 
-
-            {threadStart}
+            <Thread togglePostWindow={this.togglePostWindow} attachments={this.state.attachments}
+                    showAttachment={(a) => {
+                        this.showAttachment(true, a)
+                    }} id={this.state.id}
+                    created={this.state.created}
+                    title={this.state.title} menuRef={this.menuRef}
+                    setReplyingTo={this.setReplyingTo}
+                    author={this.state.author} authorId={this.state.authorId} content={this.state.content}/>
 
             <Divider align="left">
             <span className="p-tag"
