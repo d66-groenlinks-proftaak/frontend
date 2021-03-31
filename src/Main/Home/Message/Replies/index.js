@@ -64,7 +64,7 @@ function Replies(props) {
 
         return <CellMeasurer parent={parent} cache={_cache} columnIndex={0} rowIndex={index} key={key}>
             {() => {
-                return <div style={{...style}}>
+                return <div key={key} style={{...style}}>
                     <Reply
                         setReportId={props.setReportId} setReplyingTo={(a, b) => {
                         props.setReplyingTo(a, b)
@@ -113,7 +113,7 @@ function Replies(props) {
                                        disabled={loadingMore[reply.parent]} label={"Meer Laden"}/>
                 }
 
-                return <div>
+                return <div key={reply.id}>
                     {reply.element}
                     {addToEnd}
                 </div>;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Header from "./Header";
 
 import Message from "./Message";
@@ -6,81 +6,69 @@ import {Link} from "react-router-dom";
 import LoadingMessages from "./LoadingMessages";
 import {Tag} from "primereact/tag";
 
-class Messages extends React.Component {
-    constructor(props) {
-        super(props);
+function Messages(props) {
+    const [messages, setMessages] = useState([]);
+    const [loaded, setLoaded] = useState(false);
 
-        this.state = {
-            messages: [],
-            loaded: false
-        }
-    }
-
-    setLoaded = (b) => {
-        this.setState({
-            loaded: b
-        })
-    }
-
-    componentDidMount() {
-        this.props.connection.on("SendThreads", _messages => {
-            this.setState({
-                messages: _messages,
-                loaded: true
-            })
+    useEffect(() => {
+        props.connection.on("SendThreads", _messages => {
+            setMessages(_messages);
+            setLoaded(true);
         })
 
-        this.props.connection.on("SendMessage", _message => {
+        props.connection.on("SendMessage", _message => {
             const title = _message.title;
-            this.setState(oldState => {
-                const messages = [...oldState.messages];
 
-                let pins = 0;
-                for (let message of messages)
-                    if (message.pinned)
-                        pins++;
+            const _messages = [...messages];
 
-                _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
+            let pins = 0;
+            for (let message of _messages)
+                if (message.pinned)
+                    pins++;
 
-                messages.splice(pins > 0 ? (pins) : 0, 0, _message);
+            _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
 
-                if (messages.length > 10)
-                    messages.pop();
+            _messages.splice(pins > 0 ? (pins) : 0, 0, _message);
 
-                return {messages: messages}
-            })
+            if (_messages.length > 10)
+                _messages.pop();
+
+            setMessages(_messages)
         })
 
-        this.props.connection.send('RequestUpdate');
-    }
+        props.connection.send('RequestUpdate');
 
-    render() {
-        let header = <Header setLoaded={this.setLoaded} loggedIn={this.props.loggedIn}
-                             connection={this.props.connection}/>
+        return function cleanup() {
+            props.connection.off("SendThreads");
+            props.connection.off("SendMessage");
+        }
+    }, [])
 
-        if (!this.state.loaded)
-            return <div>
-                {header}
-                <LoadingMessages/>
-            </div>
+    let header = <Header setLoaded={setLoaded} loggedIn={props.loggedIn}
+                         connection={props.connection}/>
 
+    if (!loaded)
         return <div>
             {header}
-            {this.state.messages.map(message => {
-                return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
-                    <Message guest={message.guest}
-                             replies={message.replies}
-                             pinned={message.pinned}
-                             title={message.title}
-                             authorId={message.authorId}
-                             author={message.author}
-                             created={message.created}>
-                        {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
-                    </Message>
-                </Link>
-            })}
+            <LoadingMessages/>
         </div>
-    }
+
+    return <div>
+        {header}
+        {messages.map(message => {
+            return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
+                <Message guest={message.guest}
+                         replies={message.replies}
+                         pinned={message.pinned}
+                         title={message.title}
+                         authorId={message.authorId}
+                         author={message.author}
+                         created={message.created}>
+                    {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
+                </Message>
+            </Link>
+        })}
+    </div>
 }
 
 export default Messages;

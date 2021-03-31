@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Card} from "primereact/card";
 import {Button} from "primereact/button";
 import {Link} from "react-router-dom";
@@ -8,64 +8,47 @@ import {Editor} from "primereact/editor";
 import LoadingMessage from "./LoadingMessage";
 import {Menu} from "primereact/menu";
 import {Divider} from "primereact/divider";
-import {DateTime} from "luxon"
 import {Dialog} from 'primereact/dialog';
 import {Tooltip} from 'primereact/tooltip';
 import {ScrollTop} from 'primereact/scrolltop';
-import Reply from "./Replies/Reply";
 import Report from "./Report";
 import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
-import {List, CellMeasurer, CellMeasurerCache, AutoSizer, WindowScroller} from "react-virtualized";
+import {WindowScroller} from "react-virtualized";
 import Replies from "./Replies";
 import Thread from "./Thread";
 
-class Message extends React.Component {
-    constructor(props) {
-        super(props);
+function Message(props) {
+    const [author, setAuthor] = useState("");
+    const [content, setContent] = useState("");
+    const [created, setCreated] = useState("");
+    const [authorId, setAuthorId] = useState("");
+    const [id, setId] = useState("");
+    const [title, setTitle] = useState("");
+    const [replies, setReplies] = useState([]);
+    const [newPostOpen, setNewPostOpen] = useState(false);
+    const [additionalProps, setAdditionalProps] = useState({});
+    const [newPost, setNewPost] = useState({
+        content: "",
+        email: "",
+        author: ""
+    });
+    const [newReportOpen, setNewReportOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(false);
+    const [replyingTo, setReplyingToState] = useState("");
+    const [replyingToId, setReplyingToId] = useState("");
+    const [reportId, setReportId] = useState("");
+    const [attachments, setAttachments] = useState([]);
+    const [showAttachmentState, setShowAttachment] = useState(false);
+    const [attachment, setAttachment] = useState("");
 
-        this.state = {
-            author: "",
-            content: "",
-            created: "",
-            authorId: "",
-            id: "",
-            title: "",
-            replies: [],
-            repliesStr: ["test", "test2"],
-            newPostOpen: false,
-            additionalProps: {},
-            newPost: {
-                content: "",
-                email: "",
-                author: ""
-            },
-            newReportOpen: false,
-            reportConfirmation: false,
-            activeIndex: false,
-            replyingTo: "",
-            replyingToId: "",
-            loadingMore: {},
-            displayMore: {},
-            reportId: "",
-            attachments: [],
-            showAttachment: false,
-            attachment: ""
-        }
+    const menuRef = React.createRef();
 
-        this.listRef = React.createRef();
-
-        this.menuRef = React.createRef();
-        this._cache = new CellMeasurerCache({
-            fixedWidth: true
-        })
-    }
-
-    extraOptions = [{
+    const extraOptions = [{
         label: "Rapporteer",
         icon: "pi pi-ban",
         command: () => {
-            this.setReportWindow(true);
+            setReportWindow(true);
         }
     },
         {
@@ -76,186 +59,155 @@ class Message extends React.Component {
         }
     ]
 
-    showAttachment(bool, url) {
-        this.setState({
-            showAttachment: bool,
-            attachment: url
-        })
+    const showAttachment = (bool, url) => {
+        setShowAttachment(bool);
+        setAttachment(url)
     }
 
-    setPostWindow = (open) => {
-        this.setState(_ => {
-            return {activeIndex: open}
-        });
+    const setPostWindow = (open) => {
+        setActiveIndex(open);
     }
 
-    togglePostWindow = () => {
-        this.setState(state => {
-            return {activeIndex: !state.activeIndex}
-        });
+    const togglePostWindow = () => {
+        setActiveIndex(!activeIndex);
     }
 
-    setReportWindow = (open) => {
-        this.setState({
-            newReportOpen: open
-        });
+    const setReportWindow = (open) => {
+        setNewReportOpen(open);
     }
 
-    onInputChanged = (type, content) => {
-        this.setState(oldState => {
-            const newPost = oldState.newPost;
+    const onInputChanged = (type, content) => {
+        setNewPost(oldState => {
+            const newPost = oldState;
             newPost[type] = content;
 
             return {newPost}
         })
     }
 
-    createPost() {
-        this.setState({
-            additionalProps: {
-                disabled: true,
-                icon: "pi pi-spin pi-spinner"
-            }
+    const createPost = () => {
+        setAdditionalProps({
+            disabled: true,
+            icon: "pi pi-spin pi-spinner"
         })
 
-        let parent = this.props.id;
+        let parent = props.id;
 
-        if (this.state.replyingToId !== "")
-            parent = this.state.replyingToId;
+        if (replyingToId !== "")
+            parent = replyingToId;
 
-        this.props.connection.send("CreateReply", {
+        props.connection.send("CreateReply", {
             Parent: parent,
-            Content: this.state.newPost.content,
-            Email: this.state.newPost.email,
-            Author: this.state.newPost.author,
+            Content: newPost.content,
+            Email: newPost.email,
+            Author: newPost.author,
         }).then(_ => {
-            this.setState({
-                additionalProps: {},
-                newPost: {
-                    content: "",
-                    email: "",
-                    author: ""
-                }
-            })
+            setAdditionalProps({});
+            setNewPost({
+                content: "",
+                email: "",
+                author: ""
+            });
 
-            this.setPostWindow(false);
+            setPostWindow(false);
         })
             .catch(e => {
-                this.setState({
-                    additionalProps: {}
-                })
+                setAdditionalProps({})
 
                 alert(e.message);
             })
     }
 
-    setReportId = (id) => {
-        this.setState({
-            reportId: id
-        })
-    }
-
-    GetSubReplies(reply) {
+    const GetSubReplies = (reply) => {
         if (reply.children && reply.children.length > 0) {
             return reply.children.map(_reply => {
                 return <div>
                     {_reply.element}
-                    {this.GetSubReplies(_reply)}
+                    {GetSubReplies(_reply)}
                 </div>;
             })
         }
     }
 
-    componentWillUnmount() {
-        this.props.connection.off("SendThreadDetails");
+    const setReplyingTo = (author, id) => {
+        setReplyingToId(id);
+        setReplyingToState(author);
     }
 
-    componentDidMount() {
-        this.props.connection.on("SendThreadDetails", thread => {
-            this.setState({
-                author: thread.parent.author,
-                content: thread.parent.content,
-                created: thread.parent.created,
-                id: thread.parent.id,
-                title: thread.parent.title,
-                authorId: thread.parent.authorId,
-                attachments: thread.parent.attachments || [],
-                replies: thread.children
-            })
-        })
-
-        this.props.connection.on("ConfirmReport", (ReportConfirmation) => {
-            this.setState({reportConfirmation: ReportConfirmation})
-        })
-
-        this.props.connection.send("LoadMessageThread", this.props.id);
+    const onHide = () => {
+        setShowAttachment(false);
     }
 
-    setReplyingTo = (author, id) => {
-        this.setState({
-            replyingTo: author,
-            replyingToId: id
+    useEffect(() => {
+        props.connection.on("SendThreadDetails", thread => {
+            setAuthor(thread.parent.author);
+            setContent(thread.parent.content);
+            setCreated(thread.parent.created);
+            setId(thread.parent.id);
+            setTitle(thread.parent.title);
+            setAuthorId(thread.parent.authorId);
+            setAttachments(thread.parent.attachments || []);
+            setReplies(thread.children);
         })
-    }
 
-    onHide = () => {
-        this.setState({
-            showAttachment: false
-        })
-    }
+        props.connection.send("LoadMessageThread", props.id);
 
-    render() {
-        let authenticated = <div>
-            <h3>E-Mail</h3>
-            <InputText value={this.state.newPost.email} onChange={e => {
-                this.onInputChanged("email", e.target.value)
-            }}/>
-
-            <h3>Naam</h3>
-            <InputText value={this.state.newPost.author} onChange={e => {
-                this.onInputChanged("author", e.target.value)
-            }}/>
-        </div>
-
-        if (this.props.loggedIn)
-            authenticated = "";
-
-        let header = <div className="p-d-flex p-jc-between p-ai-center">
-            <Link to={"/"}>
-                <Button className={"p-button-info p-button-outlined"} label={"Terug"}
-                        style={{float: "right"}}
-                        icon="pi pi-arrow-left" iconPos="left"/>
-            </Link>
-            <div>
-
-                <Button className={"p-button-text"} style={{float: "right", color: "#CA8136"}}
-                        icon="pi pi-bell"
-                        iconPos="right"/>
-            </div>
-        </div>
-
-        if (this.state.title === "") {
-            return <div className={"p-mt-5"}>
-                {header}
-                <LoadingMessage/>
-            </div>
+        return function cleanup() {
+            props.connection.off("SendThreadDetails");
         }
+    }, [])
 
+    let authenticated = <div>
+        <h3>E-Mail</h3>
+        <InputText value={newPost.email} onChange={e => {
+            onInputChanged("email", e.target.value)
+        }}/>
+
+        <h3>Naam</h3>
+        <InputText value={newPost.author} onChange={e => {
+            onInputChanged("author", e.target.value)
+        }}/>
+    </div>
+
+    if (props.loggedIn)
+        authenticated = "";
+
+    let header = <div className="p-d-flex p-jc-between p-ai-center">
+        <Link to={"/"}>
+            <Button className={"p-button-info p-button-outlined"} label={"Terug"}
+                    style={{float: "right"}}
+                    icon="pi pi-arrow-left" iconPos="left"/>
+        </Link>
+        <div>
+
+            <Button className={"p-button-text"} style={{float: "right", color: "#CA8136"}}
+                    icon="pi pi-bell"
+                    iconPos="right"/>
+        </div>
+    </div>
+
+    if (title === "") {
         return <div className={"p-mt-5"}>
-            <Menu ref={this.menuRef} popup model={this.extraOptions}/>
-
             {header}
+            <LoadingMessage/>
+        </div>
+    }
 
-            <Thread togglePostWindow={this.togglePostWindow} attachments={this.state.attachments}
-                    showAttachment={(a) => {
-                        this.showAttachment(true, a)
-                    }} id={this.state.id}
-                    created={this.state.created}
-                    title={this.state.title} menuRef={this.menuRef}
-                    setReplyingTo={this.setReplyingTo}
-                    author={this.state.author} authorId={this.state.authorId} content={this.state.content}/>
+    return <div className={"p-mt-5"}>
+        <Menu ref={menuRef} popup model={extraOptions}/>
 
-            <Divider align="left">
+        {header}
+
+        <Thread togglePostWindow={togglePostWindow} attachments={attachments}
+                showAttachment={(a) => {
+                    showAttachment(true, a)
+                }} id={id}
+                created={created}
+                title={title} menuRef={menuRef}
+                setReplyingTo={setReplyingTo}
+                author={author} authorId={authorId} content={content}/>
+
+        <Divider align="left">
             <span className="p-tag"
                   style={{
                       backgroundColor: "transparent",
@@ -264,82 +216,77 @@ class Message extends React.Component {
                       fontSize: "1.2em",
                       fontWeight: "normal"
                   }}>Reacties</span>
-            </Divider>
+        </Divider>
 
-            <div className={"p-grid p-nogutter"}>
-                <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
-                         style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
-                         position="bottom"
-                         showCloseIcon={false}
-                         visible={this.state.activeIndex} onHide={() => this.setPostWindow(false)}>
-                    <div className="new-post-content p-p-3 p-pt-3">
-                        <div style={{color: "red"}}>{this.state.invalidTitle ? this.state.invalidTitle :
-                            <span>&nbsp;</span>}</div>
+        <div className={"p-grid p-nogutter"}>
+            <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
+                     style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
+                     position="bottom"
+                     showCloseIcon={false}
+                     visible={activeIndex} onHide={() => setPostWindow(false)}>
+                <div className="new-post-content p-p-3 p-pt-3">
 
-                        {this.state.replyingTo !== "" ?
-                            <span><b>Reageren op:</b> {this.state.replyingTo}</span> : ""}
+                    {replyingTo !== "" ?
+                        <span><b>Reageren op:</b> {replyingTo}</span> : ""}
 
-                        <Editor placeholder={"Typ hier uw reactie"} modules={{
-                            toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link', 'blockquote']]
-                        }} className={this.state.invalidTitle ? "p-invalid" : ""}
-                                style={{height: '250px'}}
-                                value={this.state.newPost.content} onTextChange={(e) => {
-                            this.onInputChanged("content", e.htmlValue)
-                        }}/>
-                        <div style={{color: "red"}}>{this.state.invalidContent ? this.state.invalidContent :
-                            <span>&nbsp;</span>}</div>
+                    <Editor placeholder={"Typ hier uw reactie"} modules={{
+                        toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link', 'blockquote']]
+                    }}
+                            style={{height: '250px'}}
+                            value={newPost.content} onTextChange={(e) => {
+                        onInputChanged("content", e.htmlValue)
+                    }}/>
 
 
-                        {authenticated}
-                        <div>
-                            <Button {...this.state.additionalProps} iconPos={"left"} icon={"pi pi-plus"}
-                                    onClick={() => {
-                                        this.createPost()
-                                    }} label={"Plaatsen"}/>
-                            <Button {...this.state.additionalProps}
-                                    className={"p-button-secondary p-button-outlined p-ml-3"}
-                                    iconPos={"right"}
-                                    onClick={() => {
-                                        this.setPostWindow(false)
-                                    }} label={"Annuleren"}/>
-                        </div>
+                    {authenticated}
+                    <div>
+                        <Button {...additionalProps} iconPos={"left"} icon={"pi pi-plus"}
+                                onClick={() => {
+                                    createPost()
+                                }} label={"Plaatsen"}/>
+                        <Button {...additionalProps}
+                                className={"p-button-secondary p-button-outlined p-ml-3"}
+                                iconPos={"right"}
+                                onClick={() => {
+                                    setPostWindow(false)
+                                }} label={"Annuleren"}/>
                     </div>
-                </Sidebar>
-            </div>
-
-            <Sidebar visible={this.state.newReportOpen} style={{overflowY: "scroll"}}
-                     className={"p-col-12 p-md-4"}
-                     onHide={() => this.props.setReportWindow(false)} position="right">
-                <Report id={this.state.reportId} connection={this.props.connection}
-                        setReportWindow={this.setReportWindow}/>
+                </div>
             </Sidebar>
-
-            <div>
-                <WindowScroller scrollElement={window}>
-                    {({height, isScrolling, onChildScroll, scrollTop}) => (
-                        <Replies setPostWindow={this.setPostWindow} menuRef={this.menuRef}
-                                 setReportId={this.setReportId}
-                                 setReplyingTo={this.setReplyingTo}
-                                 replies={this.state.replies}
-                                 connection={this.props.connection} height={height}
-                                 isScrolling={isScrolling}
-                                 onChilScroll={onChildScroll}
-                                 scrollTop={scrollTop}/>
-                    )}
-                </WindowScroller>
-            </div>
-
-            <Dialog breakpoints={{'960px': '75vw', '640px': '100vw'}} dismissableMask={true} keepInViewport={true}
-                    header="Bijlage" visible={this.state.showAttachment} onHide={() => {
-                this.onHide();
-            }}>
-                <img src={this.state.attachment} alt="Bijlage" style={{width: "100%", maxHeight: "100%"}}/>
-            </Dialog>
-
-            <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
-            <ScrollTop/>
         </div>
-    }
+
+        <Sidebar visible={newReportOpen} style={{overflowY: "scroll"}}
+                 className={"p-col-12 p-md-4"}
+                 onHide={() => props.setReportWindow(false)} position="right">
+            <Report id={reportId} connection={props.connection}
+                    setReportWindow={setReportWindow}/>
+        </Sidebar>
+
+        <div>
+            <WindowScroller scrollElement={window}>
+                {({height, isScrolling, onChildScroll, scrollTop}) => (
+                    <Replies setPostWindow={setPostWindow} menuRef={menuRef}
+                             setReportId={setReportId}
+                             setReplyingTo={setReplyingTo}
+                             replies={replies}
+                             connection={props.connection} height={height}
+                             isScrolling={isScrolling}
+                             onChilScroll={onChildScroll}
+                             scrollTop={scrollTop}/>
+                )}
+            </WindowScroller>
+        </div>
+
+        <Dialog breakpoints={{'960px': '75vw', '640px': '100vw'}} dismissableMask={true} keepInViewport={true}
+                header="Bijlage" visible={showAttachmentState} onHide={() => {
+            onHide();
+        }}>
+            <img src={attachment} alt="Bijlage" style={{width: "100%", maxHeight: "100%"}}/>
+        </Dialog>
+
+        <Tooltip className={"tooltip"} target=".message-posted" position={"bottom"}/>
+        <ScrollTop/>
+    </div>
 }
 
 const
