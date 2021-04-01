@@ -1,27 +1,25 @@
 import {AutoSizer, CellMeasurer, List, CellMeasurerCache} from "react-virtualized";
 import Reply from "./Reply";
+import {connect} from 'react-redux';
 import React, {useEffect, useState} from "react";
 import {Button} from "primereact/button";
+import {getReplies} from "../../../../Core/Message/message.selectors";
+import {setReplies} from "../../../../Core/Message/message.actions";
 
-const GetParent = (replies, id) => {
-    for (let reply of replies)
+const GetParent = (_replies, id) => {
+    for (let reply of _replies) {
         if (reply.id === id)
             return reply;
+    }
 
-    for (let reply of replies)
-        if (reply.replyContent && reply.replyContent.length > 0) {
-            let rValue = GetParent(reply.replyContent, id);
-            if (rValue)
-                return rValue;
-        }
+    return null;
 }
 
 function Replies(props) {
-    const [replies, setReplies] = useState([]);
     const [displayMore, setDisplayMore] = useState({});
     const [loadingMore, setLoadingMore] = useState({});
 
-    const listRef = React.createRef();
+    let listRef = React.createRef();
     const _cache = new CellMeasurerCache({
         fixedWidth: true
     })
@@ -60,7 +58,7 @@ function Replies(props) {
     }
 
     const _rowRenderer = ({index, key, parent, style}) => {
-        const reply = replies[index];
+        const reply = props.replies[index];
 
         return <CellMeasurer parent={parent} cache={_cache} columnIndex={0} rowIndex={index} key={key}>
             {() => {
@@ -91,7 +89,7 @@ function Replies(props) {
 
                 let parent;
 
-                for (let _reply of replies) {
+                for (let _reply of props.replies) {
                     if (_reply.id === reply.parent) {
                         parent = _reply;
                         break;
@@ -104,6 +102,7 @@ function Replies(props) {
                     }
 
                     addToEnd = <Button onClick={() => {
+                        loadingMore[reply.parent] = true;
                         setLoadingMore(loadingMore)
 
                         props.connection.send("LoadSubReplies", reply.id)
@@ -122,14 +121,14 @@ function Replies(props) {
     }
 
     useEffect(() => {
-        setReplies(props.replies);
-
         props.connection.on("SendChildren", children => {
+            const _newReplies = [...props.replies]
             for (let child of children) {
-                if (GetParent(replies, child.parent).replyContent)
-                    GetParent(replies, child.parent).replyContent.push(child);
+
+                if (GetParent(_newReplies, child.parent).replyContent)
+                    GetParent(_newReplies, child.parent).replyContent.push(child);
                 else
-                    GetParent(replies, child.parent).replyContent = [child]
+                    GetParent(_newReplies, child.parent).replyContent = [child]
             }
 
             if (children.length > 3) {
@@ -140,7 +139,7 @@ function Replies(props) {
                 loadingMore[children[0].parent] = true;
             }
 
-            setReplies(replies);
+            props.dispatch(setReplies(_newReplies));
             setDisplayMore(displayMore);
             setLoadingMore(loadingMore);
 
@@ -149,7 +148,7 @@ function Replies(props) {
         })
 
         props.connection.on("SendChild", child => {
-            const children = Object.assign([], replies);
+            const children = Object.assign([], props.replies);
             const displayMore = Object.assign({}, displayMore);
             const loadingMore = Object.assign({}, loadingMore);
 
@@ -175,7 +174,7 @@ function Replies(props) {
                     GetParent(children, child.parent).replyContent = [child]
             }
 
-            setReplies(children);
+            props.dispatch(setReplies(children));
             setDisplayMore(displayMore);
             setLoadingMore(loadingMore);
 
@@ -194,14 +193,21 @@ function Replies(props) {
                             isScrolling={props.isScrolling}
                             onScroll={props.onChildScroll}
                             overscanRowCount={2}
-                            scrollTop={props.scrollTop} ref={listRef}
+                            scrollTop={props.scrollTop} ref={(ref) => {
+            listRef = ref;
+        }
+        }
                             deferredMeasurementCache={_cache}
                             rowHeight={_cache.rowHeight}
                             width={width} height={props.height}
-                            rowCount={replies.length}
+                            rowCount={props.replies.length}
                             rowRenderer={_rowRenderer}/>
         }
     </AutoSizer>
 }
 
-export default Replies;
+const mapStateToProps = (state) => {
+    return {replies: getReplies(state)}
+}
+
+export default connect(mapStateToProps)(Replies);

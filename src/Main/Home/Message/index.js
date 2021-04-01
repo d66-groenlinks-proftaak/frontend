@@ -17,6 +17,10 @@ import {connect} from "react-redux";
 import {WindowScroller} from "react-virtualized";
 import Replies from "./Replies";
 import Thread from "./Thread";
+import Header from "./Header";
+import CreateReply from "./CreateReply";
+import {setReplyOpen, setReplyingToId, setReplyingTo, setReplies} from "../../../Core/Message/message.actions";
+import {getReplyOpen} from "../../../Core/Message/message.selectors";
 
 function Message(props) {
     const [author, setAuthor] = useState("");
@@ -25,18 +29,7 @@ function Message(props) {
     const [authorId, setAuthorId] = useState("");
     const [id, setId] = useState("");
     const [title, setTitle] = useState("");
-    const [replies, setReplies] = useState([]);
-    const [newPostOpen, setNewPostOpen] = useState(false);
-    const [additionalProps, setAdditionalProps] = useState({});
-    const [newPost, setNewPost] = useState({
-        content: "",
-        email: "",
-        author: ""
-    });
     const [newReportOpen, setNewReportOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(false);
-    const [replyingTo, setReplyingToState] = useState("");
-    const [replyingToId, setReplyingToId] = useState("");
     const [reportId, setReportId] = useState("");
     const [attachments, setAttachments] = useState([]);
     const [showAttachmentState, setShowAttachment] = useState(false);
@@ -65,73 +58,20 @@ function Message(props) {
     }
 
     const setPostWindow = (open) => {
-        setActiveIndex(open);
+        props.dispatch(setReplyOpen(open));
     }
 
     const togglePostWindow = () => {
-        setActiveIndex(!activeIndex);
+        props.dispatch(setReplyOpen(!props.replyOpen));
     }
 
     const setReportWindow = (open) => {
         setNewReportOpen(open);
     }
 
-    const onInputChanged = (type, content) => {
-        setNewPost(oldState => {
-            const newPost = oldState;
-            newPost[type] = content;
-
-            return {newPost}
-        })
-    }
-
-    const createPost = () => {
-        setAdditionalProps({
-            disabled: true,
-            icon: "pi pi-spin pi-spinner"
-        })
-
-        let parent = props.id;
-
-        if (replyingToId !== "")
-            parent = replyingToId;
-
-        props.connection.send("CreateReply", {
-            Parent: parent,
-            Content: newPost.content,
-            Email: newPost.email,
-            Author: newPost.author,
-        }).then(_ => {
-            setAdditionalProps({});
-            setNewPost({
-                content: "",
-                email: "",
-                author: ""
-            });
-
-            setPostWindow(false);
-        })
-            .catch(e => {
-                setAdditionalProps({})
-
-                alert(e.message);
-            })
-    }
-
-    const GetSubReplies = (reply) => {
-        if (reply.children && reply.children.length > 0) {
-            return reply.children.map(_reply => {
-                return <div>
-                    {_reply.element}
-                    {GetSubReplies(_reply)}
-                </div>;
-            })
-        }
-    }
-
-    const setReplyingTo = (author, id) => {
-        setReplyingToId(id);
-        setReplyingToState(author);
+    const setReplyState = (author, id) => {
+        props.dispatch(setReplyingToId(id));
+        props.dispatch(setReplyingTo(author));
     }
 
     const onHide = () => {
@@ -147,7 +87,8 @@ function Message(props) {
             setTitle(thread.parent.title);
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
-            setReplies(thread.children);
+
+            props.dispatch(setReplies(thread.children));
         })
 
         props.connection.send("LoadMessageThread", props.id);
@@ -157,38 +98,9 @@ function Message(props) {
         }
     }, [])
 
-    let authenticated = <div>
-        <h3>E-Mail</h3>
-        <InputText value={newPost.email} onChange={e => {
-            onInputChanged("email", e.target.value)
-        }}/>
-
-        <h3>Naam</h3>
-        <InputText value={newPost.author} onChange={e => {
-            onInputChanged("author", e.target.value)
-        }}/>
-    </div>
-
-    if (props.loggedIn)
-        authenticated = "";
-
-    let header = <div className="p-d-flex p-jc-between p-ai-center">
-        <Link to={"/"}>
-            <Button className={"p-button-info p-button-outlined"} label={"Terug"}
-                    style={{float: "right"}}
-                    icon="pi pi-arrow-left" iconPos="left"/>
-        </Link>
-        <div>
-
-            <Button className={"p-button-text"} style={{float: "right", color: "#CA8136"}}
-                    icon="pi pi-bell"
-                    iconPos="right"/>
-        </div>
-    </div>
-
     if (title === "") {
         return <div className={"p-mt-5"}>
-            {header}
+            <Header/>
             <LoadingMessage/>
         </div>
     }
@@ -196,7 +108,7 @@ function Message(props) {
     return <div className={"p-mt-5"}>
         <Menu ref={menuRef} popup model={extraOptions}/>
 
-        {header}
+        <Header/>
 
         <Thread togglePostWindow={togglePostWindow} attachments={attachments}
                 showAttachment={(a) => {
@@ -204,7 +116,7 @@ function Message(props) {
                 }} id={id}
                 created={created}
                 title={title} menuRef={menuRef}
-                setReplyingTo={setReplyingTo}
+                setReplyingTo={setReplyState}
                 author={author} authorId={authorId} content={content}/>
 
         <Divider align="left">
@@ -218,42 +130,7 @@ function Message(props) {
                   }}>Reacties</span>
         </Divider>
 
-        <div className={"p-grid p-nogutter"}>
-            <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
-                     style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
-                     position="bottom"
-                     showCloseIcon={false}
-                     visible={activeIndex} onHide={() => setPostWindow(false)}>
-                <div className="new-post-content p-p-3 p-pt-3">
-
-                    {replyingTo !== "" ?
-                        <span><b>Reageren op:</b> {replyingTo}</span> : ""}
-
-                    <Editor placeholder={"Typ hier uw reactie"} modules={{
-                        toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link', 'blockquote']]
-                    }}
-                            style={{height: '250px'}}
-                            value={newPost.content} onTextChange={(e) => {
-                        onInputChanged("content", e.htmlValue)
-                    }}/>
-
-
-                    {authenticated}
-                    <div>
-                        <Button {...additionalProps} iconPos={"left"} icon={"pi pi-plus"}
-                                onClick={() => {
-                                    createPost()
-                                }} label={"Plaatsen"}/>
-                        <Button {...additionalProps}
-                                className={"p-button-secondary p-button-outlined p-ml-3"}
-                                iconPos={"right"}
-                                onClick={() => {
-                                    setPostWindow(false)
-                                }} label={"Annuleren"}/>
-                    </div>
-                </div>
-            </Sidebar>
-        </div>
+        <CreateReply/>
 
         <Sidebar visible={newReportOpen} style={{overflowY: "scroll"}}
                  className={"p-col-12 p-md-4"}
@@ -267,8 +144,7 @@ function Message(props) {
                 {({height, isScrolling, onChildScroll, scrollTop}) => (
                     <Replies setPostWindow={setPostWindow} menuRef={menuRef}
                              setReportId={setReportId}
-                             setReplyingTo={setReplyingTo}
-                             replies={replies}
+                             setReplyingTo={setReplyState}
                              connection={props.connection} height={height}
                              isScrolling={isScrolling}
                              onChilScroll={onChildScroll}
@@ -291,7 +167,7 @@ function Message(props) {
 
 const
     mapStateToProps = (state) => {
-        return {loggedIn: getAuthAuthenticated(state)}
+        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state)}
     }
 
 export default connect(mapStateToProps)
