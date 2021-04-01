@@ -14,12 +14,11 @@ const GetParent = (_replies, id) => {
 
     return null;
 }
+let listRef = null;
 
 function Replies(props) {
     const [displayMore, setDisplayMore] = useState({});
     const [loadingMore, setLoadingMore] = useState({});
-
-    let listRef = React.createRef();
     const _cache = new CellMeasurerCache({
         fixedWidth: true
     })
@@ -144,13 +143,11 @@ function Replies(props) {
             setLoadingMore(loadingMore);
 
             _cache.clearAll();
-            listRef.current.forceUpdateGrid();
+            listRef.forceUpdateGrid();
         })
 
         props.connection.on("SendChild", child => {
-            const children = Object.assign([], props.replies);
-            const displayMore = Object.assign({}, displayMore);
-            const loadingMore = Object.assign({}, loadingMore);
+            const children = props.replies;
 
             let parent;
             for (let _reply in children) {
@@ -179,7 +176,7 @@ function Replies(props) {
             setLoadingMore(loadingMore);
 
             _cache.clearAll();
-            listRef.current.forceUpdateGrid();
+            listRef.forceUpdateGrid();
         })
 
         return function cleanup() {
@@ -195,8 +192,7 @@ function Replies(props) {
                             overscanRowCount={2}
                             scrollTop={props.scrollTop} ref={(ref) => {
             listRef = ref;
-        }
-        }
+        }}
                             deferredMeasurementCache={_cache}
                             rowHeight={_cache.rowHeight}
                             width={width} height={props.height}

@@ -130,7 +130,7 @@ function Message(props) {
                   }}>Reacties</span>
         </Divider>
 
-        <CreateReply/>
+        <CreateReply id={id}/>
 
         <Sidebar visible={newReportOpen} style={{overflowY: "scroll"}}
                  className={"p-col-12 p-md-4"}
@@ -142,7 +142,8 @@ function Message(props) {
         <div>
             <WindowScroller scrollElement={window}>
                 {({height, isScrolling, onChildScroll, scrollTop}) => (
-                    <Replies setPostWindow={setPostWindow} menuRef={menuRef}
+                    <Replies id={id}
+                             setPostWindow={setPostWindow} menuRef={menuRef}
                              setReportId={setReportId}
                              setReplyingTo={setReplyState}
                              connection={props.connection} height={height}
