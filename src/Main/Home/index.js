@@ -48,7 +48,7 @@ class Home extends React.Component {
     render() {
         return <div style={{width: "100%"}} className="p-grid p-justify-center p-nogutter">
             <Switch>
-                <Route path={"/admin"} render={(props) => <Adminpanel {...props}/>}/>
+                <Route path={"/admin"} render={(props) => <Adminpanel style={{width: "100%"}} {...props}/>}/>
                 <Route path={"/thread/:id"} render={(props) =>
                     <div className={"p-col-12 p-md-8"}>
                         <Message loggedIn={this.props.loggedIn} connection={this.props.connection}
