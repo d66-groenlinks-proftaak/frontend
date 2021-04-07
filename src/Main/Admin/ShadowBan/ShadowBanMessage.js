@@ -12,7 +12,6 @@ import {Button} from "primereact/button";
 
 
 const SendBan =(connection, postId, banned) =>{
-    console.log(postId,banned)
     connection.send("UpdateBannedMessages", {
         PostId:postId,
         Banned: banned
