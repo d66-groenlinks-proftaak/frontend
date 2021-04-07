@@ -11,6 +11,7 @@ export default {
         showAttachment: {action: "showAttachment"},
         setReplyingTo: {action: "setReplyingTo"},
         setReportId: {action: "setReportId"},
+        setPostWindow: {action: "setPostWindow"},
         content: {
             description: "Content of the thread",
             type: {name: 'string', required: true},
@@ -43,6 +44,14 @@ export default {
             defaultValue: 0,
             table: {
                 defaultValue: {summary: 0},
+            },
+        },
+        isThread: {
+            description: "If this is a thread, or comment",
+            type: {name: 'boolean', required: true},
+            defaultValue: true,
+            table: {
+                defaultValue: {summary: true},
             },
         },
         title: {
@@ -85,6 +94,7 @@ Template.args = {
     attachments: [],
     id: "1",
     created: 0,
+    isThread: true,
     title: "Test123",
     menuRef: () => {
     },
