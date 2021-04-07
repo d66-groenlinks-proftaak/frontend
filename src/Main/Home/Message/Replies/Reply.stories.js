@@ -25,6 +25,14 @@ export default {
                 defaultValue: {summary: '1'},
             },
         },
+        level: {
+            description: "Reply depth",
+            type: {name: 'number', required: true},
+            defaultValue: 0,
+            table: {
+                defaultValue: {summary: 0},
+            },
+        },
         created: {
             description: "Time in miliseconds from epoch when this thread was created",
             type: {name: 'number', required: true},

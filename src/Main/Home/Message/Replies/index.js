@@ -1,5 +1,5 @@
 import {AutoSizer, CellMeasurer, List, CellMeasurerCache} from "react-virtualized";
-import Reply from "./Reply";
+import Thread from "../Thread";
 import {connect} from 'react-redux';
 import React, {useEffect, useState} from "react";
 import {Button} from "primereact/button";
@@ -35,7 +35,7 @@ function Replies(props) {
                     created: reply.created
                 }
 
-                item.element = (<Reply setReplyingTo={(a, b) => {
+                item.element = (<Thread setReplyingTo={(a, b) => {
                     props.setReplyingTo(a, b)
                 }} setPostWindow={(b) => {
                     props.setPostWindow(b)
@@ -43,7 +43,8 @@ function Replies(props) {
                                        created={reply.created}
                                        id={reply.id}
                                        author={reply.author}
-                                       authorId={reply.authorId}/>)
+                                       authorId={reply.authorId}
+                                       isThread={false} />)
 
                 if (reply.replyContent && reply.replyContent.length > 0) {
                     for (let r of GetRepliesDepth(level + 1, reply))
@@ -62,14 +63,15 @@ function Replies(props) {
         return <CellMeasurer parent={parent} cache={_cache} columnIndex={0} rowIndex={index} key={key}>
             {() => {
                 return <div key={key} style={{...style}}>
-                    <Reply
+                    <Thread
                         setReportId={props.setReportId} setReplyingTo={(a, b) => {
                         props.setReplyingTo(a, b)
                     }} setPostWindow={(b) => {
                         props.setPostWindow(b)
                     }} content={reply.content} menuRef={props.menuRef} created={reply.created} id={reply.id}
                         author={reply.author}
-                        authorId={reply.authorId}/>
+                        authorId={reply.authorId}
+                        isThread={false} />
 
                     {GetReplies(1, reply)}
                 </div>
