@@ -11,7 +11,7 @@ import { MultiSelect } from "primereact/multiselect";
 import { Button } from "primereact/button";
 
 function RoleSettings(props) {
-  const [Permissions, setPermissions] = useState(null);
+  const [selectedPermissions, setSelectedPermissions] = useState(null);
 
   const permissions = [
     { name: "Ban", code: 0 },
@@ -20,22 +20,52 @@ function RoleSettings(props) {
     { name: "Webinar", code: 3 },
     { name: "Mededeling", code: 4 },
   ];
+  useEffect(() => {
+    let permsToSet = [];
+    for (let index = 0; index < props.permissions.length; index++) {
+      const element = props.permissions[index];
+      for (let index2 = 0; index2 < permissions.length; index2++) {
+        const element2 = permissions[index2];
+        if (element == element2.code) {
+          permsToSet.push(element2);
+        }
+      }
+    }
+    setSelectedPermissions(permsToSet);
+  }, [props.role]);
+
+  useEffect(() => {
+    props.connection.on("ConfirmRoleEdit", (Success) => {
+      console.log(Success);
+    });
+
+    return function cleanup() {
+      props.connection.off("ConfirmRoleEdit");
+    };
+  }, []);
+
+  const editRole = () => {
+    props.connection.send("EditRole", {
+      Name: props.role.name,
+      Permissions: selectedPermissions,
+    });
+  };
 
   return (
     <div class="p-grid" style={{ width: "100%" }}>
       <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
         {props.role.name}
+        <Button onClick={editRole} label="Opslaan" />
       </div>
       <br />
       <MultiSelect
         style={{ width: "100%" }}
-        value={props.role.permissions}
+        value={selectedPermissions}
         options={permissions}
         optionLabel="name"
         placeholder="Selecteer de rechten"
-        onChange={(e) => setPermissions(e.value)}
+        onChange={(e) => setSelectedPermissions(e.value)}
       />
-      <Button label="Opslaan" />
     </div>
   );
 }
