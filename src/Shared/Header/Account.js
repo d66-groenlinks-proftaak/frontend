@@ -4,6 +4,7 @@ import {Link, Redirect} from "react-router-dom";
 import {Menu} from 'primereact/menu';
 import {connect} from "react-redux";
 import {getAuthAuthenticated, getAuthEmail, getAuthId} from "../../Core/Authentication/authentication.selectors";
+import { getDarkMode } from "../../Core/Global/global.selectors";
 
 class Account extends React.Component {
     constructor(props) {
@@ -55,7 +56,7 @@ class Account extends React.Component {
             }
 
             return <span>
-                <Menu ref={this.menuRef} className={"dark"} popup model={items}/>
+                <Menu ref={this.menuRef} className={this.props.dark ? "dark" : ""} popup model={items}/>
                 <Button className={"p-button-text"} label={this.props.accountName}
                         onClick={(event) => this.menuRef.current.toggle(event)}/>
             </span>
@@ -69,7 +70,7 @@ class Account extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    return {loggedIn: getAuthAuthenticated(state), accountName: getAuthEmail(state), accountId: getAuthId(state)}
+    return {loggedIn: getAuthAuthenticated(state), accountName: getAuthEmail(state), accountId: getAuthId(state), dark: getDarkMode(state)}
 }
 
 export default connect(mapStateToProps)(Account);
