@@ -117,7 +117,7 @@ function Message(props) {
                 created={created}
                 title={title} menuRef={menuRef}
                 setReplyingTo={setReplyState}
-                author={author} authorId={authorId} content={content}/>
+                author={author} authorId={authorId} content={content} isThread={true} />
 
         <Divider align="left">
             <span className="p-tag"

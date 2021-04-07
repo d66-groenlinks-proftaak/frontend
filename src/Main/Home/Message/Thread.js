@@ -7,10 +7,17 @@ import {Card} from "primereact/card";
 import React from "react";
 
 export default function Thread(props) {
-    return <Card title={props.title}
+    return <div
+    className={!props.isThread && props.level > 0 ? "post-child" : ""}
+    style={!props.isThread ? {
+        paddingLeft: (props.level) * 30,
+        margin: 0,
+        paddingTop: 10
+    } : {paddingTop: 10}}>
+    <Card title={ props.isThread ? props.title : "" }
                  subTitle={<span><Link to={"/profile/" + props.authorId}
                                        style={{color: "blue"}}>@{props.author}</Link></span>}
-                 className={"p-mt-5 p-mb-5"}>
+                 className={(!props.isThread && props.level > 0 ? "" : "post-parent") + props.isThread ?  + "p-mt-5 p-mb-5" : ""}>
         <div style={{wordBreak: "break-all"}}
              dangerouslySetInnerHTML={{__html: props.content}}/>
         <div className="p-d-flex p-jc-between p-ai-center">
@@ -29,15 +36,21 @@ export default function Thread(props) {
                         }}/>
 
                 <Button onClick={() => {
-                    props.togglePostWindow()
-                    props.setReplyingTo("", "")
+                    if (props.isThread) {
+                        props.togglePostWindow()
+                        props.setReplyingTo("", "")
+                    }
+                    else {
+                        props.setPostWindow(true)
+                        props.setReplyingTo(props.author, props.id)
+                    }
                 }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
-                        label={"Reageer"}
+                        label={props.isThread ? "Reageer" : "Citeer"}
                         iconPos="right"/>
             </div>
         </div>
 
-        {props.attachments.length > 0 ? <div>
+        {props.isThread && props.attachments.length > 0 ? <div>
             <Divider/>
             <h3>Bijvoegingen</h3>
 
@@ -58,4 +71,5 @@ export default function Thread(props) {
             </div>
         </div> : ""}
     </Card>
+    </div>
 }
