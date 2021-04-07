@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { login } from "../../../Core/Authentication/authentication.actions";
 import { useSelector, connect } from "react-redux";
@@ -10,20 +10,21 @@ import { MultiSelect } from "primereact/multiselect";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { getGlobalConnection } from "../../../Core/Global/global.selectors";
-import { Dialog } from "primereact/dialog";
+import { Sidebar } from "primereact/sidebar";
 
 function CreateRole(props) {
-  const [dialogText, setDialogText] = useState("");
   const [selectedPermissions, setSelectedPermissions] = useState(null);
   const [roleName, setRoleName] = useState("");
-  const [displayResponsive, setDisplayResponsive] = useState(false);
   const [nameError, setNameError] = useState(false);
 
   const createRole = () => {
-    props.connection.send("CreateRole", {
-      Name: roleName,
-      Permissions: selectedPermissions,
-    });
+    if (nameError == false) {
+      props.connection.send("CreateRole", {
+        Name: roleName,
+        Permissions: selectedPermissions,
+      });
+      props.hide();
+    }
   };
 
   const checkError = () => {
@@ -35,13 +36,8 @@ function CreateRole(props) {
   };
 
   useEffect(() => {
-    props.connection.on("ConfirmRoleCreation", (Succes) => {
-      if (Succes) {
-        setDialogText("Rol succesvol toegevoegd.");
-      } else {
-        setDialogText("Er bestaat al een rol met deze naam.");
-      }
-      setDisplayResponsive(true);
+    props.connection.on("ConfirmRoleCreation", (Error) => {
+      props.toast(Error);
     });
 
     return function cleanup() {
@@ -59,34 +55,46 @@ function CreateRole(props) {
 
   return (
     <div>
-      <InputText
-        type="text"
-        value={roleName}
-        onInput={() => checkError()}
-        onChange={(e) => setRoleName(e.target.value)}
-        id="roleName"
-      />
-      {nameError ? (
-        <span style={{ color: "red" }}> {nameError} </span>
-      ) : (
-        <span>&nbsp;</span>
-      )}
-      <MultiSelect
-        value={selectedPermissions}
-        options={permissions}
-        optionLabel="name"
-        placeholder="Selecteer de rechten"
-        onChange={(e) => setSelectedPermissions(e.value)}
-      />
-      <Button label="Aanmaken" onClick={createRole} />
-      <Dialog
-        header={dialogText}
-        visible={displayResponsive}
-        onHide={() => setDisplayResponsive(false)}
-        breakpoints={{ "960px": "75vw" }}
-        style={{ width: "50vw" }}
-        baseZIndex={1000}
-      />
+      <Sidebar
+        className={"p-grid"}
+        showCloseIcon={false}
+        style={{ overflowX: "hidden", width: "100%" }}
+        position="bottom"
+        visible={props.visible}
+        onHide={() => props.hide()}
+      >
+        <div className={"p-col-12 p-grid p-justify-center p-nogutter"}>
+          <InputText
+            style={{ width: "100%" }}
+            type="text"
+            value={roleName}
+            onInput={() => checkError()}
+            onChange={(e) => setRoleName(e.target.value)}
+            id="roleName"
+            placeholder="Naam van de rol"
+          />
+          <div style={{ width: "100%" }}>
+            {nameError ? (
+              <span style={{ width: "100%", color: "red" }}> {nameError} </span>
+            ) : (
+              <span>&nbsp;</span>
+            )}
+          </div>
+          <MultiSelect
+            style={{ width: "100%" }}
+            value={selectedPermissions}
+            options={permissions}
+            optionLabel="name"
+            placeholder="Selecteer de rechten"
+            onChange={(e) => setSelectedPermissions(e.value)}
+          />
+          <Button
+            style={{ width: "100%" }}
+            label="Aanmaken"
+            onClick={createRole}
+          />
+        </div>
+      </Sidebar>
     </div>
   );
 }
