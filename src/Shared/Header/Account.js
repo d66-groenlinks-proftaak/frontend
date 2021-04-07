@@ -55,7 +55,7 @@ class Account extends React.Component {
             }
 
             return <span>
-                <Menu ref={this.menuRef} popup model={items}/>
+                <Menu ref={this.menuRef} className={"dark"} popup model={items}/>
                 <Button className={"p-button-text"} label={this.props.accountName}
                         onClick={(event) => this.menuRef.current.toggle(event)}/>
             </span>
