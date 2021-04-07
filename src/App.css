@@ -188,7 +188,7 @@ Darkmode
 
 .dark .p-submenu-header {
     color: white;
-    background: #121212;
+    background: #121212 !important;
 }
 
 .dark .p-dropdown {
@@ -274,6 +274,14 @@ Darkmode
 
 .dark .p-dropdown-label {
     color: white;
+}
+
+.dark .p-menuitem-link {
+    background: #121212;
+}
+
+.dark.p-menu.p-menu-overlay {
+    background: #121212 !important;
 }
 
 .dark .p-menuitem-link:hover {
