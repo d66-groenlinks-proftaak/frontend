@@ -8,13 +8,13 @@ import {
 } from "../../Core/Authentication/authentication.selectors";
 import Categories from "./Categories";
 import RoleManager from "./RoleManager";
-import ShadowBans from "./ShadowBans";
+import ShadowBans from "./ShadowBan/ShadowBans";
 
 function AdminPanel (){
-    return <div>
+    return <div style={{width: "100%"}}>
         <Categories></Categories>
         <RoleManager></RoleManager>
-        <ShadowBans></ShadowBans>
+        <ShadowBans style={{width: "100%"}}></ShadowBans>
     </div>
 }
 
