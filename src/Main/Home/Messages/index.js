@@ -10,10 +10,15 @@ function Messages(props) {
     const [messages, setMessages] = useState([]);
     const [loaded, setLoaded] = useState(false);
 
+    useEffect(() => {        
+        props.connection.send('RequestUpdate');
+    }, [])
+
     useEffect(() => {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
+            console.log(_messages)
         })
 
         props.connection.on("SendMessage", _message => {
@@ -27,22 +32,24 @@ function Messages(props) {
                     pins++;
 
             _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
+            console.log(_messages)
 
-            _messages.splice(pins > 0 ? (pins) : 0, 0, _message);
+            if(pins > 0)
+                _messages.splice(pins > 0 ? (pins) : 0, 0, _message);
 
             if (_messages.length > 10)
                 _messages.pop();
 
+                console.log(_messages)
+
             setMessages(_messages)
         })
-
-        props.connection.send('RequestUpdate');
 
         return function cleanup() {
             props.connection.off("SendThreads");
             props.connection.off("SendMessage");
         }
-    }, [])
+    }, [messages, props.connection])
 
     let header = <Header setLoaded={setLoaded} loggedIn={props.loggedIn}
                          connection={props.connection}/>
