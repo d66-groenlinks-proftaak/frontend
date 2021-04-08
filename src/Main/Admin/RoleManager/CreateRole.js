@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { login } from "../../../Core/Authentication/authentication.actions";
-import { useSelector, connect } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   getAuthError,
   getAuthAuthenticating,
 } from "../../../Core/Authentication/authentication.selectors";
+
 import { MultiSelect } from "primereact/multiselect";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { login } from "../../../Core/Authentication/authentication.actions";
-import { useSelector, connect } from "react-redux";
+import { connect } from "react-redux";
 import {
   getAuthError,
   getAuthAuthenticating,
@@ -12,6 +10,7 @@ import { Button } from "primereact/button";
 import RoleSettings from "./RoleSettings";
 import CreateRole from "./CreateRole";
 import { Toast } from "primereact/toast";
+import { Divider } from "primereact/divider";
 
 function RoleManager(props) {
   const [Roles, setRoles] = useState([]);
@@ -102,6 +101,8 @@ function RoleManager(props) {
       <Toast ref={toast} />
       <div class="p-col-12">
         <h1>Rollenbeheer</h1>
+        <h4>Hier kunt u nieuwe rollen aanmaken of bestaande rollen bewerken</h4>
+        <Divider/>
       </div>
 
       <div className={"p-col-3"}>
