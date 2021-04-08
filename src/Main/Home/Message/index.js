@@ -135,6 +135,7 @@ function Message(props) {
                 created={created}
                 title={title} menuRef={menuRef}
                 setReplyingTo={setReplyState}
+                setReportId={setReportId}
                 author={author} authorId={authorId} content={content} isThread={true} 
                 locked={locked}/>
 
