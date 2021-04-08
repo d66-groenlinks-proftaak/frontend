@@ -65,7 +65,6 @@ function RoleManager(props) {
 
   function showRoleDetails(prole) {
     if (prole.id == "") {
-      console.log(prole.id);
       return (
         <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
           Selecteer een rol.
@@ -77,7 +76,6 @@ function RoleManager(props) {
         const element = prole.permissions[index];
         permissions.push(element.perm);
       }
-      console.log(permissions);
       return <RoleSettings permissions={permissions} role={prole} />;
     }
   }
@@ -100,14 +98,14 @@ function RoleManager(props) {
   }, []);
 
   return (
-    <div class="p-grid" style={{ width: "100%" }}>
+    <div className={"p-grid"} style={{ width: "100%" }}>
       <Toast ref={toast} />
       <div class="p-col-12">
         <h1>Rollenbeheer</h1>
       </div>
 
-      <div class="p-col-3">
-        <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
+      <div className={"p-col-3"}>
+        <div className={"m-m-1 p-p-0 p-text-bold"} style={{ fontSize: "2em" }}>
           Alle Rollen {""}
           <Button
             icon="pi pi-plus"
@@ -124,7 +122,7 @@ function RoleManager(props) {
         />
       </div>
 
-      <div class="p-col-9">{showRoleDetails(Role)}</div>
+      <div className={"p-col-9"}>{showRoleDetails(Role)}</div>
       <CreateRole
         refresh={getRoleList()}
         hide={() => setVisible(false)}
