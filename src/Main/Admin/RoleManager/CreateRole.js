@@ -54,16 +54,21 @@ function CreateRole(props) {
   ];
 
   return (
-    <div>
+    <div className={"p-grid"}>
       <Sidebar
-        className={"p-grid"}
-        showCloseIcon={false}
-        style={{ overflowX: "hidden", width: "100%" }}
+        className={"p-col-12 p-grid p-justify-center p-nogutter"}
+        style={{
+          overflowY: "scroll",
+          overflowX: "hidden",
+          width: "100%",
+          height: "25vh",
+        }}
         position="bottom"
+        showCloseIcon={false}
         visible={props.visible}
         onHide={() => props.hide()}
       >
-        <div className={"p-col-12 p-grid p-justify-center p-nogutter"}>
+        <div className="new-post-content p-p-3 p-pt-3">
           <InputText
             style={{ width: "100%" }}
             type="text"
@@ -88,6 +93,8 @@ function CreateRole(props) {
             placeholder="Selecteer de rechten"
             onChange={(e) => setSelectedPermissions(e.value)}
           />
+          <br />
+          <br />
           <Button
             style={{ width: "100%" }}
             label="Aanmaken"

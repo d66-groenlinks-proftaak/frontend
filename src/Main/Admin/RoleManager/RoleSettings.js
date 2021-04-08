@@ -55,7 +55,6 @@ function RoleSettings(props) {
     <div class="p-grid" style={{ width: "100%" }}>
       <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
         {props.role.name}
-        <Button onClick={editRole} label="Opslaan" />
       </div>
       <br />
       <MultiSelect
@@ -66,6 +65,7 @@ function RoleSettings(props) {
         placeholder="Selecteer de rechten"
         onChange={(e) => setSelectedPermissions(e.value)}
       />
+      <Button onClick={editRole} label="Opslaan" />
     </div>
   );
 }
