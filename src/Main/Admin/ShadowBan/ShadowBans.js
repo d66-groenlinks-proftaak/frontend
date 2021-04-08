@@ -4,6 +4,7 @@ import {getAuthAuthenticating, getAuthError} from "../../../Core/Authentication/
 import {getGlobalConnection} from "../../../Core/Global/global.selectors";
 import {connect} from "react-redux";
 import { Toast } from 'primereact/toast';
+import { Divider } from "primereact/divider";
 
 
 
@@ -35,11 +36,13 @@ function ShadowBans(props){
         props.connection.send("GetShadowBannedMessages")
     })
 
-    return <div style={{width: "100%"}} className={"p-d-flex p-jc-center p-ai-center"}>
+    return <div style={{width: "100%"}}>
         <Toast ref={toast} />
-        <div style={{width: "40%"}}>
-            <h1 style={{textAlign: "center"}}>Gerapporteerde berichten</h1>
-            <h4 style={{textAlign: "center"}}><i className={"pi pi-ban"}/> : Verwijdert dit bericht <i className={"pi pi-check"}/> : Sta dit bericht toe</h4>
+        <div>
+            <h1>Gerapporteerde berichten</h1>
+            <h4><i className={"pi pi-ban"}/> : Verwijdert dit bericht <i className={"pi pi-check"}/> : Sta dit bericht toe</h4>
+            <Divider/>
+            
             {messageList !== undefined && messageList[0] !== undefined ? messageList.map(message => {
                 return <ShadowBanMessage style={{width: "100%"}} guest={message.guest}
                                          replies={message.replies}
@@ -52,7 +55,7 @@ function ShadowBans(props){
                     {message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}
                 </ShadowBanMessage>
 
-            }) :  <h2 style={{textAlign: "center"}}>Er zijn geen gerapporteerde berichten gevonden</h2> }
+            }) :  <h2>Er zijn geen gerapporteerde berichten gevonden</h2> }
         </div>
 
     </div>

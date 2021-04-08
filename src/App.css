@@ -142,7 +142,7 @@ Darkmode
  */
 
 .dark {
-    background: #121212;
+    background-color: #121212;
     color: white;
 }
 
@@ -154,8 +154,18 @@ Darkmode
     color: black;
 }
 
+body {
+    background: url('./Shared/klavergod.png') center center;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed;
+}
+
+.brand img {
+    height: 40px;
+}
+
 .p-dialog-header {
-    background: #121212 !important;
+    background-color: #121212 !important;
 }
 
 .p-dialog-title {    
@@ -178,17 +188,17 @@ Darkmode
 }
 
 .dark .search-bar {
-    background: #121212;
+    background-color: #121212;
     border: 1px solid #212121;
 }
 
 .dark .p-menu {
-    background: #121212;
+    background-color: #121212;
 }
 
 .dark .p-submenu-header {
     color: white;
-    background: #121212 !important;
+    background-color: #121212 !important;
 }
 
 .dark .p-dropdown {
@@ -429,7 +439,7 @@ Darkmode
 }
 
 .dark .p-grid {
-    background: #121212;
+    background-color: #121212;
 }
 
 .dark .p-fileupload-buttonbar {
