@@ -7,6 +7,16 @@ import {Card} from "primereact/card";
 import React from "react";
 
 export default function Thread(props) {
+    function Greeting() {
+        if(props.locked == false)
+          return <Button onClick={() => {
+            props.togglePostWindow()
+            props.setReplyingTo("", "")
+        }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
+                label={"Reageer"}
+                iconPos="right"/>;
+      }
+      
     return <Card title={props.title}
                  subTitle={<span><Link to={"/profile/" + props.authorId}
                                        style={{color: "blue"}}>@{props.author}</Link></span>}
@@ -25,15 +35,10 @@ export default function Thread(props) {
                         onClick={(event) => {
                             if (props.menuRef.current)
                                 props.menuRef.current.toggle(event)
-                            props.setReportId(props.id)
+                            //props.setReportId(props.id)
                         }}/>
-
-                <Button onClick={() => {
-                    props.togglePostWindow()
-                    props.setReplyingTo("", "")
-                }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
-                        label={"Reageer"}
-                        iconPos="right"/>
+                
+                {Greeting()}
             </div>
         </div>
 
