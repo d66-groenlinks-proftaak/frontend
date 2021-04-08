@@ -442,3 +442,12 @@ Darkmode
     border: none;
     margin-bottom: 20px;
 }
+
+.admin-menu{
+    width : 100%;
+    border :none;
+}
+
+.max-width{
+    width: 100%
+}
