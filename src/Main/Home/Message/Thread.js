@@ -7,6 +7,22 @@ import {Card} from "primereact/card";
 import React from "react";
 
 export default function Thread(props) {
+    function reactButton() {
+        if(props.locked == false){
+            return <Button onClick={() => {
+                if (props.isThread) {
+                    props.togglePostWindow()
+                    props.setReplyingTo("", "")
+                }
+                else {
+                    props.setPostWindow(true)
+                    props.setReplyingTo(props.author, props.id)
+                }
+            }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
+                    label={props.isThread ? "Reageer" : "Citeer"}
+                    iconPos="right"/>;
+        }
+    }
     return <div
     className={!props.isThread && props.level > 0 ? "post-child" : ""}
     style={!props.isThread ? {
@@ -35,18 +51,7 @@ export default function Thread(props) {
                             props.setReportId(props.id)
                         }}/>
 
-                <Button onClick={() => {
-                    if (props.isThread) {
-                        props.togglePostWindow()
-                        props.setReplyingTo("", "")
-                    }
-                    else {
-                        props.setPostWindow(true)
-                        props.setReplyingTo(props.author, props.id)
-                    }
-                }} className={"p-button-primary p-button-outlined"} icon="pi pi-plus"
-                        label={props.isThread ? "Reageer" : "Citeer"}
-                        iconPos="right"/>
+                        {reactButton()}
             </div>
         </div>
 
