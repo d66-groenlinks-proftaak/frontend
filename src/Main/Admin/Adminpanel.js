@@ -10,7 +10,7 @@ import {
 } from "../../Core/Authentication/authentication.selectors";
 import Categories from "./Categories";
 
-import RoleManager from "./RoleManager";
+import RoleManager from "./RoleManager/RoleManager";
 import ShadowBans from "./ShadowBan/ShadowBans";
 import { Menu } from 'primereact/menu';
 function AdminPanel (){
