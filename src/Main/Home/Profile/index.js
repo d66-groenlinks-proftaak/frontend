@@ -58,8 +58,15 @@ class Profile extends React.Component {
     <div class="p-col-12 p-md-8">
       <div class="profile-info">
         <div class="profile-name">
-          {this.getProfilePic()}
-          <h1 class="account-name">{this.state.loaded ? this.state.firstname : "loading..."} {this.state.lastname}</h1>
+          <div className="profile-name p-d-flex p-jc-between" style={{width: "100%"}}>
+            <div>
+              <h1 class="account-name"> 
+              {this.getProfilePic()} {this.state.loaded ? this.state.firstname : "loading..."} {this.state.lastname}</h1>
+            </div>
+            <div>
+              <Button className="p-button-text" label="Bewerken" iconPos="right" icon="pi pi-pencil"></Button>
+            </div>
+          </div>
         </div>
         <div class="account-email">Email: {this.state.email}</div>
       </div>  
