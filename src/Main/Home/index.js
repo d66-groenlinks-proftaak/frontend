@@ -14,7 +14,7 @@ import Categories from "./Categories";
 import {connect} from "react-redux";
 import {getGlobalConnection} from "../../Core/Global/global.selectors";
 import Adminpanel from "../Admin/Adminpanel";
-
+import Poll from "./Poll/Poll";
 const errors = [
     "Geen fout",
     "Tekstbericht was te kort",
@@ -66,6 +66,9 @@ class Home extends React.Component {
                     </div>
                     <div className="p-col-12 p-md-7 p-pl-5">
                         <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
+                    </div>
+                    <div className={"p-col-12 p-sm-2 p-md-2 p-xl-1 hidden-sm hidden-xs"}>
+                        <Poll/>
                     </div>
                 </Route>
             </Switch>

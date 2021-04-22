@@ -7,6 +7,9 @@ import Categories from "./Categories";
 import RoleManager from "./RoleManager/RoleManager";
 import ShadowBans from "./ShadowBan/ShadowBans";
 import { Menu } from 'primereact/menu';
+import CreatePoll from "../Home/Poll/CreatePoll";
+import {Route} from "react-router-dom";
+
 function AdminPanel (){
 
     const [window, setWindow] = useState("report");
@@ -31,7 +34,7 @@ function AdminPanel (){
 
             <div className={"p-col-10"}>
                 {window !== undefined && window === "report" ? <ShadowBans className={"max-width"}></ShadowBans>: <span/>}
-                {window !== undefined && window === "catergorie" ? <Categories></Categories>: <span/>}
+                {window !== undefined && window === "catergorie" ? <CreatePoll></CreatePoll>: <span/>}
                 {window !== undefined && window === "rollen" ? <RoleManager></RoleManager>: <span/>}
             </div>
         </div>
