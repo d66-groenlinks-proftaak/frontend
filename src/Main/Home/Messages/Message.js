@@ -12,7 +12,7 @@ class Message extends React.Component {
             <div class={"p-d-flex p-jc-between p-ai-center"}>
                 <div>
                     <div className={"message-title"} style={{fontWeight: "bold", color: "black"}}>
-                        {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
+                        {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : <Tag value={this.props.role} severity="secondary" />} {this.props.title}
                     </div>
                 </div>
                 <div>
