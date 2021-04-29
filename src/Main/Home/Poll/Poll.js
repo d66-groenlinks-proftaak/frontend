@@ -72,7 +72,7 @@ function Poll(props) {
         props.connection.send("VoteOnPoll", {VoteOptions : optionsToSend});*/
         setShowResults(true);
     }
-
+    //hoi
     const onOptionChange = (e) => {
         let selectedOptions = [...currentCbOptions];
         if(e.checked)
