@@ -8,12 +8,14 @@ import {getAuthAuthenticated, getAuthToken} from "../../../Core/Authentication/a
 import {connect} from "react-redux";
 import {FileUpload} from "primereact/fileupload";
 import { Toast } from "primereact/toast";
+import { MultiSelect } from 'primereact/multiselect';
 
 class Header extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            categories: [],
             newPostOpen: false,
             additionalProps: {},
             newPost: {
@@ -26,12 +28,20 @@ class Header extends React.Component {
             invalidContent: false,
             invalidEmail: false,
             invalidAuthor: false,
-            currentMessages: 0
+            currentMessages: 0,
+            selectedCategories: null
         }
 
         this.uploadRef = undefined
         this.toastRef = React.createRef();
         this.upload.bind(this)
+         
+    }
+
+    setSelectedCategories = (value) => {
+        this.setState({
+            selectedCategories: value
+        });
     }
 
     setPostWindow = (open) => {
@@ -144,6 +154,9 @@ class Header extends React.Component {
         formData.append("Email", this.state.newPost.email);
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
+        
+        console.log(this.state.selectedCategories)
+        formData.append("Categories", JSON.stringify(this.state.selectedCategories));
 
         fetch('http://localhost:5000/message/create', {
             method: 'POST',
@@ -158,7 +171,7 @@ class Header extends React.Component {
             console.log(e);
         })
     }
-
+     
     render() {
 
         let authenticated = <div>
@@ -188,6 +201,13 @@ class Header extends React.Component {
             {label: "Oudste", value: 2},
         ]
 
+        const categories = [
+            {name: 'Corona', value: 'Corona'},
+            {name: 'Gemeente', value: 'Gemeente'},
+            {name: 'Afval', value: 'Afval'},
+            {name: 'Racisme', value: 'Racisme'}
+        ];
+
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
@@ -208,6 +228,9 @@ class Header extends React.Component {
                          position="bottom"
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
+                    <div className="new-post-settings p-p-3 p-pt-3">
+                        <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie"/>
+                    </div>
                     <div className="new-post-content p-p-3 p-pt-3">
                         <InputText style={{width: "100%"}} placeholder={"Titel"}
                                    className={this.state.invalidTitle ? "p-invalid" : ""}

@@ -11,7 +11,7 @@ function Messages(props) {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {        
-        props.connection.send('RequestUpdate');
+        props.connection.send('RequestUpdate', 'Alle Berichten');
     }, [])
 
     useEffect(() => {

@@ -9,7 +9,7 @@ import {Tooltip} from "primereact/tooltip";
 class Message extends React.Component {
     render() {
         return <div className={"message p-component"}>
-            <div class={"p-d-flex p-jc-between p-ai-center"}>
+            <div className={"p-d-flex p-jc-between p-ai-center"}>
                 <div>
                     <div className={"message-title"} style={{fontWeight: "bold", color: "black"}}>
                         {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
