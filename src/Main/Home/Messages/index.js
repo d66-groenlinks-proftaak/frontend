@@ -82,9 +82,14 @@ function Messages(props) {
 
     return <div>
         {header}
+        <Divider align="center">
+            <b>Mededelingen</b>
+        </Divider>
         {announcements.map(announcements => {
             return <Link key={announcements.id} style={{textDecoration: 'none'}} to={"/thread/" + announcements.id}>
-                <Message guest={announcements.guest}
+                <Message style={"message-overlay"} 
+                         titleSize={20} 
+                         guest={announcements.guest}
                          replies={announcements.replies}
                          pinned={announcements.pinned}
                          title={announcements.title}
