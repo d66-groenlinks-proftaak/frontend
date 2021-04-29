@@ -17,8 +17,8 @@ const Account = (props) => {
                     return <Redirect to={"/"}/>
 
                 return <Login
-                    login={(username, password) => {
-                        props.dispatch(login(username, password, ""))
+                    login={(username, password, permissions) => {
+                        props.dispatch(login(username, password, "", permissions))
                     }} {..._props} loggingIn={props.authenticating}/>
             }}/>
 

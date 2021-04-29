@@ -1,6 +1,7 @@
 export const Actions = {
     setConnection: "[Global] Connection",
     setDarkMode: "[Global] Dark Mode",
+    setPermissions: "[Global] Permissions"
 }
 
 export const setConnection = (connection) => ({
@@ -22,5 +23,12 @@ const setDarkModeInternal = (darkmode) => ({
     type: Actions.setDarkMode,
     payload: {
         darkmode
+    }
+})
+
+export const setPermissions = (permissions) => ({
+    type: Actions.setPermissions,
+    payload: {
+        permissions
     }
 })
