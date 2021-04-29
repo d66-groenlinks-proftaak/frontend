@@ -18,7 +18,7 @@ function AdminPanel (){
         {label: 'Gerapporteede berichten', command: (e) =>{
                 setWindow("report")
             }},
-        {label: 'Categorieën', command: (e) =>{
+        {label: 'Poll Maken', command: (e) =>{
                 setWindow("catergorie")
             }},
         {label: 'Rollen Beheren' , command: (e) =>{

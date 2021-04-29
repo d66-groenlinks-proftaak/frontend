@@ -67,13 +67,14 @@ class Home extends React.Component {
                     <div className="p-col-12 p-md-7 p-pl-5">
                         <Messages loggedIn={this.props.loggedIn} connection={this.props.connection}/>
                     </div>
-                    <div className={"p-col-12 p-sm-2 p-md-2 p-xl-1 hidden-sm hidden-xs"}>
-                        <Poll/>
-                    </div>
                 </Route>
             </Switch>
 
             <Toast ref={this.toastRef}/>
+
+            <div className={"poll"}>
+                <Poll/>
+            </div>
         </div>
     }
 }
