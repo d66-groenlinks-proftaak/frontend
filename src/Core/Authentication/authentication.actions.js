@@ -1,4 +1,5 @@
 import {getGlobalConnection} from "../Global/global.selectors";
+import {setPermissions} from "../Global/global.actions";
 
 export const Actions = {
     authenticate: "[Authentication] Login",
@@ -20,10 +21,12 @@ export const authenticateFailed = (error) => ({
     }
 })
 
-export const loginSuccess = (email, id, token) => {
+export const loginSuccess = (email, id, token, permissions) => {
     return function (dispatch, state) {
         localStorage.setItem("token", token);
+
         dispatch(loginSuccessInternal(email, id, token));
+        dispatch(setPermissions(permissions));
     }
 }
 
@@ -54,7 +57,6 @@ export const register = (firstname, lastname, password, email) => {
 export const login = (username, password, captcha) => {
     return function (dispatch, state) {
         dispatch(authenticate())
-
         const connection = getGlobalConnection(state());
 
         connection.send("Login", {

@@ -1,6 +1,6 @@
 import React from "react";
 import Category from "./Category";
-import {faComments, faVirus, faCity, faTrash, faAdjust, faBullhorn} from "@fortawesome/free-solid-svg-icons"
+import {faComments, faVirus, faCity, faTrash, faAdjust, faBullhorn, faPollH, faVideo, faQuestion} from "@fortawesome/free-solid-svg-icons"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 class Categories extends React.Component {
@@ -18,11 +18,17 @@ class Categories extends React.Component {
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={faComments}/>}/>
                 <Category name={"Mededelingen"}
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={faBullhorn}/>}/>
+                <Category name={"Polls"}
+                          icon={<FontAwesomeIcon style={{color: "black"}} icon={faPollH}/>}/>
+                <Category name={"Webinars"}
+                          icon={<FontAwesomeIcon style={{color: "black"}} icon={faVideo}/>}/>
+                <Category name={"Quizzes"}
+                          icon={<FontAwesomeIcon style={{color: "black"}} icon={faQuestion}/>}/>
                 <div style={{width: "100%", height: 25}}/>
                 <span style={{
                     textTransform: "uppercase", marginLeft: "-2em",
                     fontSize: "1.5em", fontWeight: "bold"
-                }}>Categorieën</span>
+                }}>THEMA'S</span>
                 <Category name={"Corona"}
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={faVirus}/>}/>
                 <Category name={"Gemeente"}
