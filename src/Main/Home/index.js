@@ -14,7 +14,7 @@ import Categories from "./Categories";
 import {connect} from "react-redux";
 import {getGlobalConnection} from "../../Core/Global/global.selectors";
 import Adminpanel from "../Admin/Adminpanel";
-
+import Poll from "./Poll/Poll";
 const errors = [
     "Geen fout",
     "Tekstbericht was te kort",
@@ -71,6 +71,10 @@ class Home extends React.Component {
             </Switch>
 
             <Toast ref={this.toastRef}/>
+
+            <div className={"poll"}>
+                <Poll/>
+            </div>
         </div>
     }
 }
