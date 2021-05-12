@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {connect} from "react-redux";
 import {getDarkMode} from "../../Core/Global/global.selectors";
 import {setDarkMode} from "../../Core/Global/global.actions";
+import Logo from "./D66GL.png";
 
 class index extends React.Component {
     render() {
@@ -22,7 +23,9 @@ class index extends React.Component {
                     fontSize: "1.7em",
                     textDecoration: 'none'
                 }}
-                      className={"p-text-bold brand"}>Ringkey</Link>
+                      className={"p-text-bold brand"}>
+                          <img src={Logo} />
+                      </Link>
 
                 <div>
                     <InputText className={"search-bar hidden-sm hidden-xs"} placeholder={"Zoeken"}/>

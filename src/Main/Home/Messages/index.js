@@ -5,13 +5,21 @@ import Message from "./Message";
 import {Link} from "react-router-dom";
 import LoadingMessages from "./LoadingMessages";
 import {Tag} from "primereact/tag";
+import { Divider } from 'primereact/divider';
+
 
 function Messages(props) {
     const [messages, setMessages] = useState([]);
+    const [announcements, setAnnouncements] = useState([]);
+
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {        
         props.connection.send('RequestUpdate');
+    }, [])
+
+    useEffect(() => {        
+        props.connection.send('RequestAnnouncement');
     }, [])
 
     useEffect(() => {
@@ -22,6 +30,7 @@ function Messages(props) {
             console.log(_messages)
         })
 
+        
         props.connection.on("SendMessage", _message => {
             const title = _message.title;
 
@@ -46,11 +55,22 @@ function Messages(props) {
             setMessages(_messages)
         })
 
+        
+        props.connection.on("SendAnnouncements", _announcements => {
+            setAnnouncements(_announcements);
+            setLoaded(true);
+            console.log(_announcements)
+        })
+
         return function cleanup() {
             props.connection.off("SendThreads");
             props.connection.off("SendMessage");
         }
     }, [messages, props.connection])
+
+
+
+        
 
     let header = <Header setLoaded={setLoaded} loggedIn={props.loggedIn}
                          connection={props.connection}/>
@@ -63,6 +83,27 @@ function Messages(props) {
 
     return <div>
         {header}
+        <Divider align="center">
+            <b>Mededelingen</b>
+        </Divider>
+        {announcements.map(announcements => {
+            return <Link key={announcements.id} style={{textDecoration: 'none'}} to={"/thread/" + announcements.id}>
+                <Message style={"message-overlay"} 
+                         titleSize={20} 
+                         guest={announcements.guest}
+                         replies={announcements.replies}
+                         pinned={announcements.pinned}
+                         title={announcements.title}
+                         authorId={announcements.authorId}
+                         author={announcements.author}
+                         created={announcements.created}
+                         content={announcements.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
+                </Message>
+            </Link>
+        })}
+        <Divider align="center">
+            <b>Berichten</b>
+        </Divider>
         {messages.map(message => {
             return <Link key={message.id} style={{textDecoration: 'none'}} to={"/thread/" + message.id}>
                 <Message guest={message.guest}

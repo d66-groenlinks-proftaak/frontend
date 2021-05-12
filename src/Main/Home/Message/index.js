@@ -28,6 +28,7 @@ function Message(props) {
     const [created, setCreated] = useState("");
     const [authorId, setAuthorId] = useState("");
     const [id, setId] = useState("");
+    const [locked, setLocked] = useState(true);
     const [title, setTitle] = useState("");
     const [newReportOpen, setNewReportOpen] = useState(false);
     const [reportId, setReportId] = useState("");
@@ -48,6 +49,21 @@ function Message(props) {
             label: "Bewerken",
             icon: "pi pi-pencil",
             command: () => {
+                props.connection.send();
+            }
+        },
+        {
+            label: "Lock",
+            icon: "pi pi-lock",
+            command: () => {
+                props.connection.send("LockPost", props.id);
+            }
+        },
+        {
+            label: "Pin",
+            icon: "pi pi-lock",
+            command: () => {
+                props.connection.send("TogglePostPin", props.id);
             }
         }
     ]
@@ -87,6 +103,8 @@ function Message(props) {
             setTitle(thread.parent.title);
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
+            setLocked(thread.parent.locked);
+
 
             props.dispatch(setReplies(thread.children));
         })
@@ -117,7 +135,9 @@ function Message(props) {
                 created={created}
                 title={title} menuRef={menuRef}
                 setReplyingTo={setReplyState}
-                author={author} authorId={authorId} content={content} isThread={true} />
+                setReportId={setReportId}
+                author={author} authorId={authorId} content={content} isThread={true} 
+                locked={locked}/>
 
         <Divider align="left">
             <span className="p-tag"

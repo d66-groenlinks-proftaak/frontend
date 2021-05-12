@@ -6,6 +6,7 @@ import 'primeflex/primeflex.css';
 import './App.css';
 
 import {connect} from "react-redux";
+import links from "./Shared/klavergod.png";
 
 import Home from "./Main/Home";
 import Header from "./Shared/Header";
@@ -39,7 +40,8 @@ class App extends React.Component {
 
                 connection.send('UpdatePage', this.props.location.pathname);
                 connection.on("Authenticated", account => {
-                    this.props.dispatch(loginSuccess(account.email, account.accountId, account.token))
+                    console.log(account)
+                    this.props.dispatch(loginSuccess(account.email, account.accountId, account.token, account.permissions))
                 });
 
                 connection.on("AuthenticateFailed", error => {
@@ -62,7 +64,6 @@ class App extends React.Component {
         return (
             <div className={"p-grid p-nogutter " + (this.props.darkmode ? "dark" : "")}
                  style={{width: "100%", height: "100vh"}}>
-
                 <title>Ringkey</title>
 
                 <div className={"p-col-12"}>
