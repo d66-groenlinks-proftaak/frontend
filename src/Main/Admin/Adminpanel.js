@@ -9,9 +9,7 @@ import ShadowBans from "./ShadowBan/ShadowBans";
 import { Menu } from 'primereact/menu';
 
 import CreatePoll from "../Home/Poll/CreatePoll";
-import {Route} from "react-router-dom";
 
-function AdminPanel (){
 import {getPermissions} from "../../Core/Global/global.selectors";
 import {connect} from "react-redux";
 import {getAuthAuthenticating, getAuthError} from "../../Core/Authentication/authentication.selectors";
