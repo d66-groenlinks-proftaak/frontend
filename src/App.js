@@ -6,7 +6,6 @@ import 'primeflex/primeflex.css';
 import './App.css';
 
 import {connect} from "react-redux";
-import links from "./Shared/klavergod.png";
 
 import Home from "./Main/Home";
 import Header from "./Shared/Header";
