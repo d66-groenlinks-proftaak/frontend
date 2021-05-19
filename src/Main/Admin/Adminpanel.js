@@ -7,6 +7,11 @@ import Categories from "./Categories";
 import RoleManager from "./RoleManager/RoleManager";
 import ShadowBans from "./ShadowBan/ShadowBans";
 import { Menu } from 'primereact/menu';
+
+import CreatePoll from "../Home/Poll/CreatePoll";
+import {Route} from "react-router-dom";
+
+function AdminPanel (){
 import {getPermissions} from "../../Core/Global/global.selectors";
 import {connect} from "react-redux";
 import {getAuthAuthenticating, getAuthError} from "../../Core/Authentication/authentication.selectors";
@@ -14,13 +19,15 @@ import {Redirect, Route} from "react-router-dom";
 
 function AdminPanel (props){
 
+
     const [window, setWindow] = useState("report");
 
     let items = [
         {label: 'Gerapporteede berichten', command: (e) =>{
                 setWindow("report")
             }},
-        {label: 'Categorieën', command: (e) =>{
+
+        {label: 'Poll Maken', command: (e) =>{
                 setWindow("catergorie")
             }},
         {label: 'Rollen Beheren' , command: (e) =>{
@@ -39,7 +46,7 @@ function AdminPanel (props){
 
             <div className={"p-col-10"}>
                 {window !== undefined && window === "report" ? <ShadowBans className={"max-width"}></ShadowBans>: <span/>}
-                {window !== undefined && window === "catergorie" ? <Categories></Categories>: <span/>}
+                {window !== undefined && window === "catergorie" ? <CreatePoll></CreatePoll>: <span/>}
                 {window !== undefined && window === "rollen" ? <RoleManager></RoleManager>: <span/>}
             </div>
         </div>
