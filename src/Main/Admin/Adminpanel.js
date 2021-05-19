@@ -30,8 +30,7 @@ function AdminPanel (props){
     console.log(props.permissions);
     if(!props.permissions.includes(0))
         return <Redirect to="/" />
-    return<div>
-        <div className={"p-col-12 p-grid p-justify-center"}>
+    return<div className={"p-col-12 p-grid p-justify-center"}>
         <div className={"p-col-8"} style={{marginTop: "10px"}}>
         <div className={"p-grid"}>
             <div className={"p-col-2"}>
@@ -46,7 +45,6 @@ function AdminPanel (props){
         </div>
     </div>
     </div>
-</div>
                 
                 
 }
