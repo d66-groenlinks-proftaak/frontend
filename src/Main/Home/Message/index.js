@@ -21,6 +21,7 @@ import Header from "./Header";
 import CreateReply from "./CreateReply";
 import {setReplyOpen, setReplyingToId, setReplyingTo, setReplies} from "../../../Core/Message/message.actions";
 import {getReplyOpen} from "../../../Core/Message/message.selectors";
+import {getPermissions} from "../../../Core/Global/global.selectors";
 
 function Message(props) {
     const [author, setAuthor] = useState("");
@@ -35,10 +36,11 @@ function Message(props) {
     const [attachments, setAttachments] = useState([]);
     const [showAttachmentState, setShowAttachment] = useState(false);
     const [attachment, setAttachment] = useState("");
+    const [type, setType] = useState(0);
 
     const menuRef = React.createRef();
 
-    const extraOptions = [{
+    const [extraOptions, setExtraOptions] = useState([{
         label: "Rapporteer",
         icon: "pi pi-ban",
         command: () => {
@@ -59,15 +61,24 @@ function Message(props) {
                 props.connection.send("LockPost", props.id);
             }
         },
-        {
-            label: "Pin",
-            icon: "pi pi-lock",
-            command: () => {
-                props.connection.send("TogglePostPin", props.id);
-            }
-        }
-    ]
 
+    ]);
+
+    const setAnnouncement = () =>{
+        if(props.permissions.includes(4) && type === 0){
+            let oldOptions = extraOptions;
+            oldOptions.push({
+                label: "Mededeling",
+                icon: "pi pi-volume-off",
+                command: () => {
+                    props.connection.send("SetAnnouncement", props.id);
+                }
+            });
+            setExtraOptions(oldOptions);
+        }
+
+
+    }
     const showAttachment = (bool, url) => {
         setShowAttachment(bool);
         setAttachment(url)
@@ -104,11 +115,12 @@ function Message(props) {
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
             setLocked(thread.parent.locked);
+            setType(thread.parent.type);
 
 
             props.dispatch(setReplies(thread.children));
         })
-
+        setAnnouncement();
         props.connection.send("LoadMessageThread", props.id);
 
         return function cleanup() {
@@ -188,7 +200,7 @@ function Message(props) {
 
 const
     mapStateToProps = (state) => {
-        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state)}
+        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state),permissions: getPermissions(state)}
     }
 
 export default connect(mapStateToProps)
