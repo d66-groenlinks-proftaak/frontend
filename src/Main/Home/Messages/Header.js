@@ -8,7 +8,11 @@ import {getAuthAuthenticated, getAuthToken} from "../../../Core/Authentication/a
 import {connect} from "react-redux";
 import {FileUpload} from "primereact/fileupload";
 import { Toast } from "primereact/toast";
+<<<<<<< Updated upstream
 import { MultiSelect } from 'primereact/multiselect';
+=======
+import { MultiSelect } from "primereact/multiselect";
+>>>>>>> Stashed changes
 
 class Header extends React.Component {
     constructor(props) {
@@ -17,6 +21,7 @@ class Header extends React.Component {
         this.state = {
             categories: [],
             newPostOpen: false,
+            selectedCategories: [],
             additionalProps: {},
             newPost: {
                 title: "",
@@ -154,8 +159,11 @@ class Header extends React.Component {
         formData.append("Email", this.state.newPost.email);
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
+<<<<<<< Updated upstream
         
         console.log(this.state.selectedCategories)
+=======
+>>>>>>> Stashed changes
         formData.append("Categories", JSON.stringify(this.state.selectedCategories));
 
         fetch('http://localhost:5000/message/create', {
@@ -202,11 +210,19 @@ class Header extends React.Component {
         ]
 
         const categories = [
+<<<<<<< Updated upstream
             {name: 'Corona', value: 'Corona'},
             {name: 'Gemeente', value: 'Gemeente'},
             {name: 'Afval', value: 'Afval'},
             {name: 'Racisme', value: 'Racisme'}
         ];
+=======
+            {label: "Corona", value: "corona"},
+            {label: "Gemeente", value: "gemeente"},
+            {label: "Afval", value: "afval"},
+            {label: "Racisme", value: "racisme"}
+        ]
+>>>>>>> Stashed changes
 
         return <div>
 
@@ -232,6 +248,8 @@ class Header extends React.Component {
                         <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie"/>
                     </div>
                     <div className="new-post-content p-p-3 p-pt-3">
+                        <MultiSelect value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} display="chip" />
+
                         <InputText style={{width: "100%"}} placeholder={"Titel"}
                                    className={this.state.invalidTitle ? "p-invalid" : ""}
                                    value={this.state.newPost.title} onChange={e => {
