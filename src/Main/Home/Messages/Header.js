@@ -230,10 +230,9 @@ class Header extends React.Component {
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
                     <div className="new-post-settings p-p-3 p-pt-3">
-                        <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie"/>
+                        <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie" display="chip" />
                     </div>
                     <div className="new-post-content p-p-3 p-pt-3">
-                        <MultiSelect value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} display="chip" />
 
                         <InputText style={{width: "100%"}} placeholder={"Titel"}
                                    className={this.state.invalidTitle ? "p-invalid" : ""}
