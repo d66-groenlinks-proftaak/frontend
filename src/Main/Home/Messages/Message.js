@@ -8,39 +8,44 @@ import {Tooltip} from "primereact/tooltip";
 
 class Message extends React.Component {
     render() {
-        return <div className={"message p-component"}>
-            <div className={"p-d-flex p-jc-between p-ai-center"}>
-                <div>
-                    <div className={"message-title"} style={{fontWeight: "bold", color: "black"}}>
-                        {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
-                    </div>
-                </div>
-                <div>
-                    <div style={{color: "#ff5959"}}> {this.props.pinned ?
-                        <FontAwesomeIcon icon={faThumbtack}/> : ""} </div>
-                </div>
-            </div>
-            <div style={{fontSize: "0.7em", color: "black"}}>
-                <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
-                <span
-                    className={"message-date"}
-                    data-pr-tooltip={DateTime.fromMillis(this.props.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}> — {DateTime.fromMillis(this.props.created).toRelative({locale: "nl"})} gepost</span>
-            </div>
-            <div className={"p-d-flex p-jc-between p-ai-end"}>
-                <div style={{
-                    marginTop: 5,
-                    wordBreak: "break-all"
-                }} className={"message-content"}>{this.props.content}</div>
-                <div style={{
-                    minWidth: 55,
-                    textAlign: "right"
-                }}>
-                    <div className={"message-comments"}> {this.props.replies || 0} <i className={"pi pi-comments"}/>
-                    </div>
-                </div>
-            </div>
+        return <div className={" message p-component"}>
+                    <div  className={this.props.style}></div>
+                    <div  className={"content"}>
+                        <div class={"p-d-flex p-jc-between p-ai-center"}>
+                            <div>
+                                <div className={"message-title"} style={{ fontSize: this.props.titleSize, fontWeight: "bold", color: "black"}}>
+                                    {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
+                                </div>
 
-            <Tooltip className={"tooltip"} target=".message-date" position={"bottom"}/>
+                            </div>
+                            <div>
+                                <div style={{color: "#ff5959"}}> {this.props.pinned ?
+                                    <FontAwesomeIcon icon={faThumbtack}/> : ""} </div>
+                            </div>
+                        </div>
+                        <div style={{fontSize: "0.7em", color: "black"}}>
+                            <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
+                            <span
+                                className={"message-date"}
+                                data-pr-tooltip={DateTime.fromMillis(this.props.created).setLocale("nl").toLocaleString(DateTime.DATETIME_FULL)}> — {DateTime.fromMillis(this.props.created).toRelative({locale: "nl"})} gepost</span>
+                        </div>
+                        <div className={"p-d-flex p-jc-between p-ai-end"}>
+                            <div style={{
+                                marginTop: 5,
+                                wordBreak: "break-all"
+                            }} className={"message-content"}>{this.props.content}</div>
+                            <div style={{
+                                minWidth: 55,
+                                textAlign: "right"
+                            }}>
+                                <div className={"message-comments"}> {this.props.replies || 0} <i className={"pi pi-comments"}/>
+                                </div>
+                            </div>
+                        
+                    
+                        </div>
+                    <Tooltip className={"tooltip"} target=".message-date" position={"bottom"}/>
+                </div>
         </div>
     }
 }
