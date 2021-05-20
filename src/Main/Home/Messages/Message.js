@@ -10,7 +10,6 @@ class Message extends React.Component {
     render() {
         return <div className={" message p-component"}>
                     <div  className={this.props.style}></div>
-
                     <div  className={"content"}>
                         <div class={"p-d-flex p-jc-between p-ai-center"}>
                             <div>
