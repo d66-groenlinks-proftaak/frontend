@@ -50,6 +50,8 @@ function CreateRole(props) {
     { name: "Quiz", code: 2 },
     { name: "Webinar", code: 3 },
     { name: "Mededeling", code: 4 },
+    { name: "RollenBeheer", code: 5},
+    { name : "AdminPaneel", code:6}
   ];
 
   return (
