@@ -41,9 +41,8 @@ function Message(props) {
     const [invalidContent, setInvalidContent] = useState(false);
     const [invalidTitle, setInvalidTitle] = useState(false);
     const [additionalProps, setAdditionalProps] = useState({});
-    const [uploadRef, setUploadRef] = useState();
-    const [editMessageContent, setEditMessageContent] = useState({});
-    const [editMessageTitle, setEditMessageTitle] = useState({});
+    const [editMessageContent, setEditMessageContent] = useState(content);
+    const [editMessageTitle, setEditMessageTitle] = useState(title);
 
 
 
@@ -99,33 +98,24 @@ function Message(props) {
         setShowAttachment(false);
     }
 
-    const onInputChanged = (type, content) => {
-        validateInput(type, content)
+    const onInputChanged = (type, c) => {
+        validateInput(type, c)
 
-/*        this.setState(oldState => {
-            const newPost = oldState.newPost;
-            newPost[type] = content;
-
-            return {newPost}
-        })*/
         if(type === "content"){
-            setEditMessageContent(content)
+            setEditMessageContent(c)
         }
         else if (type === "title"){
-            setEditMessageTitle(content)
+
+            setEditMessageTitle(c)
         }
 
     }
 
-    const validateInput = (type, content, cb) => {
-        console.log(type,content)
-        if (content === undefined)
-            return;
-
+    const validateInput = (type, c) => {
         if (type === "title") {
-            if (content.length > 40) {
+            if (c.length > 40) {
                 setInvalidTitle("De title is te lang")
-            } else if (content.length <= 5) {
+            } else if (c.length <= 5) {
                 setInvalidTitle("De titel is te kort")
             } else {
                 setInvalidTitle(false)
@@ -133,9 +123,9 @@ function Message(props) {
         }
 
         if (type === "content") {
-            if (content.length > 2000) {
+            if (c.length > 2000) {
                 setInvalidContent("De tekst is te lang")
-            } else if (content.length <= 10) {
+            } else if (c.length <= 10) {
                 setInvalidContent("De tekst is te kort")
             } else {
                 setInvalidContent(false)
@@ -144,47 +134,18 @@ function Message(props) {
     }
 
     const createPost = () => {
-        console.log("CREATE")
-        validateInput("title", editMessageTitle, () => {
-            validateInput("content", editMessageContent, () => {
-                if (this.props.loggedIn && !invalidTitle&& !invalidContent) {
-                    uploadRef.upload();
-                        } else if (!invalidTitle && !invalidContent) {
-                            uploadRef.upload();
-                        }
-                    });
-                });
-    }
+        validateInput("title", editMessageTitle)
+        validateInput("content", editMessageContent)
 
-    const upload = (files, ref) => {
-        let formData = new FormData();
-
-        for(let i in files.files) {
-            formData.append(files.files[i].name, files.files[i]);
+        if (props.loggedIn && !invalidTitle&& !invalidContent) {
+            props.connection.send("EditMessage",{
+                MessageId: id,
+                Title: editMessageTitle,
+                Content: editMessageContent
+            })
+            setEditWindow(false)
+            window.location.reload();
         }
-
-        setAdditionalProps({
-                disabled: true,
-                icon: "pi pi-spin pi-spinner"
-        })
-
-        formData.append("Title", this.state.newPost.title);
-        formData.append("Content", this.state.newPost.content);
-        formData.append("Email", this.state.newPost.email);
-        formData.append("Author", this.state.newPost.author);
-        formData.append("Token", this.props.token);
-
-        fetch('http://localhost:5000/message/create', {
-            method: 'POST',
-            body: formData
-        }).then(() => {
-            setAdditionalProps({})
-
-            ref.clear();
-            setEditWindow(false);
-        }).catch((e) => {
-            console.log(e);
-        })
     }
 
     useEffect(() => {
@@ -197,7 +158,8 @@ function Message(props) {
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
             setLocked(thread.parent.locked);
-
+            setEditMessageContent(thread.parent.content);
+            setEditMessageTitle(thread.parent.title)
 
             props.dispatch(setReplies(thread.children));
         })
@@ -215,9 +177,6 @@ function Message(props) {
             <LoadingMessage/>
         </div>
     }
-    console.log(authorId, props.accountId)
-
-
 
     if(authorId === props.accountId){
         extraOptions.push({
@@ -228,7 +187,6 @@ function Message(props) {
             }
         },)
     }
-
 
     return <div className={"p-mt-5"}>
         <Menu ref={menuRef} popup model={extraOptions}/>
@@ -243,7 +201,7 @@ function Message(props) {
             <div className="new-post-content p-p-3 p-pt-3">
                 <InputText style={{width: "100%"}} placeholder={"Titel"}
                            className={invalidTitle ? "p-invalid" : ""}
-                           value={title} onChange={e => {
+                           value={editMessageTitle} onChange={e => {
                     onInputChanged("title", e.target.value)
                 }}/>
                 <div style={{color: "red"}}>{invalidTitle ? invalidTitle :
@@ -253,26 +211,18 @@ function Message(props) {
                     toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
                 }} className={invalidContent ? "p-invalid" : ""}
                         style={{height: '250px'}}
-                        value={content} onTextChange={(e) => {
-                    console.log(e)
+                        value={editMessageContent} onTextChange={(e) => {
                     onInputChanged("content", e.htmlValue)
                 }}/>
 
                 <div style={{color: "red"}}>{invalidContent ? invalidContent:
                     <span>&nbsp;</span>}</div>
 
-                <b>Voeg maximaal 2 bestanden toe</b>
-                <FileUpload ref={(ref) => {
-                    setUploadRef(ref)
-                }}  customUpload={true} uploadHandler={(files) => {
-                    upload(files, uploadRef);
-                }} chooseLabel="Bestanden Kiezen" name="demo[]" url="./upload" multiple />
-
                 <div>
                     <Button {...additionalProps} iconPos={"left"} icon={"pi pi-plus"}
                             onClick={() => {
                                 createPost()
-                            }} label={"Plaatsen"}/>
+                            }} label={"bewerken"}/>
                     <Button {...additionalProps}
                             className={"p-button-secondary p-button-outlined p-ml-3"}
                             iconPos={"right"}
