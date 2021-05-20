@@ -25,6 +25,7 @@ function Messages(props) {
     useEffect(() => {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
+            console.log(_messages)
             setLoaded(true);
             console.log(_messages)
         })
@@ -112,6 +113,7 @@ function Messages(props) {
                          authorId={message.authorId}
                          author={message.author}
                          created={message.created}
+                         role={message.role}
                          content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
             </Link>
