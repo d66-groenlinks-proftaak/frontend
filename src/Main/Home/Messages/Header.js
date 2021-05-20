@@ -8,11 +8,7 @@ import {getAuthAuthenticated, getAuthToken} from "../../../Core/Authentication/a
 import {connect} from "react-redux";
 import {FileUpload} from "primereact/fileupload";
 import { Toast } from "primereact/toast";
-<<<<<<< Updated upstream
 import { MultiSelect } from 'primereact/multiselect';
-=======
-import { MultiSelect } from "primereact/multiselect";
->>>>>>> Stashed changes
 
 class Header extends React.Component {
     constructor(props) {
@@ -159,11 +155,8 @@ class Header extends React.Component {
         formData.append("Email", this.state.newPost.email);
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
-<<<<<<< Updated upstream
         
         console.log(this.state.selectedCategories)
-=======
->>>>>>> Stashed changes
         formData.append("Categories", JSON.stringify(this.state.selectedCategories));
 
         fetch('http://localhost:5000/message/create', {
@@ -210,19 +203,11 @@ class Header extends React.Component {
         ]
 
         const categories = [
-<<<<<<< Updated upstream
             {name: 'Corona', value: 'Corona'},
             {name: 'Gemeente', value: 'Gemeente'},
             {name: 'Afval', value: 'Afval'},
             {name: 'Racisme', value: 'Racisme'}
         ];
-=======
-            {label: "Corona", value: "corona"},
-            {label: "Gemeente", value: "gemeente"},
-            {label: "Afval", value: "afval"},
-            {label: "Racisme", value: "racisme"}
-        ]
->>>>>>> Stashed changes
 
         return <div>
 
