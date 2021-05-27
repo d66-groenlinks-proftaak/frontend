@@ -198,7 +198,7 @@ function Replies(props) {
                             deferredMeasurementCache={_cache}
                             rowHeight={_cache.rowHeight}
                             width={width} height={props.height}
-                            rowCount={props.replies.length}
+                            rowCount={props.replies == null ? 0 : props.replies.length }
                             rowRenderer={_rowRenderer}/>
         }
     </AutoSizer>

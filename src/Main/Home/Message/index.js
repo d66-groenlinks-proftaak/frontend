@@ -12,7 +12,7 @@ import {Dialog} from 'primereact/dialog';
 import {Tooltip} from 'primereact/tooltip';
 import {ScrollTop} from 'primereact/scrolltop';
 import Report from "./Report";
-import {getAuthAuthenticated} from "../../../Core/Authentication/authentication.selectors";
+import {getAuthAuthenticated, getAuthId} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
 import {WindowScroller} from "react-virtualized";
 import Replies from "./Replies";
@@ -21,6 +21,9 @@ import Header from "./Header";
 import CreateReply from "./CreateReply";
 import {setReplyOpen, setReplyingToId, setReplyingTo, setReplies} from "../../../Core/Message/message.actions";
 import {getReplyOpen} from "../../../Core/Message/message.selectors";
+
+import {FileUpload} from "primereact/fileupload";
+import {getPermissions} from "../../../Core/Global/global.selectors";
 
 function Message(props) {
     const [author, setAuthor] = useState("");
@@ -36,22 +39,25 @@ function Message(props) {
     const [showAttachmentState, setShowAttachment] = useState(false);
     const [attachment, setAttachment] = useState("");
 
+    const [editWindow, setEditWindow] = useState(false);
+    const [invalidContent, setInvalidContent] = useState(false);
+    const [invalidTitle, setInvalidTitle] = useState(false);
+    const [additionalProps, setAdditionalProps] = useState({});
+    const [editMessageContent, setEditMessageContent] = useState(content);
+    const [editMessageTitle, setEditMessageTitle] = useState(title);
+
+    const [type, setType] = useState(0);
+
     const menuRef = React.createRef();
 
-    const extraOptions = [{
+    const [extraOptions, setExtraOptions] = useState([{
         label: "Rapporteer",
         icon: "pi pi-ban",
         command: () => {
             setReportWindow(true);
         }
     },
-        {
-            label: "Bewerken",
-            icon: "pi pi-pencil",
-            command: () => {
-                props.connection.send();
-            }
-        },
+
         {
             label: "Lock",
             icon: "pi pi-lock",
@@ -59,15 +65,25 @@ function Message(props) {
                 props.connection.send("LockPost", props.id);
             }
         },
-        {
-            label: "Mededeling",
-            icon: "pi pi-volume-off",
-            command: () => {
-                props.connection.send("SetAnnouncement", props.id);
-            }
-        }
-    ]
 
+
+    ]);
+
+    const setAnnouncement = () =>{
+        if(props.permissions.includes(4) && type === 0){
+            let oldOptions = extraOptions;
+            oldOptions.push({
+                label: "Mededeling",
+                icon: "pi pi-volume-off",
+                command: () => {
+                    props.connection.send("SetAnnouncement", props.id);
+                }
+            });
+            setExtraOptions(oldOptions);
+        }
+
+
+    }
     const showAttachment = (bool, url) => {
         setShowAttachment(bool);
         setAttachment(url)
@@ -94,6 +110,56 @@ function Message(props) {
         setShowAttachment(false);
     }
 
+    const onInputChanged = (type, c) => {
+        validateInput(type, c)
+
+        if(type === "content"){
+            setEditMessageContent(c)
+        }
+        else if (type === "title"){
+
+            setEditMessageTitle(c)
+        }
+
+    }
+
+    const validateInput = (type, c) => {
+        if (type === "title") {
+            if (c.length > 40) {
+                setInvalidTitle("De title is te lang")
+            } else if (c.length <= 5) {
+                setInvalidTitle("De titel is te kort")
+            } else {
+                setInvalidTitle(false)
+            }
+        }
+
+        if (type === "content") {
+            if (c.length > 2000) {
+                setInvalidContent("De tekst is te lang")
+            } else if (c.length <= 10) {
+                setInvalidContent("De tekst is te kort")
+            } else {
+                setInvalidContent(false)
+            }
+        }
+    }
+
+    const createPost = () => {
+        validateInput("title", editMessageTitle)
+        validateInput("content", editMessageContent)
+
+        if (props.loggedIn && !invalidTitle&& !invalidContent) {
+            props.connection.send("EditMessage",{
+                MessageId: id,
+                Title: editMessageTitle,
+                Content: editMessageContent
+            })
+            setEditWindow(false)
+            window.location.reload();
+        }
+    }
+
     useEffect(() => {
         props.connection.on("SendThreadDetails", thread => {
             setAuthor(thread.parent.author);
@@ -104,11 +170,14 @@ function Message(props) {
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
             setLocked(thread.parent.locked);
+            setEditMessageContent(thread.parent.content);
+            setEditMessageTitle(thread.parent.title)
 
+            setType(thread.parent.type);
 
             props.dispatch(setReplies(thread.children));
         })
-
+        setAnnouncement();
         props.connection.send("LoadMessageThread", props.id);
 
         return function cleanup() {
@@ -123,11 +192,60 @@ function Message(props) {
         </div>
     }
 
+    if(authorId === props.accountId){
+        extraOptions.push({
+            label: "Bewerken",
+            icon: "pi pi-pencil",
+            command: () => {
+                setEditWindow(true)
+            }
+        },)
+    }
+
     return <div className={"p-mt-5"}>
         <Menu ref={menuRef} popup model={extraOptions}/>
 
         <Header/>
 
+        <Sidebar className={"p-col-12 new-post p-grid p-justify-center p-nogutter"}
+                 style={{overflowY: "scroll", overflowX: "hidden", width: "100%"}}
+                 position="bottom"
+                 showCloseIcon={false}
+                 visible={editWindow} onHide={() => setEditWindow(false)}>
+            <div className="new-post-content p-p-3 p-pt-3">
+                <InputText style={{width: "100%"}} placeholder={"Titel"}
+                           className={invalidTitle ? "p-invalid" : ""}
+                           value={editMessageTitle} onChange={e => {
+                    onInputChanged("title", e.target.value)
+                }}/>
+                <div style={{color: "red"}}>{invalidTitle ? invalidTitle :
+                    <span>&nbsp;</span>}</div>
+
+                <Editor placeholder={"Typ hier uw bericht"} modules={{
+                    toolbar: [[{'header': 1}, {'header': 2}], ['bold', 'italic'], ['link']]
+                }} className={invalidContent ? "p-invalid" : ""}
+                        style={{height: '250px'}}
+                        value={editMessageContent} onTextChange={(e) => {
+                    onInputChanged("content", e.htmlValue)
+                }}/>
+
+                <div style={{color: "red"}}>{invalidContent ? invalidContent:
+                    <span>&nbsp;</span>}</div>
+
+                <div>
+                    <Button {...additionalProps} iconPos={"left"} icon={"pi pi-plus"}
+                            onClick={() => {
+                                createPost()
+                            }} label={"bewerken"}/>
+                    <Button {...additionalProps}
+                            className={"p-button-secondary p-button-outlined p-ml-3"}
+                            iconPos={"right"}
+                            onClick={() => {
+                                setEditWindow(false)
+                            }} label={"Annuleren"}/>
+                </div>
+            </div>
+        </Sidebar>
         <Thread togglePostWindow={togglePostWindow} attachments={attachments}
                 showAttachment={(a) => {
                     showAttachment(true, a)
@@ -188,7 +306,7 @@ function Message(props) {
 
 const
     mapStateToProps = (state) => {
-        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state)}
+        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state),permissions: getPermissions(state),accountId: getAuthId(state) }
     }
 
 export default connect(mapStateToProps)

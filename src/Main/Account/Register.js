@@ -116,7 +116,7 @@ class Register extends React.Component {
                 <ul className="p-pl-2 p-ml-2 p-mt-0" style={{lineHeight: '1.5'}}>
                     <li>Minimaal 1 kleine letter</li>
                     <li>Minimaal 1 hoofdletter</li>
-                    <li>Minimaal 1 getal</li>
+                    <li>Minimaal 1 getal of leesteken</li>
                     <li>Minimaal 8 karakters</li>
                 </ul>
             </>

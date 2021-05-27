@@ -9,5 +9,6 @@ export const Errors = {
     7: "Password is too long",
     8: "Email already in use",
     9: "Invalid captcha",
-    10: "Invalid username or password"
+    10: "Invalid username or password",
+    11: "Password doesn't fulfill the requirements"
 }
