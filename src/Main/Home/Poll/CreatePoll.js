@@ -44,10 +44,10 @@ function CreatePoll(props) {
             error = true;
             setNameError("De pollnaam moet langer zijn dan 2 tekens");
         }
-        else if (pollName.length >= 19)
+        else if (pollName.length >= 50)
         {
             error = true;
-            setNameError("De pollnaam moet korter zijn dan 20 tekens");
+            setNameError("De pollnaam moet korter zijn dan 50 tekens");
         }
         else
             setNameError("");

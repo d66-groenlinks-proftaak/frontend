@@ -39,8 +39,8 @@ class App extends React.Component {
 
                 connection.send('UpdatePage', this.props.location.pathname);
                 connection.on("Authenticated", account => {
-                    console.log(account)
-                    this.props.dispatch(loginSuccess(account.email, account.accountId, account.token, account.permissions))
+                    this.props.dispatch(loginSuccess(account.email, account.accountId, account.token, account.permissions));
+                    connection.send("GetLatestPoll");
                 });
 
                 connection.on("AuthenticateFailed", error => {

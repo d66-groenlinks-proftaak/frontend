@@ -11,29 +11,12 @@ import { ProgressBar } from 'primereact/progressbar';
 function Poll(props) {
 
     const [showResults,setShowResults] = useState(false);
-    const [poll, setPoll] = useState({
-        name: "Klopt dit?",
-        multipleOptions : false,
-        options : [{
-            name:"Ja"
-        },{
-            name:"Nee"
-        }]
-    });
+    const [poll, setPoll] = useState({});
     const [currentOptions, setCurrentOptions] = useState(null);
     const [currentCbOptions, setCurrentCbOptions] = useState([]);
-    const [pollResults, setPollResults] = useState({
-        name:"Klopt dit?",
-        votes: [{
-            polloption: "Ja",
-            votecount : 63
-        },{
-            polloption: "Nee",
-            votecount: 37
-        }]
-        });
+    const [pollResults, setPollResults] = useState({});
 
-    /*
+
     useEffect(() => {
         props.connection.send("GetLatestPoll");
     }, []);
@@ -45,21 +28,21 @@ function Poll(props) {
         return function cleanup() {
             props.connection.off("ReceiveLatestPoll");
         };
-
     },[]);
 
     useEffect(() =>{
         props.connection.on("ReceivePollResults", (recPollResults)=>{
             setPollResults(recPollResults)
+            setShowResults(true);
         });
         return function cleanup(){
             props.constructor.off("ReceivePollResults");
         }
+
     },[]);
-    */
+
 
     const votePoll = () =>{
-        /*
         let optionsToSend = [];
 
         if(poll.multipleOptions){
@@ -69,10 +52,10 @@ function Poll(props) {
         else{
             optionsToSend[0] = currentOptions.id;
         }
-        props.connection.send("VoteOnPoll", {VoteOptions : optionsToSend});*/
+        props.connection.send("VoteOnPoll", {VoteOptions : optionsToSend});
         setShowResults(true);
     }
-    //hoi
+
     const onOptionChange = (e) => {
         let selectedOptions = [...currentCbOptions];
         if(e.checked)
@@ -83,20 +66,24 @@ function Poll(props) {
     }
     const returnResults = () =>{
         if(pollResults.name != undefined){
-            return <Card style={{width:"100%"}}>
-                <label>{pollResults.name}</label>
-                <br/>
-                {pollResults.votes.map((vote) =>  <div>
-                        <label>{vote.polloption}</label>
-                        <ProgressBar value={vote.votecount}></ProgressBar>
-                    </div>
-                )}
-            </Card>
+            console.log(pollResults);
+            if(pollResults.votes.length > 0){
+                let totalcount = pollResults.votes.length;
+                return <Card style={{width:"100%"}}>
+                    <label><b>{pollResults.name}</b></label>
+                    <br/>
+                    {pollResults.votes.map((vote) =>  <div>
+                            <label>{vote.pollOption.name}</label>
+                            <ProgressBar value={(totalcount / vote.voteCount * 100)}></ProgressBar>
+                        </div>
+                    )}
+                </Card>
+            }
         }
-
     }
     const returnPoll = () =>{
         if(poll.options != undefined){
+            console.log(poll);
            return <Card style={{width:"100%"}}>
                 <label>{poll.name}</label>
                 <br/>
