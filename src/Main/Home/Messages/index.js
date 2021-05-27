@@ -56,6 +56,7 @@ function Messages(props) {
 
         
         props.connection.on("SendAnnouncements", _announcements => {
+            console.log(_announcements)
             setAnnouncements(_announcements);
             setLoaded(true);
         })
@@ -94,7 +95,7 @@ function Messages(props) {
                          title={announcements.title}
                          authorId={announcements.authorId}
                          author={announcements.author}
-                         replyContent={announcements.replyContent}
+                         replyContent={announcements.replyContent ? announcements.replyContent : []}
                          created={announcements.created}
                          content={announcements.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
@@ -112,7 +113,7 @@ function Messages(props) {
                          title={message.title}
                          authorId={message.authorId}
                          author={message.author}
-                         replyContent={message.replyContent}
+                         replyContent={message.replyContent ? message.replyContent : []}
                          created={message.created}
                          role={message.role}
                          content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
