@@ -27,10 +27,6 @@ function Messages(props) {
             setMessages(_messages);
             console.log(_messages)
             setLoaded(true);
-            for(var i =0; i < messages.length; i++){
-               // console.log(messages[i].replyContent)
-
-            }
 
         })
 
@@ -62,7 +58,6 @@ function Messages(props) {
         props.connection.on("SendAnnouncements", _announcements => {
             setAnnouncements(_announcements);
             setLoaded(true);
-            //console.log(_announcements)
         })
 
         return function cleanup() {
