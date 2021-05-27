@@ -18,7 +18,7 @@ class Account extends React.Component {
 
     render() {
         var items = [];
-        if(this.props.permissions.includes(0)){
+        if(this.props.permissions !== undefined && this.props.permissions.includes(0)){
             items = [
                 {
                     label: 'Account',

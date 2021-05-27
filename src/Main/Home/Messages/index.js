@@ -15,7 +15,7 @@ function Messages(props) {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {        
-        props.connection.send('RequestUpdate');
+        props.connection.send('RequestUpdate', 'Alle Berichten');
     }, [])
 
     useEffect(() => {        
@@ -25,6 +25,7 @@ function Messages(props) {
     useEffect(() => {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
+            console.log(_messages)
             setLoaded(true);
             for(var i =0; i < messages.length; i++){
                // console.log(messages[i].replyContent)
@@ -118,6 +119,7 @@ function Messages(props) {
                          author={message.author}
                          replyContent={message.replyContent}
                          created={message.created}
+                         role={message.role}
                          content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
             </Link>

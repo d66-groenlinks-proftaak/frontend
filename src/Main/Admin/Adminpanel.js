@@ -2,15 +2,11 @@
 import React, {useState} from "react";
 import "./admin.css";
 
-import Categories from "./Categories";
-
 import RoleManager from "./RoleManager/RoleManager";
 import ShadowBans from "./ShadowBan/ShadowBans";
 import { Menu } from 'primereact/menu';
 
 import CreatePoll from "../Home/Poll/CreatePoll";
-
-
 
 import {getPermissions} from "../../Core/Global/global.selectors";
 import {connect} from "react-redux";

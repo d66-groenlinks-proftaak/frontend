@@ -3,9 +3,14 @@ import {Button} from "primereact/button";
 import {Link} from "react-router-dom";
 import { Avatar } from 'primereact/avatar';
 import { Divider } from 'primereact/divider';
+import {connect} from "react-redux";
+import {getAuthEmail} from "../../../Core/Authentication/authentication.selectors";
+import { InputTextarea } from 'primereact/inputtextarea';
+import CryptoJS from 'crypto-js';
 import './index.css';
 
 import Message from "../Messages/Message";
+import { InputText } from "primereact/inputtext";
 
 
 class Profile extends React.Component {
@@ -15,11 +20,15 @@ class Profile extends React.Component {
     this.state = {
       id: this.props.id,
       loaded: false,
+      editing: false,
       firstname: "",
       lastname: "",
       email: "",
       enableImage: false,
       image: "/profile_pictures/1.png",
+      bio: "Hallo!",
+      avatar: "",
+      avatarEmail: "",
       messages: []
     }
   }
@@ -28,27 +37,63 @@ class Profile extends React.Component {
   /// TODO - working implementation of images
   ///
 
+  toggleEditing() {
+    this.setState({
+      editing: !this.state.editing
+    }, () => {
+      if(!this.state.editing) {
+        this.props.connection.send("UpdateProfile", {
+          biography: this.state.bio,
+          avatar: this.state.avatarEmail
+        })
+      }
+    })
+
+    
+  }
+
+  setValue(v) {
+    this.setState({
+      bio: v
+    })
+  }
+
+  setAvatar(v) {
+    this.setState({
+      avatarEmail: v
+    })
+  }
+
   componentWillMount() {
     this.props.connection.send("GetProfile", this.state.id)
   }
 
   componentDidMount() {
     this.props.connection.on("SendProfile", profile => {
-      console.log(profile)
       this.setState({
         loaded: true,
         firstname: profile.firstName,
         lastname: profile.lastName,
         email: profile.email,
-        messages: profile.messages
+        messages: profile.messages,
+        bio: profile.biography,
+        avatarEmail: profile.avatar
       })
 
-      //this.props.connection.send("GetProfile", this.state.id)
+      if(profile.avatar.length > 0) {
+        const lowerCaseGravatar = profile.avatar.toLowerCase();
+        const gravatarHash = CryptoJS.MD5(lowerCaseGravatar);
+
+        this.setState({
+          avatar: "https://www.gravatar.com/avatar/" + gravatarHash,
+          enableImage: true
+        });
+      }
     })
   }
 
   getProfilePic() {
-    if (this.state.enableImage && this.state.image !== "") return <Avatar image={this.state.image} size="xlarge" />
+    if (this.state.enableImage && this.state.avatar !== "") return <Avatar image={this.state.avatar} size="xlarge" />
     else if (this.state.firstname !== "") return <Avatar label={this.state.firstname[0].toUpperCase()} size="xlarge" />
     else return <Avatar icon="pi pi-user" size="xlarge" />
   }
@@ -58,9 +103,37 @@ class Profile extends React.Component {
     <div class="p-col-12 p-md-8">
       <div class="profile-info">
         <div class="profile-name">
-          {this.getProfilePic()}
-          <h1 class="account-name">{this.state.loaded ? this.state.firstname : "loading..."} {this.state.lastname}</h1>
+          <div className="profile-name p-d-flex p-jc-between" style={{width: "100%"}}>
+            <div>
+              <h1 class="account-name"> 
+              {this.getProfilePic()} {this.state.loaded ? this.state.firstname : "loading..."} {this.state.lastname}</h1>
+            </div>
+            <div>
+              { this.props.accountName === this.state.email ? <Button onClick={() => {this.toggleEditing()}} className="p-button-text" label={ this.state.editing ? "Opslaan" : "Bewerken"} iconPos="right" icon={ this.state.editing ? "pi pi-save" : "pi pi-pencil" }/> : "" }
+            </div>
+          </div>
         </div>
+
+        {this.state.editing ? <div>
+          <div>
+            <b>Gravatar E-Mail</b><br/>
+            <InputText value={this.state.avatarEmail} onChange={(e) => this.setAvatar(e.target.value)}/>
+          </div><br/>
+
+          <b>Biografie</b>
+          <div><InputTextarea style={{width: "100%"}} value={this.state.bio} onChange={(e) => this.setValue(e.target.value)} /></div><br/>
+          </div> 
+          
+          : 
+
+          <div>
+            { this.state.bio.length > 0 ? <div>
+        <b>Biografie</b>
+          { this.state.editing ? "" : <div style={{whiteSpace: "pre-wrap"}}>{ this.state.bio }</div> }
+              </div> : "" } <br/>
+          </div>}
+
+        <b>Details</b>
         <div class="account-email">Email: {this.state.email}</div>
       </div>  
       <Divider align="left">
@@ -93,4 +166,8 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile;
+const mapStateToProps = (state) => {
+  return { accountName: getAuthEmail(state) }
+}
+
+export default connect(mapStateToProps)(Profile);

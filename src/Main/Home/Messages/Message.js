@@ -37,13 +37,12 @@ class Message extends React.Component {
         return <div onMouseEnter={this.SetHoverFalse} onMouseLeave={this.SetHoverTrue} >
                 <div className={" message p-component"} >
                     <div  className={this.props.style}></div>
-
                     <div  className={"content"}>
                         <div class={"p-d-flex p-jc-between p-ai-center"}>
                             <div>
                                 <div className={"message-title"} style={{ fontSize: this.props.titleSize, fontWeight: "bold", color: "black"}}>
-                                    {this.props.guest ? <Tag value="Gast" severity={"warning"}/> : ""} {this.props.title}
 
+                                <Tag value={this.props.role} severity={""}/> {this.props.title}
                                 </div>
 
                             </div>
