@@ -26,7 +26,6 @@ function Messages(props) {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
-            console.log(_messages)
         })
 
         
@@ -58,7 +57,6 @@ function Messages(props) {
         props.connection.on("SendAnnouncements", _announcements => {
             setAnnouncements(_announcements);
             setLoaded(true);
-            console.log(_announcements)
         })
 
         return function cleanup() {
