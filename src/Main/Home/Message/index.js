@@ -60,10 +60,10 @@ function Message(props) {
             }
         },
         {
-            label: "Pin",
-            icon: "pi pi-lock",
+            label: "Mededeling",
+            icon: "pi pi-volume-off",
             command: () => {
-                props.connection.send("TogglePostPin", props.id);
+                props.connection.send("SetAnnouncement", props.id);
             }
         }
     ]
