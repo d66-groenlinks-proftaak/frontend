@@ -68,9 +68,6 @@ export default function Thread(props) {
                             }} src={`http://localhost:5000/images/${attachment.id}_${attachment.name}`}
                                  alt="Attachment" style={{maxWidth: "100%", maxHeight: 300}}/>
                         </div>
-                        <div style={{position: "absolute", bottom: 0}}>
-                            {attachment.name}
-                        </div>
                     </div>
                 })}
             </div>
