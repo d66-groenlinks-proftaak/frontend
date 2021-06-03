@@ -9,6 +9,8 @@ import {connect} from "react-redux";
 import {FileUpload} from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import { MultiSelect } from 'primereact/multiselect';
+import {Checkbox} from 'primereact/checkbox';
+import { getPermissions } from "../../../Core/Global/global.selectors";
 
 class Header extends React.Component {
     constructor(props) {
@@ -30,6 +32,7 @@ class Header extends React.Component {
             invalidEmail: false,
             invalidAuthor: false,
             currentMessages: 0,
+            makeAnnouncement: false
         }
 
         this.uploadRef = undefined
@@ -154,6 +157,7 @@ class Header extends React.Component {
         formData.append("Email", this.state.newPost.email);
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
+        formData.append("Announcement", this.state.makeAnnouncement);
         
         formData.append("Categories", JSON.stringify(this.state.selectedCategories));
 
@@ -208,8 +212,6 @@ class Header extends React.Component {
             {name: 'Racisme', value: 'Racisme'}
         ];
 
-
-
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
@@ -230,8 +232,15 @@ class Header extends React.Component {
                          position="bottom"
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
-                    <div className="new-post-settings p-p-3 p-pt-3">
+                    <div className="new-post-settings p-p-3 p-pt-3 p-d-flex p-jc-between">
                         <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
+                        
+                        { this.props.permissions.includes(4) ? <div>
+                            <label>Mededeling &nbsp;</label>
+                            <Checkbox onChange={e => this.setState({ makeAnnouncement: !this.state.makeAnnouncement })} checked={this.state.makeAnnouncement}/>
+                        </div> : "" }
+                        
+                        
                     </div>
                     <div className="new-post-content p-p-3 p-pt-3">
 
@@ -284,7 +293,7 @@ class Header extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    return {loggedIn: getAuthAuthenticated(state), token: getAuthToken(state)}
+    return {loggedIn: getAuthAuthenticated(state), token: getAuthToken(state), permissions: getPermissions(state)}
 }
 
 export default connect(mapStateToProps)(Header);
