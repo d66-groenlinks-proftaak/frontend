@@ -175,6 +175,16 @@ function Message(props) {
 
             setType(thread.parent.type);
 
+            if(thread.parent.authorId === props.accountId){
+                extraOptions.push({
+                    label: "Bewerken",
+                    icon: "pi pi-pencil",
+                    command: () => {
+                        setEditWindow(true)
+                    }
+                },)
+            }
+
             props.dispatch(setReplies(thread.children));
         })
         setAnnouncement();
@@ -190,16 +200,6 @@ function Message(props) {
             <Header/>
             <LoadingMessage/>
         </div>
-    }
-
-    if(authorId === props.accountId){
-        extraOptions.push({
-            label: "Bewerken",
-            icon: "pi pi-pencil",
-            command: () => {
-                setEditWindow(true)
-            }
-        },)
     }
 
     return <div className={"p-mt-5"}>

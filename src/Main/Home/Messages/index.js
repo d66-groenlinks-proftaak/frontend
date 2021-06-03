@@ -25,7 +25,6 @@ function Messages(props) {
     useEffect(() => {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
-            console.log(_messages)
             setLoaded(true);
 
         })
@@ -56,7 +55,6 @@ function Messages(props) {
 
         
         props.connection.on("SendAnnouncements", _announcements => {
-            console.log(_announcements)
             setAnnouncements(_announcements);
             setLoaded(true);
         })

@@ -30,7 +30,6 @@ class Header extends React.Component {
             invalidEmail: false,
             invalidAuthor: false,
             currentMessages: 0,
-            selectedCategories: null
         }
 
         this.uploadRef = undefined
@@ -57,7 +56,7 @@ class Header extends React.Component {
     }
 
     validateInput(type, content, cb) {
-        if (content === undefined)
+        if (content === undefined || content == null)
             return;
 
         if (type === "title") {
@@ -156,7 +155,6 @@ class Header extends React.Component {
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
         
-        console.log(this.state.selectedCategories)
         formData.append("Categories", JSON.stringify(this.state.selectedCategories));
 
         fetch('http://localhost:5000/message/create', {
@@ -172,6 +170,7 @@ class Header extends React.Component {
             console.log(e);
         })
     }
+
      
     render() {
 
@@ -209,6 +208,8 @@ class Header extends React.Component {
             {name: 'Racisme', value: 'Racisme'}
         ];
 
+
+
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
@@ -230,10 +231,9 @@ class Header extends React.Component {
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
                     <div className="new-post-settings p-p-3 p-pt-3">
-                        <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie"/>
+                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
                     </div>
                     <div className="new-post-content p-p-3 p-pt-3">
-                        <MultiSelect value={this.state.selectedCategories} options={categories} onChange={(e) => this.setState({ selectedCategories: e.value })} display="chip" />
 
                         <InputText style={{width: "100%"}} placeholder={"Titel"}
                                    className={this.state.invalidTitle ? "p-invalid" : ""}
@@ -248,7 +248,6 @@ class Header extends React.Component {
                         }} className={this.state.invalidTitle ? "p-invalid" : ""}
                                 style={{height: '250px'}}
                                 value={this.state.newPost.content} onTextChange={(e) => {
-                            console.log(e)
                             this.onInputChanged("content", e.htmlValue)
                         }}/>
 

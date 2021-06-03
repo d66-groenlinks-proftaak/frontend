@@ -127,7 +127,7 @@ class Profile extends React.Component {
           : 
 
           <div>
-            { this.state.bio.length > 0 ? <div>
+            {this.state.bio && this.state.bio.length > 0 ? <div>
         <b>Biografie</b>
           { this.state.editing ? "" : <div style={{whiteSpace: "pre-wrap"}}>{ this.state.bio }</div> }
               </div> : "" } <br/>
