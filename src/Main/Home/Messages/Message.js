@@ -32,7 +32,6 @@ class Message extends React.Component {
     }
 
 
-
     render() {
         return <div onMouseEnter={this.SetHoverFalse} onMouseLeave={this.SetHoverTrue} >
                 <div className={" message p-component"} >
@@ -42,7 +41,8 @@ class Message extends React.Component {
                             <div>
                                 <div className={"message-title"} style={{ fontSize: this.props.titleSize, fontWeight: "bold", color: "black"}}>
 
-                                <Tag value={this.props.role} severity={""}/> {this.props.title}
+                                    {this.props.role ? <Tag value={this.props.role} severity={""}/> : ""}
+                                 {this.props.title}
                                 </div>
 
                             </div>
@@ -82,7 +82,7 @@ class Message extends React.Component {
                 <div hidden={this.state.hover} style={{position: "absolute", width: "100%"}}>
                     <div >
                         
-                            {this.props.replyContent.map(m=> {
+                            {this.props.replyContent ? this.props.replyContent.map(m=> {
                                 return <div className={" message p-component"} style={{ marginBottom: "4px", marginTop: "4px", paddingBottom: "10px", zIndex: "13", width: "100%" } }>
                                             <Link className={"message-author"} style={{ paddingLeft: "10px"}} to={"/profile/" + m.author}>@{m.author}</Link>
                                             <span
@@ -91,7 +91,7 @@ class Message extends React.Component {
                                             <div style={{ paddingLeft: "10px"}} className={"message-title"} 
                                             dangerouslySetInnerHTML={{__html: m.content}}/> <div/>
                                     </div>
-                            })} 
+                            }) : ''}
                     </div>            
                 </div>
             </div>

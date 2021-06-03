@@ -36,7 +36,7 @@ function Poll(props) {
             setShowResults(true);
         });
         return function cleanup(){
-            props.constructor.off("ReceivePollResults");
+            props.connection.off("ReceivePollResults");
         }
 
     },[]);
@@ -66,7 +66,6 @@ function Poll(props) {
     }
     const returnResults = () =>{
         if(pollResults.name != undefined){
-            console.log(pollResults);
             if(pollResults.votes.length > 0){
                 let totalcount = pollResults.votes.length;
                 return <Card style={{width:"100%"}}>
