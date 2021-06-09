@@ -52,8 +52,6 @@ class Login extends React.Component {
                                       id="password" type="text"/>
                         </div>
                     </div>
-                    {this.props.error ? <span>{this.props.error}</span> :
-                        <span>&nbsp; </span>}
 
                     <Button disabled={this.props.loggingIn} onClick={() => {
                         this.props.login(this.state.username, this.state.password);
