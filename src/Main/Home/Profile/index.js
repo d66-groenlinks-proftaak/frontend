@@ -164,11 +164,12 @@ class Profile extends React.Component {
 
                 {this.props.permissions.includes(5) ?
                     <div>
-                        <h1>Rollen</h1>
+                        <h2>Rollen</h2>
                         {this.state.allRoles.map(role => {
                             return <div>
-                                {role.name} <Checkbox value={role.name} onChange={(e) => this.setRole(e)}
+                                 <Checkbox value={role.name} onChange={(e) => this.setRole(e)}
                                                       checked={this.state.userRoles.some(r => r.name == role.name)}></Checkbox>
+                                &nbsp;{role.name}
                             </div>
                         })}
                     </div>
