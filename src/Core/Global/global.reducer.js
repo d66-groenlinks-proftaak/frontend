@@ -3,7 +3,8 @@ import {Actions} from "./global.actions";
 const initialState = {
     connection: undefined,
     darkmode: false,
-    permissions: []
+    permissions: [],
+    voted: false
 }
 
 export default function globalReducer(state = initialState, action) {
@@ -14,6 +15,8 @@ export default function globalReducer(state = initialState, action) {
             return {...state, darkmode: action.payload.darkmode}
         case Actions.setPermissions:
             return  {...state, permissions: action.payload.permissions}
+        case Actions.setVoted:
+            return  {...state, voted: action.payload.voted}
         default:
             return state;
     }

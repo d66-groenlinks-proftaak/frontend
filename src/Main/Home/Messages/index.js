@@ -14,7 +14,8 @@ function Messages(props) {
 
     const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {        
+    useEffect(() => {
+        console.log("request update")
         props.connection.send('RequestUpdate', 'Alle Berichten');
     }, [])
 
@@ -26,7 +27,7 @@ function Messages(props) {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
-
+            console.log(_messages)
         })
 
         

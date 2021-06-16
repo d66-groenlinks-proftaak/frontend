@@ -24,6 +24,8 @@ import {getReplyOpen} from "../../../Core/Message/message.selectors";
 
 import {FileUpload} from "primereact/fileupload";
 import {getPermissions} from "../../../Core/Global/global.selectors";
+import {toHtml} from "@fortawesome/fontawesome-svg-core";
+import Webinar from "./Webinar";
 
 function Message(props) {
     const [author, setAuthor] = useState("");
@@ -40,6 +42,7 @@ function Message(props) {
     const [attachments, setAttachments] = useState([]);
     const [showAttachmentState, setShowAttachment] = useState(false);
     const [attachment, setAttachment] = useState("");
+    const [webinar, setWebinar] = useState(false);
 
     const [editWindow, setEditWindow] = useState(false);
     const [invalidContent, setInvalidContent] = useState(false);
@@ -164,6 +167,7 @@ function Message(props) {
 
     useEffect(() => {
         props.connection.on("SendThreadDetails", thread => {
+            console.log(thread)
             setAuthor(thread.parent.author);
             setContent(thread.parent.content);
             setCreated(thread.parent.created);
@@ -176,6 +180,7 @@ function Message(props) {
             setRating(thread.parent.rating);
             setEditMessageContent(thread.parent.content);
             setEditMessageTitle(thread.parent.title)
+            setWebinar(thread.parent.webinar)
             setType(thread.parent.type);
             if(thread.parent.authorId === props.accountId){
                 extraOptions.push({
@@ -204,7 +209,7 @@ function Message(props) {
         </div>
     }
 
-    return <div className={"p-mt-5"}>
+    return <div className={"p-mt-5"} id={"Message"}>
         <Menu ref={menuRef} popup model={extraOptions}/>
 
         <Header/>
@@ -248,9 +253,20 @@ function Message(props) {
                 </div>
             </div>
         </Sidebar>
-        <Thread togglePostWindow={togglePostWindow} attachments={attachments}
+        {webinar ? <Webinar
+                title={title}
+                author={author}
+                authorId={authorId}
+                id={"Webinar"}
+                Content={content}
+                setReplyingTo={setReplyState}
+                togglePostWindow={togglePostWindow}
+            />
+            :
+            <Thread togglePostWindow={togglePostWindow} attachments={attachments}
                 showAttachment={(a) => {
                     showAttachment(true, a)
+
                 }} id={id}
                 created={created}
                 title={title} menuRef={menuRef}
@@ -258,6 +274,7 @@ function Message(props) {
                 setReportId={setReportId}
                 author={author} authorId={authorId} content={content} isThread={true} 
                 locked={locked} rating={rating} userRating={userRating}/>
+
 
         <Divider align="left">
             <span className="p-tag"
@@ -269,6 +286,7 @@ function Message(props) {
                       fontWeight: "normal"
                   }}>Reacties</span>
         </Divider>
+
 
         <CreateReply id={id}/>
 
