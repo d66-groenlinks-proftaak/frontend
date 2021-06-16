@@ -3,7 +3,7 @@ import {Route, Switch, Redirect} from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import {login} from "../../Core/Authentication/authentication.actions";
-import {useSelector, connect} from "react-redux";
+import {connect} from "react-redux";
 import {
     getAuthAuthenticated,
     getAuthAuthenticating

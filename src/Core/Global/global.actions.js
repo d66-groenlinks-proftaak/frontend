@@ -32,3 +32,10 @@ export const setPermissions = (permissions) => ({
         permissions
     }
 })
+
+export const setVoted = (voted) => ({
+    type: Actions.setVoted,
+    payload: {
+        voted
+    }
+})

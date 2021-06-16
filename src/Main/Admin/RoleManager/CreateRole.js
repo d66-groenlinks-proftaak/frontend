@@ -17,7 +17,7 @@ function CreateRole(props) {
   const [nameError, setNameError] = useState(false);
 
   const createRole = () => {
-    if (nameError == false) {
+    if (nameError === false) {
       props.connection.send("CreateRole", {
         Name: roleName,
         Permissions: selectedPermissions,
@@ -42,7 +42,7 @@ function CreateRole(props) {
     return function cleanup() {
       props.connection.off("ConfirmRoleCreation");
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const permissions = [
     { name: "Ban", code: 0 },

@@ -37,7 +37,7 @@ class Message extends React.Component {
                 <div className={" message p-component"} >
                     <div  className={this.props.style}></div>
                     <div  className={"content"}>
-                        <div class={"p-d-flex p-jc-between p-ai-center"}>
+                        <div className={"p-d-flex p-jc-between p-ai-center"}>
                             <div>
                                 <div className={"message-title"} style={{ fontSize: this.props.titleSize, fontWeight: "bold", color: "black"}}>
 

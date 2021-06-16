@@ -1,6 +1,5 @@
 import {Link} from "react-router-dom";
 import {DateTime} from "luxon";
-import {Menu} from "primereact/menu";
 import {Button} from "primereact/button";
 import {Divider} from "primereact/divider";
 import {Card} from "primereact/card";
@@ -8,7 +7,7 @@ import React from "react";
 
 export default function Thread(props) {
     function reactButton() {
-        if(props.locked == false){
+        if(props.locked === false){
             return <Button onClick={() => {
                 if (props.isThread) {
                     props.togglePostWindow()
@@ -33,7 +32,7 @@ export default function Thread(props) {
     <Card title={ props.isThread ? props.title : "" }
                  subTitle={<span><Link to={"/profile/" + props.authorId}
                                        style={{color: "blue"}}>@{props.author}</Link></span>}
-                 className={(!props.isThread && props.level > 0 ? "" : "post-parent") + props.isThread ?  + "p-mt-5 p-mb-5" : ""}>
+                 class={(!props.isThread && props.level > 0 ? "" : "post-parent") + props.isThread ?  + "p-mt-5 p-mb-5" : ""}>
         <div style={{wordBreak: "break-all"}}
              dangerouslySetInnerHTML={{__html: props.content}}/>
         <div className="p-d-flex p-jc-between p-ai-center">

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { login } from "../../../Core/Authentication/authentication.actions";
-import { useSelector, connect } from "react-redux";
+import { connect } from "react-redux";
 import {
   getAuthError,
   getAuthAuthenticating,
@@ -28,13 +26,13 @@ function RoleSettings(props) {
       const element = props.permissions[index];
       for (let index2 = 0; index2 < permissions.length; index2++) {
         const element2 = permissions[index2];
-        if (element == element2.code) {
+        if (element === element2.code) {
           permsToSet.push(element2);
         }
       }
     }
     setSelectedPermissions(permsToSet);
-  }, [props.role]);
+  }, [props.role]);// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     props.connection.on("ConfirmRoleEdit", (Success) => {
@@ -43,7 +41,7 @@ function RoleSettings(props) {
     return function cleanup() {
       props.connection.off("ConfirmRoleEdit");
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const editRole = () => {
     props.connection.send("EditRole", {
@@ -53,8 +51,8 @@ function RoleSettings(props) {
   };
 
   return (
-    <div class="p-grid" style={{ width: "100%" }}>
-      <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
+    <div className="p-grid" style={{ width: "100%" }}>
+      <div className="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
         {props.role.name}
       </div>
       <br />

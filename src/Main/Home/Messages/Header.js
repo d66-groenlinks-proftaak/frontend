@@ -128,7 +128,6 @@ class Header extends React.Component {
     }
 
     setCurrentMessages(current) {
-        console.log(current);
         this.setState({
             currentMessages: current
         })
@@ -159,7 +158,10 @@ class Header extends React.Component {
         formData.append("Token", this.props.token);
         formData.append("Announcement", this.state.makeAnnouncement);
         
-        formData.append("Categories", JSON.stringify(this.state.selectedCategories));
+        var selectedCategoryNames = this.state.selectedCategories.map(function(c) {
+            return c['name'];
+        })
+        formData.append("Categories", JSON.stringify(selectedCategoryNames));
 
         fetch('http://localhost:5000/message/create', {
             method: 'POST',
@@ -174,7 +176,16 @@ class Header extends React.Component {
             console.log(e);
         })
     }
+     
+    componentDidMount() {
+        this.props.connection.on("SendCategories", (retrievedCategories) => {
+            this.setState({
+                categories: retrievedCategories
+            })
+        })
 
+        this.props.connection.send("GetCategories")
+    }
      
     render() {
 
@@ -205,13 +216,6 @@ class Header extends React.Component {
             {label: "Oudste", value: 2},
         ]
 
-        const categories = [
-            {name: 'Corona', value: 'Corona'},
-            {name: 'Gemeente', value: 'Gemeente'},
-            {name: 'Afval', value: 'Afval'},
-            {name: 'Racisme', value: 'Racisme'}
-        ];
-
         return <div>
 
             <div className="p-d-flex p-jc-between p-ai-center" style={{marginBottom: 30, marginTop: 15}}>
@@ -233,7 +237,7 @@ class Header extends React.Component {
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
                     <div className="new-post-settings p-p-3 p-pt-3 p-d-flex p-jc-between">
-                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
+                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={this.state.categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
                         
                         { this.props.permissions.includes(4) ? <div>
                             <label>Mededeling &nbsp;</label>
