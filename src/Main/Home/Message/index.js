@@ -263,17 +263,15 @@ function Message(props) {
                 togglePostWindow={togglePostWindow}
             />
             :
-            <Thread togglePostWindow={togglePostWindow} attachments={attachments}
-                showAttachment={(a) => {
-                    showAttachment(true, a)
-
-                }} id={id}
-                created={created}
-                title={title} menuRef={menuRef}
-                setReplyingTo={setReplyState}
-                setReportId={setReportId}
-                author={author} authorId={authorId} content={content} isThread={true} 
-                locked={locked} rating={rating} userRating={userRating}/>
+            <Thread togglePostWindow={togglePostWindow}
+                    attachments={attachments}
+                    showAttachment={(a) => {showAttachment(true, a)}} id={id}
+                    created={created}
+                    title={title} menuRef={menuRef}
+                    setReplyingTo={setReplyState}
+                    setReportId={setReportId}
+                    author={author} authorId={authorId} content={content} isThread={true}
+                    locked={locked} rating={rating} userRating={userRating}/>}
 
 
         <Divider align="left">
@@ -324,9 +322,11 @@ function Message(props) {
     </div>
 }
 
-const
-    mapStateToProps = (state) => {
-        return {loggedIn: getAuthAuthenticated(state), replyOpen: getReplyOpen(state),permissions: getPermissions(state),accountId: getAuthId(state) }
+const mapStateToProps = (state) => {
+        return {loggedIn: getAuthAuthenticated(state),
+            replyOpen: getReplyOpen(state),
+            permissions: getPermissions(state),
+            accountId: getAuthId(state) }
     }
 
 export default connect(mapStateToProps)
@@ -334,4 +334,3 @@ export default connect(mapStateToProps)
 (
     Message
 )
-;
