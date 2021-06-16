@@ -19,7 +19,7 @@ function AdminPanel (props){
     const [window, setWindow] = useState("report");
 
     let items = [
-        {label: 'Categorieën beheren', command: (e) => {
+        {label: 'Thema Beheer', command: (e) => {
             setWindow("categorie")
         }},
         {label: 'Gerapporteede berichten', command: (e) =>{

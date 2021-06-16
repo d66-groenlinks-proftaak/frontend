@@ -1,3 +1,7 @@
 h4 {
   font-weight: 400;
 }
+
+.p-sidebar-content {
+  padding: 0;
+}
