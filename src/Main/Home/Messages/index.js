@@ -26,7 +26,6 @@ function Messages(props) {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
-            console.log(_messages)
         })
 
         

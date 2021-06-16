@@ -11,7 +11,7 @@ ReactDOM.render(
     <Provider store={store}>
         <React.StrictMode>
             <BrowserRouter>
-                <div class="background">
+                <div className="background">
                     <App/>
                 </div>
             </BrowserRouter>

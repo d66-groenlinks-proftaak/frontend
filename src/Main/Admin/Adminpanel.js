@@ -11,6 +11,7 @@ import {getPermissions} from "../../Core/Global/global.selectors";
 import {connect} from "react-redux";
 import {getAuthAuthenticating, getAuthError} from "../../Core/Authentication/authentication.selectors";
 import {Redirect} from "react-router-dom";
+import CategoryManager from "./Category/CategoryManager";
 
 function AdminPanel (props){
 
@@ -42,8 +43,8 @@ function AdminPanel (props){
         fillItems();
         },[]);
 
-    if(!props.permissions.includes(6))
-        return <Redirect to="/" />
+    // if(!props.permissions.includes(6))
+    //     return <Redirect to="/" />
     return<div className={"p-col-12 p-grid p-justify-center"}>
         <div className={"p-col-8"} style={{marginTop: "10px"}}>
         <div className={"p-grid"}>
@@ -54,7 +55,7 @@ function AdminPanel (props){
 
             <div className={"p-col-10"}>
                 {window !== undefined && window === "report" ? <ShadowBans className={"max-width"}></ShadowBans>: <span/>}
-                {window !== undefined && window === "categorie" ? <CreatePoll></CreatePoll>: <span/>}
+                {window !== undefined && window === "categorie" ? <CategoryManager></CategoryManager>: <span/>}
                 {window !== undefined && window === "rollen" ? <RoleManager></RoleManager>: <span/>}
             </div>
         </div>

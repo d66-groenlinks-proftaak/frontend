@@ -34,7 +34,6 @@ class Profile extends React.Component {
 
   componentDidMount() {
     this.props.connection.on("SendProfile", profile => {
-      console.log(profile)
       this.setState({
         loaded: true,
         firstname: profile.firstName,
