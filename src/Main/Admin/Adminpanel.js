@@ -12,7 +12,6 @@ import {getPermissions} from "../../Core/Global/global.selectors";
 import {connect} from "react-redux";
 import {getAuthAuthenticating, getAuthError} from "../../Core/Authentication/authentication.selectors";
 import {Redirect} from "react-router-dom";
-import CategoryManager from "./Category/CategoryManager";
 
 function AdminPanel (props){
 
