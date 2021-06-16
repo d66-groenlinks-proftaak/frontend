@@ -112,7 +112,6 @@ class Header extends React.Component {
     }
 
     createPost() {
-        console.log("CREATE")
         this.validateInput("title", this.state.newPost.title, () => {
             this.validateInput("content", this.state.newPost.content, () => {
                 this.validateInput("email", this.state.newPost.email, () => {
@@ -238,7 +237,7 @@ class Header extends React.Component {
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
                     <div className="new-post-settings p-p-3 p-pt-3 p-d-flex p-jc-between">
-                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={this.state.categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
+                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={this.state.categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Thema"/>
 
                         { this.props.permissions.includes(3) ? <div style={{float: "right"}}>
                             <label>Webinar &nbsp;</label>

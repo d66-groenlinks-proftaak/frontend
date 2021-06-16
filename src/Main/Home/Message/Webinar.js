@@ -72,15 +72,6 @@ function Webinar(props){
             <div style={{display: "flex", justifyContent: "right"}}>
                 <div style={{flexGrow: 1}}></div>
                 <div>
-                    <Button className={"p-button-secondary p-mr-2 p-button-text"}
-                            icon="pi pi-ellipsis-h"
-                            iconPos="right"
-                            onClick={(event) => {
-                                if (props.menuRef.current)
-                                    props.menuRef.current.toggle(event)
-                                props.setReportId(props.id)
-                            }}/>
-
                     {reactButton()}
                 </div>
             </div>

@@ -60,17 +60,7 @@ function Message(props) {
         command: () => {
             setReportWindow(true);
         }
-    },
-
-        {
-            label: "Lock",
-            icon: "pi pi-lock",
-            command: () => {
-                props.connection.send("LockPost", props.id);
-            }
-        },
-
-
+    }
     ]);
 
     const setAnnouncement = () =>{

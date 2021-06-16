@@ -15,7 +15,6 @@ function Messages(props) {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        console.log("request update")
         props.connection.send('RequestUpdate', 'Alle Berichten');
     }, [])
 
@@ -79,9 +78,9 @@ function Messages(props) {
 
     return <div>
         {header}
-        <Divider align="center">
-            <b>Mededelingen</b>
-        </Divider>
+        {announcements.length != 0 ? <Divider align="center">
+            <b>Mededelingen</b> </Divider> : <div></div>}
+
         {announcements.map(announcements => {
             return <Link key={announcements.id} style={{textDecoration: 'none'}} to={"/thread/" + announcements.id}>
                 <Message style={"message-overlay"} 

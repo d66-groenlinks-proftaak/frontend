@@ -9,11 +9,5 @@ export default function Header() {
                     style={{float: "right"}}
                     icon="pi pi-arrow-left" iconPos="left"/>
         </Link>
-        <div>
-
-            <Button className={"p-button-text"} style={{float: "right", color: "#CA8136"}}
-                    icon="pi pi-bell"
-                    iconPos="right"/>
-        </div>
     </div>
 }

@@ -33,7 +33,6 @@ class Message extends React.Component {
 
     
     render() {
-        console.log(this.props.rating);
         return <div onMouseEnter={this.SetHoverFalse} onMouseLeave={this.SetHoverTrue} >
                 <div className={" message p-component"} >
                     <div  className={this.props.style}></div>

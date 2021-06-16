@@ -28,8 +28,6 @@ class index extends React.Component {
                       </Link>
 
                 <div>
-                    <InputText className={"search-bar hidden-sm hidden-xs"} placeholder={"Zoeken"}/>
-
                     <Account accountId={this.props.accountId}
                              accountName={this.props.accountName}
                              loggedIn={this.props.loggedIn}/>
