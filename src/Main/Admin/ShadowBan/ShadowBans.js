@@ -25,6 +25,7 @@ function ShadowBans(props){
         })
         props.connection.on("SendShadowBannedMessages", message =>{
             setMessageList(message)
+            console.log(message)
         })
         return function cleanup(){
             props.connection.off("SendShadowBannedMessages")
@@ -34,7 +35,7 @@ function ShadowBans(props){
 
     useEffect( () =>{
         props.connection.send("GetShadowBannedMessages")
-    })
+    },[])
 
     return <div style={{width: "100%"}}>
         <Toast ref={toast} />

@@ -60,6 +60,10 @@ function Poll(props) {
             props.connection.off("ReceivePollResults");
         }
     },[]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 93e915eb75f879cf547599bc686cf982c615c5f0
 */
     const votePoll = () =>{
         let optionsToSend = [];

@@ -14,6 +14,10 @@ function Messages(props) {
 
     const [loaded, setLoaded] = useState(false);
 
+    useEffect(() => {
+        console.log("request update")
+        props.connection.send('RequestUpdate', 'Alle Berichten');
+    }, [])
 
     useEffect(() => {        
         props.connection.send('RequestAnnouncement');
@@ -24,7 +28,7 @@ function Messages(props) {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
-
+            console.log(_messages)
         })
 
         
@@ -37,6 +41,7 @@ function Messages(props) {
                 if (message.pinned)
                     pins++;
             //console.log("test" + _message.authorId)
+
             _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
 
             if(pins > 0)
@@ -109,6 +114,7 @@ function Messages(props) {
                          replyContent={message.replyContent ? message.replyContent : []}
                          created={message.created}
                          role={message.role}
+                         rating={message.rating}
                          content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
             </Link>

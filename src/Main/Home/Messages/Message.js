@@ -31,13 +31,16 @@ class Message extends React.Component {
         this.setState({hover: !this.state.hover})
     }
 
-
+    
     render() {
+        console.log(this.props.rating);
         return <div onMouseEnter={this.SetHoverFalse} onMouseLeave={this.SetHoverTrue} >
                 <div className={" message p-component"} >
                     <div  className={this.props.style}></div>
                     <div  className={"content"}>
-                        <div className={"p-d-flex p-jc-between p-ai-center"}>
+                    <div className={"message-comments"} style={{float: "right"}}> {this.props.rating || 0} <i className={"pi pi-thumbs-up"}/>
+                                </div>
+                        <div class={"p-d-flex p-jc-between p-ai-center"}>
                             <div>
                                 <div className={"message-title"} style={{ fontSize: this.props.titleSize, fontWeight: "bold", color: "black"}}>
 
@@ -51,6 +54,7 @@ class Message extends React.Component {
                                     <FontAwesomeIcon icon={faThumbtack}/> : ""} </div>
                             </div>
                         </div>
+
                         <div style={{fontSize: "0.7em", color: "black"}}>
                             <Link className={"message-author"} to={"/profile/" + this.props.authorId}>@{this.props.author}</Link>
                             <span
