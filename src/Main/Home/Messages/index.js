@@ -40,6 +40,7 @@ function Messages(props) {
                 if (message.pinned)
                     pins++;
             //console.log("test" + _message.authorId)
+
             _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
             //console.log(_messages)
 
@@ -115,6 +116,7 @@ function Messages(props) {
                          replyContent={message.replyContent ? message.replyContent : []}
                          created={message.created}
                          role={message.role}
+                         rating={message.rating}
                          content={message.content.replace(/<[^>]*>?/gm, '').substring(0, 600)}>
                 </Message>
             </Link>
