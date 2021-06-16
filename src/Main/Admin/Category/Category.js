@@ -13,7 +13,6 @@ class Category extends React.Component {
     }
 
     render() {
-        var val = this.props.value
         console.log(this.props)
     return <li style={{fontSize: "1.5em", marginTop: 5, marginLeft: 0}} key={this.props.id}>
             <div className="item" style={{display: "flex"}}>

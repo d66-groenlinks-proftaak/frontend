@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-
+import React, {useState} from "react";
 import {getAuthAuthenticating, getAuthError} from "../../../Core/Authentication/authentication.selectors";
 import {getGlobalConnection} from "../../../Core/Global/global.selectors";
 import {connect} from "react-redux";
@@ -44,10 +43,10 @@ function CreatePoll(props) {
             error = true;
             setNameError("De pollnaam moet langer zijn dan 2 tekens");
         }
-        else if (pollName.length >= 19)
+        else if (pollName.length >= 50)
         {
             error = true;
-            setNameError("De pollnaam moet korter zijn dan 20 tekens");
+            setNameError("De pollnaam moet korter zijn dan 50 tekens");
         }
         else
             setNameError("");
@@ -79,10 +78,10 @@ function CreatePoll(props) {
             }
         });
         setOptionError(newOptionsError);
+
         return error;
     }
     const checkError = () => {
-        console.log(checkNameError(), checkDateError(), checkOptionError())
         if(!checkNameError() && !checkDateError() && !checkOptionError())
             return true;
         else
@@ -97,6 +96,7 @@ function CreatePoll(props) {
                 ExpirationDate : date
             });
         }
+
     }
 
 

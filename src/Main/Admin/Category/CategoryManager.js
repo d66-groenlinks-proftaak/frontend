@@ -62,7 +62,7 @@ class CategoryManager extends React.Component {
             <h1>Thema Beheer</h1>
             <ul className={"fa-ul"}>
             {this.state.categories.map(cat => {
-                    return <Category id={cat.id} icon={<FontAwesomeIcon icon={cat.icon}/>} name={cat.name} value={false} />
+                    return <Category id={cat.id} icon={<FontAwesomeIcon icon={cat.icon} key={cat.id}/>} name={cat.name} value={false} />
                 })}
             </ul>
 

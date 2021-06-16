@@ -9,6 +9,8 @@ import {connect} from "react-redux";
 import {FileUpload} from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import { MultiSelect } from 'primereact/multiselect';
+import {Checkbox} from 'primereact/checkbox';
+import { getPermissions } from "../../../Core/Global/global.selectors";
 
 class Header extends React.Component {
     constructor(props) {
@@ -30,7 +32,8 @@ class Header extends React.Component {
             invalidEmail: false,
             invalidAuthor: false,
             currentMessages: 0,
-            selectedCategories: null
+            makeAnnouncement: false,
+            isWebinar: false
         }
 
         this.uploadRef = undefined
@@ -57,7 +60,7 @@ class Header extends React.Component {
     }
 
     validateInput(type, content, cb) {
-        if (content === undefined)
+        if (content === undefined || content == null)
             return;
 
         if (type === "title") {
@@ -126,7 +129,6 @@ class Header extends React.Component {
     }
 
     setCurrentMessages(current) {
-        console.log(current);
         this.setState({
             currentMessages: current
         })
@@ -155,8 +157,8 @@ class Header extends React.Component {
         formData.append("Email", this.state.newPost.email);
         formData.append("Author", this.state.newPost.author);
         formData.append("Token", this.props.token);
-        
-        console.log(this.state.selectedCategories)
+        formData.append("Announcement", this.state.makeAnnouncement);
+        formData.append("Webinar", this.state.isWebinar);
         var selectedCategoryNames = this.state.selectedCategories.map(function(c) {
             return c['name'];
         })
@@ -178,7 +180,6 @@ class Header extends React.Component {
      
     componentDidMount() {
         this.props.connection.on("SendCategories", (retrievedCategories) => {
-            console.log(retrievedCategories)
             this.setState({
                 categories: retrievedCategories
             })
@@ -186,7 +187,7 @@ class Header extends React.Component {
 
         this.props.connection.send("GetCategories")
     }
-
+     
     render() {
 
         let authenticated = <div>
@@ -236,8 +237,19 @@ class Header extends React.Component {
                          position="bottom"
                          showCloseIcon={false}
                          visible={this.state.newPostOpen} onHide={() => this.setPostWindow(false)}>
-                    <div className="new-post-settings p-p-3 p-pt-3">
-                        <MultiSelect optionLabel="name" value={this.state.selectedCategories} options={this.state.categories} onChange={(e) => this.setState({ selectedCategories: e.value })} placeholder="Kies Categorie" display="chip" />
+                    <div className="new-post-settings p-p-3 p-pt-3 p-d-flex p-jc-between">
+                        <MultiSelect optionLabel={"name"} value={this.state.selectedCategories} options={categories} onChange={(e) => this.setSelectedCategories(e.value)} placeholder="Kies Categorie"/>
+
+                        { this.props.permissions.includes(3) ? <div style={{float: "right"}}>
+                            <label>Webinar &nbsp;</label>
+                            <Checkbox onChange={e => this.setState({ isWebinar: !this.state.isWebinar })} checked={this.state.isWebinar}/>
+                        </div> : "" }
+                        { this.props.permissions.includes(4) ? <div>
+                            <label>Mededeling &nbsp;</label>
+                            <Checkbox onChange={e => this.setState({ makeAnnouncement: !this.state.makeAnnouncement })} checked={this.state.makeAnnouncement}/>
+                        </div> : "" }
+                        
+                        
                     </div>
                     <div className="new-post-content p-p-3 p-pt-3">
 
@@ -254,7 +266,6 @@ class Header extends React.Component {
                         }} className={this.state.invalidTitle ? "p-invalid" : ""}
                                 style={{height: '250px'}}
                                 value={this.state.newPost.content} onTextChange={(e) => {
-                            console.log(e)
                             this.onInputChanged("content", e.htmlValue)
                         }}/>
 
@@ -291,7 +302,7 @@ class Header extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    return {loggedIn: getAuthAuthenticated(state), token: getAuthToken(state)}
+    return {loggedIn: getAuthAuthenticated(state), token: getAuthToken(state), permissions: getPermissions(state)}
 }
 
 export default connect(mapStateToProps)(Header);
