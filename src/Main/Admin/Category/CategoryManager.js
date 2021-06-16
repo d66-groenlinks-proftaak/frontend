@@ -58,7 +58,7 @@ class CategoryManager extends React.Component {
     }
     
     render() {
-        return <div>
+        return <div style={{height: "100vh"}}>
             <h1>Thema Beheer</h1>
             <ul className={"fa-ul"}>
             {this.state.categories.map(cat => {
@@ -67,12 +67,13 @@ class CategoryManager extends React.Component {
             </ul>
 
             <div>
-                <span style={{cursor: "pointer"}} onClick={() => this.setEditorVisible(true)}>Voeg thema toe</span>
+                <Button style={{cursor: "pointer"}} onClick={() => this.setEditorVisible(true)}>Voeg thema toe</Button>
             </div>
 
             <Sidebar className={"p-col-12  p-grid p-nogutter"} showCloseIcon={false}
-                         style={{overflowY: "scroll", overflowX: "hidden", width: "100%", height: '40%'}} visible={this.state.visible} onHide={() => this.setEditorVisible(false)} position="bottom">
+                         style={{overflowY: "hidden", overflowX: "hidden", width: "100%", height: '60%'}} visible={this.state.visible} onHide={() => this.setEditorVisible(false)} position="bottom">
                 <h1>Maak een nieuw thema</h1>
+                <h4>Kies een pictogram van <a target={"_blank"} href={"https://fontawesome.com/v5.15/icons?d=gallery"}>https://fontawesome.com/v5.15/icons?d=gallery</a> en vul de naam van het pictogram hieronder in.</h4>
                 <div style={{display: "flex"}}>
                     <div style={{flex: "50%"}}>
                         <h2>Naam:</h2>
@@ -83,6 +84,7 @@ class CategoryManager extends React.Component {
                         <InputText value={this.state.icon} onChange={(e) => this.setIcon(e.target.value)} />
                     </div>
                 </div>
+                <br/>
                 <Button label="Save" onClick={() => this.addCategory()} />
             </Sidebar>
         </div>
