@@ -39,12 +39,8 @@ class Categories extends React.Component {
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={"comments"}/>}/>
                 <Category name={"Mededelingen"}
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={"bullhorn"}/>}/>
-                <Category name={"Polls"}
-                          icon={<FontAwesomeIcon style={{color: "black"}} icon={"poll-h"}/>}/>
                 <Category name={"Webinars"}
                           icon={<FontAwesomeIcon style={{color: "black"}} icon={"video"}/>}/>
-                <Category name={"Quizzes"}
-                          icon={<FontAwesomeIcon style={{color: "black"}} icon={"question"}/>}/>
                 <div style={{width: "100%", height: 25}}/>
                 <span style={{
                     textTransform: "uppercase", marginLeft: "-2em",

@@ -16,7 +16,7 @@ import {Redirect} from "react-router-dom";
 function AdminPanel (props){
 
 
-    const [window, setWindow] = useState("report");
+    const [window, setWindow] = useState("categorie");
 
     let items = [
         {label: 'Thema Beheer', command: (e) => {
