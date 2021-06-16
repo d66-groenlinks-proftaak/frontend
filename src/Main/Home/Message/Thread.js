@@ -1,6 +1,5 @@
 import {Link} from "react-router-dom";
 import {DateTime} from "luxon";
-import {Menu} from "primereact/menu";
 import {Button} from "primereact/button";
 import {connect} from "react-redux";
 import {Divider} from "primereact/divider";
@@ -18,7 +17,7 @@ function Thread(props) {
         props.connection.send("SetRating", props.id, props.mail, 2);
     }
     function reactButton() {
-        if(props.locked == false){
+        if(props.locked === false){
             return <Button onClick={() => {
                 if (props.isThread) {
                     props.togglePostWindow()

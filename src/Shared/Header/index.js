@@ -24,7 +24,7 @@ class index extends React.Component {
                     textDecoration: 'none'
                 }}
                       className={"p-text-bold brand"}>
-                          <img src={Logo} />
+                          <img src={Logo} alt=""/>
                       </Link>
 
                 <div>

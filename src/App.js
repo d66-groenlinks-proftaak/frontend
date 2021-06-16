@@ -19,6 +19,8 @@ import {getDarkMode, getGlobalConnection} from "./Core/Global/global.selectors";
 import {setConnection, setDarkMode} from "./Core/Global/global.actions";
 import {authenticateFailed, loginSuccess} from "./Core/Authentication/authentication.actions";
 
+import {library} from '@fortawesome/fontawesome-svg-core';
+import * as Icons from '@fortawesome/free-solid-svg-icons';
 
 class App extends React.Component {
     constructor(props) {
@@ -55,6 +57,8 @@ class App extends React.Component {
                     connection.send("Authenticate", localStorage.getItem("token"))
                 }
             })
+        
+        
     }
 
     render() {
@@ -83,6 +87,12 @@ class App extends React.Component {
         )
     }
 }
+
+const iconList = Object.keys(Icons)
+  .filter((key) => key !== 'fas' && key !== 'prefix')
+  .map((icon) => Icons[icon]);
+
+library.add(...iconList);
 
 const mapStateToProps = (state) => {
     return {connection: getGlobalConnection(state), darkmode: getDarkMode(state)}

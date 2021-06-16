@@ -1,5 +1,4 @@
 import React from "react";
-import {Button} from "primereact/button";
 import {Link} from "react-router-dom";
 import {Avatar} from 'primereact/avatar';
 import {Divider} from 'primereact/divider';
@@ -7,6 +6,8 @@ import {connect} from "react-redux";
 import {getAuthEmail} from "../../../Core/Authentication/authentication.selectors";
 import {InputTextarea} from 'primereact/inputtextarea';
 import CryptoJS from 'crypto-js';
+
+import {Button} from "primereact/button";
 import './index.css';
 
 import Message from "../Messages/Message";

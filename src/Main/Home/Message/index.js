@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Card} from "primereact/card";
-import {Button} from "primereact/button";
-import {Link} from "react-router-dom";
 import {Sidebar} from "primereact/sidebar";
-import {InputText} from "primereact/inputtext";
-import {Editor} from "primereact/editor";
 import LoadingMessage from "./LoadingMessage";
 import {Menu} from "primereact/menu";
 import {Divider} from "primereact/divider";
 import {Dialog} from 'primereact/dialog';
 import {Tooltip} from 'primereact/tooltip';
 import {ScrollTop} from 'primereact/scrolltop';
+import {InputText} from "primereact/inputtext";
+import {Button} from "primereact/button";
+
+import {Editor} from "primereact/editor";
 import Report from "./Report";
 import {getAuthAuthenticated, getAuthId} from "../../../Core/Authentication/authentication.selectors";
 import {connect} from "react-redux";
@@ -200,7 +199,7 @@ function Message(props) {
         return function cleanup() {
             props.connection.off("SendThreadDetails");
         }
-    }, [])
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (title === "") {
         return <div className={"p-mt-5"}>

@@ -21,13 +21,13 @@ function Messages(props) {
 
     useEffect(() => {        
         props.connection.send('RequestAnnouncement');
-    }, [])
+        props.connection.send('RequestUpdate', 'Alle Berichten');
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         props.connection.on("SendThreads", _messages => {
             setMessages(_messages);
             setLoaded(true);
-            console.log(_messages)
         })
 
         
@@ -42,15 +42,12 @@ function Messages(props) {
             //console.log("test" + _message.authorId)
 
             _message.title = <span> <Tag value={"Nieuw"}/> &nbsp; {title} </span>
-            //console.log(_messages)
 
             if(pins > 0)
                 _messages.splice(pins > 0 ? (pins) : 0, 0, _message);
 
             if (_messages.length > 10)
                 _messages.pop();
-
-                //console.log(_messages)
 
             setMessages(_messages)
         })
@@ -65,7 +62,7 @@ function Messages(props) {
             props.connection.off("SendThreads");
             props.connection.off("SendMessage");
         }
-    }, [messages, props.connection])
+    }, [messages, props.connection]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
 

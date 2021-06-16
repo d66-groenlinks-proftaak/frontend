@@ -41,7 +41,6 @@ function Poll(props) {
     useEffect(() => {
         props.connection.send("GetLatestPoll");
     }, []);
-
     useEffect(() => {
         props.connection.on("ReceiveLatestPoll", (recPoll) => {
             setPoll(recPoll);
@@ -51,7 +50,6 @@ function Poll(props) {
             props.connection.off("ReceiveLatestPoll");
         };
     },[]);
-
     useEffect(() =>{
         props.connection.on("ReceivePollResults", (recPollResults)=>{
             setPollResults(recPollResults)
@@ -61,9 +59,11 @@ function Poll(props) {
         return function cleanup(){
             props.connection.off("ReceivePollResults");
         }
-
     },[]);
+<<<<<<< HEAD
+=======
 
+>>>>>>> 93e915eb75f879cf547599bc686cf982c615c5f0
 */
     const votePoll = () =>{
         let optionsToSend = [];

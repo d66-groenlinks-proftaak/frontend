@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-
+import React, {useState} from "react";
 import {getAuthAuthenticating, getAuthError} from "../../../Core/Authentication/authentication.selectors";
 import {getGlobalConnection} from "../../../Core/Global/global.selectors";
 import {connect} from "react-redux";
@@ -79,6 +78,7 @@ function CreatePoll(props) {
             }
         });
         setOptionError(newOptionsError);
+
         return error;
     }
     const checkError = () => {

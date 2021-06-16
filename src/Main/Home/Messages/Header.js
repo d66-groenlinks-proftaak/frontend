@@ -129,7 +129,6 @@ class Header extends React.Component {
     }
 
     setCurrentMessages(current) {
-        console.log(current);
         this.setState({
             currentMessages: current
         })
@@ -160,8 +159,10 @@ class Header extends React.Component {
         formData.append("Token", this.props.token);
         formData.append("Announcement", this.state.makeAnnouncement);
         formData.append("Webinar", this.state.isWebinar);
-
-        formData.append("Categories", JSON.stringify(this.state.selectedCategories));
+        var selectedCategoryNames = this.state.selectedCategories.map(function(c) {
+            return c['name'];
+        })
+        formData.append("Categories", JSON.stringify(selectedCategoryNames));
 
         fetch('http://localhost:5000/message/create', {
             method: 'POST',
@@ -176,7 +177,16 @@ class Header extends React.Component {
             console.log(e);
         })
     }
+     
+    componentDidMount() {
+        this.props.connection.on("SendCategories", (retrievedCategories) => {
+            this.setState({
+                categories: retrievedCategories
+            })
+        })
 
+        this.props.connection.send("GetCategories")
+    }
      
     render() {
 
@@ -206,13 +216,6 @@ class Header extends React.Component {
             {label: "Top", value: 1},
             {label: "Oudste", value: 2},
         ]
-
-        const categories = [
-            {name: 'Corona', value: 'Corona'},
-            {name: 'Gemeente', value: 'Gemeente'},
-            {name: 'Afval', value: 'Afval'},
-            {name: 'Racisme', value: 'Racisme'}
-        ];
 
         return <div>
 

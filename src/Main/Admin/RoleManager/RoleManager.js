@@ -23,7 +23,7 @@ function RoleManager(props) {
   const [Visible, setVisible] = useState(false);
 
   function onClickRole(selectRole) {
-    if (selectRole == null) {
+    if (selectRole === null) {
       return;
     } else {
       setRole(selectRole);
@@ -31,28 +31,28 @@ function RoleManager(props) {
   }
 
   function showToast(errorNumber) {
-    if (errorNumber == 0) {
+    if (errorNumber === 0) {
       toast.current.show({
         severity: "success",
         summary: "Gelukt",
         detail: "Rol succesvol aangemaakt.",
         life: 3000,
       });
-    } else if (errorNumber == 1) {
+    } else if (errorNumber === 1) {
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "De rolnaam is te kort.",
         life: 3000,
       });
-    } else if (errorNumber == 2) {
+    } else if (errorNumber === 2) {
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "De rolnaam is te lang.",
         life: 3000,
       });
-    } else if (errorNumber == 3) {
+    } else if (errorNumber === 3) {
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -63,9 +63,9 @@ function RoleManager(props) {
   }
 
   function showRoleDetails(prole) {
-    if (prole.id == "") {
+    if (prole.id === "") {
       return (
-        <div class="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
+        <div className="m-m-1 p-p-0 p-text-bold" style={{ fontSize: "2em" }}>
           Selecteer een rol.
         </div>
       );
@@ -85,7 +85,7 @@ function RoleManager(props) {
   useEffect(() => {
     props.connection.on("ReceiveRoleList", (RoleList) => {
       setRoles(RoleList);
-    });
+    }); // eslint-disable-line react-hooks/exhaustive-deps
 
     return function cleanup() {
       props.connection.off("ReceiveRoleList");
@@ -94,12 +94,12 @@ function RoleManager(props) {
 
   useEffect(() => {
     props.connection.send("GetRoleList");
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={"p-grid"} style={{ width: "100%" }}>
       <Toast ref={toast} />
-      <div class="p-col-12">
+      <div className="p-col-12">
         <h1>Rollenbeheer</h1>
         <h4>Hier kunt u nieuwe rollen aanmaken of bestaande rollen bewerken</h4>
         <Divider/>

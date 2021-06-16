@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Button} from "primereact/button";
-import {Sidebar} from "primereact/sidebar";
 import {Editor} from "primereact/editor";
 
 class Report extends Component {
