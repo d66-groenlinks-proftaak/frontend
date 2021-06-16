@@ -256,6 +256,9 @@ function Message(props) {
                 author={author}
                 authorId={authorId}
                 id={"Webinar"}
+                Content={content}
+                setReplyingTo={setReplyState}
+                togglePostWindow={togglePostWindow}
             />
             :
             <Thread togglePostWindow={togglePostWindow} attachments={attachments}
@@ -269,7 +272,7 @@ function Message(props) {
                     author={author} authorId={authorId} content={content} isThread={true}
                     locked={locked}/> }
 
-        {webinar ?  "" :  <Divider align="left">
+        <Divider align="left">
             <span className="p-tag"
                   style={{
                       backgroundColor: "transparent",
@@ -278,7 +281,7 @@ function Message(props) {
                       fontSize: "1.2em",
                       fontWeight: "normal"
                   }}>Reacties</span>
-        </Divider>}
+        </Divider>
 
 
         <CreateReply id={id}/>
