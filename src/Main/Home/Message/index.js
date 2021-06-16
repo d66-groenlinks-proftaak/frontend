@@ -32,6 +32,8 @@ function Message(props) {
     const [authorId, setAuthorId] = useState("");
     const [id, setId] = useState("");
     const [locked, setLocked] = useState(true);
+    const [rating, setRating] = useState("");
+    const [userRating, setUserRating] = useState("");
     const [title, setTitle] = useState("");
     const [newReportOpen, setNewReportOpen] = useState(false);
     const [reportId, setReportId] = useState("");
@@ -167,14 +169,14 @@ function Message(props) {
             setCreated(thread.parent.created);
             setId(thread.parent.id);
             setTitle(thread.parent.title);
+            setUserRating(thread.parent.userRating);
             setAuthorId(thread.parent.authorId);
             setAttachments(thread.parent.attachments || []);
             setLocked(thread.parent.locked);
+            setRating(thread.parent.rating);
             setEditMessageContent(thread.parent.content);
             setEditMessageTitle(thread.parent.title)
-
             setType(thread.parent.type);
-
             if(thread.parent.authorId === props.accountId){
                 extraOptions.push({
                     label: "Bewerken",
@@ -255,7 +257,7 @@ function Message(props) {
                 setReplyingTo={setReplyState}
                 setReportId={setReportId}
                 author={author} authorId={authorId} content={content} isThread={true} 
-                locked={locked}/>
+                locked={locked} rating={rating} userRating={userRating}/>
 
         <Divider align="left">
             <span className="p-tag"
