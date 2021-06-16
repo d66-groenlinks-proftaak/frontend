@@ -82,7 +82,6 @@ function CreatePoll(props) {
         return error;
     }
     const checkError = () => {
-        console.log(checkNameError(), checkDateError(), checkOptionError())
         if(!checkNameError() && !checkDateError() && !checkOptionError())
             return true;
         else
@@ -97,6 +96,7 @@ function CreatePoll(props) {
                 ExpirationDate : date
             });
         }
+
     }
 
 
